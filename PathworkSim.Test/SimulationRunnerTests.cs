@@ -32,11 +32,15 @@ namespace PathworkSim.Test
 			Assert.Equal(SimulationState.EndLocation, state.PlayerPosition[0]);
 			Assert.Equal(SimulationState.EndLocation, state.PlayerPosition[1]);
 
+			//Game should have ended
 			Assert.True(state.GameHasEnded);
 
-			//TODO: Button Amount checks
+			//Players should have one button for each place they moved
 			Assert.Equal(SimulationState.EndLocation, state.PlayerButtonAmount[0]);
 			Assert.Equal(SimulationState.EndLocation, state.PlayerButtonAmount[1]);
+
+			//Starting player should have won by arriving at the end first
+			Assert.Equal(0, state.WinningPlayer);
 		}
     }
 }
