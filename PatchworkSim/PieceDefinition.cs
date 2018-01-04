@@ -1,4 +1,6 @@
-﻿namespace PatchworkSim
+﻿using System.Collections.Generic;
+
+namespace PatchworkSim
 {
 	public class PieceDefinition
 	{
@@ -8,6 +10,9 @@
 		public int ButtonsIncome { get; }
 
 		public bool[,] Bitmap { get; }
+		public int TotalUsedLocations { get; }
+
+		public bool[][,] PossibleOrientations { get; }
 
 		public PieceDefinition(string name, int buttonCost, int timeCost, int buttonsIncome, bool[,] bitmap)
 		{
@@ -16,8 +21,9 @@
 			TimeCost = timeCost;
 			ButtonsIncome = buttonsIncome;
 			Bitmap = bitmap;
+			TotalUsedLocations = BitmapOps.SumUsed(bitmap);
 
-			//TODO: Calculate all possible bitmaps
+			PossibleOrientations = BitmapOps.CalculatePossibleOrientations(bitmap);
 		}
 
 		public static PieceDefinition[] GetAllPieceDefinitions()
