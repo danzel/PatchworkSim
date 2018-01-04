@@ -4,8 +4,8 @@ using Xunit;
 
 namespace PathworkSim.Test
 {
-    public class SimulationRunnerTests
-    {
+	public class SimulationRunnerTests
+	{
 		/// <summary>
 		/// If both players use AlwaysAdvanceMoveMaker, they should both advance all the way to the end and the game end
 		/// </summary>
@@ -47,11 +47,10 @@ namespace PathworkSim.Test
 		[Fact]
 		public void BuyFirstPossibleMoveMakerNoPiecePlacing()
 		{
-			var state = new SimulationState(SimulationHelpers.GetRandomPieces(), 0);
+			var state = new SimulationState(SimulationHelpers.GetRandomPieces(3), 0);
 			state.Fidelity = SimulationFidelity.NoPiecePlacing;
 			var runner = new SimulationRunner(state, new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, null), new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, null));
 
-			//The game definitely ends within 200 steps
 			while (!state.GameHasEnded)
 			{
 				runner.PerformNextStep();
@@ -59,6 +58,49 @@ namespace PathworkSim.Test
 
 			//Check someone bought something
 			Assert.True(state.Pieces.Count < PieceDefinition.AllPieceDefinitions.Length);
+		}
+
+		[Fact]
+		public void AdvanceToEndPlacingSinglePatches()
+		{
+			var state = new SimulationState(SimulationHelpers.GetRandomPieces(), 0);
+			state.Fidelity = SimulationFidelity.FullSimulation;
+			var runner = new SimulationRunner(state, new PlayerDecisionMaker(AlwaysAdvanceMoveMaker.Instance, FirstPossiblePlacementMaker.Instance), new PlayerDecisionMaker(AlwaysAdvanceMoveMaker.Instance, FirstPossiblePlacementMaker.Instance));
+
+			while (!state.GameHasEnded)
+			{
+				runner.PerformNextStep();
+			}
+
+			//Both players should be at the end
+			Assert.Equal(SimulationState.EndLocation, state.PlayerPosition[0]);
+			Assert.Equal(SimulationState.EndLocation, state.PlayerPosition[1]);
+
+			//Game should have ended
+			Assert.True(state.GameHasEnded);
+
+			//Players should have one button for each place they moved
+			Assert.Equal(SimulationState.EndLocation + SimulationState.PlayerStartingButtons, state.PlayerButtonAmount[0]);
+			Assert.Equal(SimulationState.EndLocation + SimulationState.PlayerStartingButtons, state.PlayerButtonAmount[1]);
+
+			//non-starting player should have won by collecting all of the leather patches (https://boardgamegeek.com/thread/1703957/how-break-stalemate)
+			Assert.Equal(1, state.WinningPlayer);
+
+			//Check the ending points are correct
+			Assert.Equal(SimulationState.EndLocation - SimulationState.PlayerBoardSize * SimulationState.PlayerBoardSize * 2 + SimulationState.PlayerStartingButtons, state.CalculatePlayerEndGameWorth(0));
+			Assert.Equal(SimulationState.EndLocation - SimulationState.PlayerBoardSize * SimulationState.PlayerBoardSize * 2 + SimulationState.PlayerStartingButtons + 2 * SimulationState.LeatherPatches.Length, state.CalculatePlayerEndGameWorth(1));
+
+			//Check the pieces are on their board
+			int sum = 0;
+			for (var x = 0; x < state.PlayerBoardState[1].GetLength(0); x++)
+			{
+				for (var y = 0; y < state.PlayerBoardState[1].GetLength(1); y++)
+				{
+					if (state.PlayerBoardState[1][x, y])
+						sum++;
+				}
+			}
+			Assert.Equal(SimulationState.LeatherPatches.Length, sum);
 		}
 	}
 }

@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace PatchworkSim
 {
-	static class BitmapOps
+	public static class BitmapOps
 	{
 		public static bool[][,] CalculatePossibleOrientations(bool[,] bitmap)
 		{
@@ -108,6 +109,38 @@ namespace PatchworkSim
 				}
 			}
 			return result;
+		}
+
+		/// <summary>
+		/// Returns true if all of the positions the given bitmap requires for placement are empty
+		/// </summary>
+		public static bool CanPlace(bool[,] board, bool[,] bitmap, int x, int y)
+		{
+			for (var bitmapY = 0; bitmapY < bitmap.GetLength(1); bitmapY++)
+			{
+				for (var bitmapX = 0; bitmapX < bitmap.GetLength(0); bitmapX++)
+				{
+					if (board[x + bitmapX, y + bitmapY] && bitmap[bitmapX, bitmapY])
+						return false;
+				}
+			}
+			return true;
+		}
+
+		public static void Place(bool[,] board, bool[,] bitmap, int x, int y)
+		{
+			for (var bitmapY = 0; bitmapY < bitmap.GetLength(1); bitmapY++)
+			{
+				for (var bitmapX = 0; bitmapX < bitmap.GetLength(0); bitmapX++)
+				{
+					if (bitmap[bitmapX, bitmapY])
+					{
+						if (board[x + bitmapX, y + bitmapY])
+							throw new Exception("Cannot place piece here, it overlaps");
+						board[x + bitmapX, y + bitmapY] = true;
+					}
+				}
+			}
 		}
 	}
 }

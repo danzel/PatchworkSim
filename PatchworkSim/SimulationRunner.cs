@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PatchworkSim
+﻿namespace PatchworkSim
 {
 	public class SimulationRunner
 	{
@@ -22,17 +16,17 @@ namespace PatchworkSim
 		/// </summary>
 		public void PerformNextStep()
 		{
-			//Player will decide to buy a piece or move in front of opponent
-			//If they buy a piece, they need to place it (if simulation is running at high fidelity)
-			_decisionMakers[_state.ActivePlayer].MoveDecisionMaker.MakeMove(_state);
-
-			//Move the player
-			//Remove buttons
-			//Get them to place the piece
-
-			//Check if the player gets buttons
-			//Check if the player gets a leather patch
-			//Check if the active player changes
+			if (_state.PieceToPlace == null)
+			{
+				//Player will decide to buy a piece or move in front of opponent
+				//If they buy a piece, they need to place it (if simulation is running at high fidelity)
+				_decisionMakers[_state.ActivePlayer].MoveDecisionMaker.MakeMove(_state);
+			}
+			else
+			{
+				//Player must place the piece
+				_decisionMakers[_state.PieceToPlacePlayer].PlacementDecisionMaker.PlacePiece(_state);
+			}
 		}
 	}
 }

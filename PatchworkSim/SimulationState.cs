@@ -85,18 +85,18 @@ namespace PatchworkSim
 		private int NonActivePlayer => ActivePlayer == 0 ? 1 : 0;
 
 		//TODO LATER
-		/*
+
 		/// <summary>
-		/// After a player has purchased a piece, this will be the piece, they need to place.
+		/// After a player has purchased a piece, this will be the piece they need to place.
 		/// If they pass a leather patch then that will be placed here too
 		/// </summary>
 		public PieceDefinition PieceToPlace;
 
 		/// <summary>
-		/// Player that owns the PieceToPlace (required as collects leather patches during move, that could make them not the ActivePlayer anymore)
+		/// Player that owns the PieceToPlace (required as when collecting leather patches during a move, that could make them not the ActivePlayer anymore)
 		/// </summary>
-		public int PieceToPlacePlayer;
-		*/
+		public int PieceToPlacePlayer = -1;
+
 		public bool GameHasEnded
 		{
 			get { return PlayerPosition[0] == EndLocation && PlayerPosition[1] == EndLocation; }
@@ -143,6 +143,8 @@ namespace PatchworkSim
 		/// </summary>
 		public void PerformAdvanceMove()
 		{
+			if (PieceToPlace != null)
+				throw new Exception("Cannot move when there is a piece waiting to be placed");
 			if (GameHasEnded)
 				throw new Exception("Players cannot make moves, the game has finished");
 
@@ -179,8 +181,12 @@ namespace PatchworkSim
 
 				if (Fidelity == SimulationFidelity.FullSimulation)
 				{
-					//Check if we get a leather patch to place TODO
-					throw new Exception("Leather patch check is not implemented");
+					//Only get the piece if their board isn't full
+					if (PlayerBoardUsedLocationsCount[ActivePlayer] < PlayerBoardSize * PlayerBoardSize)
+					{
+						PieceToPlace = PieceDefinition.LeatherTile;
+						PieceToPlacePlayer = ActivePlayer;
+					}
 				}
 				else
 				{
@@ -205,8 +211,12 @@ namespace PatchworkSim
 		/// <param name="pieceIndex">The index of the patch in the Pieces List</param>
 		public void PerformPurchasePiece(int pieceIndex)
 		{
+			if (PieceToPlace != null)
+				throw new Exception("Cannot purchase a piece when there is one waiting to be placed");
+
 			//Check the piece is one of the next 3
-			if (pieceIndex != NextPieceIndex && pieceIndex % Pieces.Count != (NextPieceIndex + 1) % Pieces.Count && pieceIndex % Pieces.Count != (NextPieceIndex + 2) % Pieces.Count)
+			pieceIndex = pieceIndex % Pieces.Count;
+			if (pieceIndex != NextPieceIndex % Pieces.Count && pieceIndex != (NextPieceIndex + 1) % Pieces.Count && pieceIndex != (NextPieceIndex + 2) % Pieces.Count)
 				throw new Exception("pieceIndex (" + pieceIndex + ") is not one of the next 3 pieces");
 			var piece = PieceDefinition.AllPieceDefinitions[Pieces[pieceIndex]];
 
@@ -225,12 +235,7 @@ namespace PatchworkSim
 
 			if (Fidelity == SimulationFidelity.NoPiecePlacing)
 			{
-				//4. Place the Patch on Your Quilt Board
-				PlayerBoardUsedLocationsCount[ActivePlayer] += piece.TotalUsedLocations;
-				PlayerButtonIncome[ActivePlayer] += piece.ButtonsIncome;
-
-				//5. Move Your Time Token
-				MoveActivePlayer(Math.Min(EndLocation, PlayerPosition[ActivePlayer] + piece.TimeCost));
+				PerformPurchasePlaceSteps45(piece, ActivePlayer);
 			}
 			else
 			{
@@ -240,6 +245,38 @@ namespace PatchworkSim
 				//5. Move Your Time Token
 				//TODO: Move the player
 			}
+		}
+
+		private void PerformPurchasePlaceSteps45(PieceDefinition piece, int player)
+		{
+			//4. Place the Patch on Your Quilt Board
+			PlayerBoardUsedLocationsCount[player] += piece.TotalUsedLocations;
+			PlayerButtonIncome[player] += piece.ButtonsIncome;
+
+			//5. Move Your Time Token
+			if (piece.TimeCost > 0)
+				MoveActivePlayer(Math.Min(EndLocation, PlayerPosition[player] + piece.TimeCost));
+		}
+
+		/// <summary>
+		/// Place the piece in the given orientation at the given x,y position
+		/// </summary>
+		public void PerformPlacePiece(bool[,] bitmap, int x, int y)
+		{
+			if (PieceToPlace == null)
+				throw new Exception("Cannot place a piece when there is none to place");
+			if (!PieceToPlace.PossibleOrientations.Contains(bitmap))
+				throw new Exception("Given bitmap does not belong to the piece to be placed");
+
+			BitmapOps.Place(PlayerBoardState[PieceToPlacePlayer], bitmap, x, y);
+
+			var piece = PieceToPlace;
+			var player = PieceToPlacePlayer;
+
+			PieceToPlace = null;
+			PieceToPlacePlayer = -1;
+
+			PerformPurchasePlaceSteps45(piece, player);
 		}
 
 		/// <summary>

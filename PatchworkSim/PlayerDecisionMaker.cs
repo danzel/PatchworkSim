@@ -25,6 +25,6 @@
 
 	public interface IPlacementDecisionMaker
 	{
-		//TODO void PlacePiece(SimulationState)
+		void PlacePiece(SimulationState state);
 	}
 }
