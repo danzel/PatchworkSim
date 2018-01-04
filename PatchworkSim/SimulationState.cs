@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -81,11 +82,21 @@ namespace PatchworkSim
 		/// </summary>
 		public int ActivePlayer;
 
-		private int NonActivePlayer
-		{
-			get { return ActivePlayer == 0 ? 1 : 0; }
-		}
+		private int NonActivePlayer => ActivePlayer == 0 ? 1 : 0;
 
+		//TODO LATER
+		/*
+		/// <summary>
+		/// After a player has purchased a piece, this will be the piece, they need to place.
+		/// If they pass a leather patch then that will be placed here too
+		/// </summary>
+		public PieceDefinition PieceToPlace;
+
+		/// <summary>
+		/// Player that owns the PieceToPlace (required as collects leather patches during move, that could make them not the ActivePlayer anymore)
+		/// </summary>
+		public int PieceToPlacePlayer;
+		*/
 		public bool GameHasEnded
 		{
 			get { return PlayerPosition[0] == EndLocation && PlayerPosition[1] == EndLocation; }
@@ -161,8 +172,11 @@ namespace PatchworkSim
 				PlayerButtonAmount[ActivePlayer] += PlayerButtonIncome[ActivePlayer];
 			}
 
+			//Check if the player gets a leather patch
 			if (LeatherPatchesIndex < LeatherPatches.Length && targetPosition >= LeatherPatches[LeatherPatchesIndex])
 			{
+				//Note: If the player cannot place the patch it is just discarded https://boardgamegeek.com/thread/1538861/cant-put-1x1-patch-what-happens
+
 				if (Fidelity == SimulationFidelity.FullSimulation)
 				{
 					//Check if we get a leather patch to place TODO
@@ -170,7 +184,9 @@ namespace PatchworkSim
 				}
 				else
 				{
-					PlayerBoardUsedLocationsCount[ActivePlayer]++;
+					//Only get the points if their board isn't full
+					if (PlayerBoardUsedLocationsCount[ActivePlayer] < PlayerBoardSize * PlayerBoardSize)
+						PlayerBoardUsedLocationsCount[ActivePlayer]++;
 				}
 
 				LeatherPatchesIndex++;
@@ -180,6 +196,49 @@ namespace PatchworkSim
 			if (PlayerPosition[ActivePlayer] > PlayerPosition[NonActivePlayer])
 			{
 				ActivePlayer = NonActivePlayer;
+			}
+		}
+
+		/// <summary>
+		/// Purchase the given piece for placement (B: Take and Place a Patch)
+		/// </summary>
+		/// <param name="pieceIndex">The index of the patch in the Pieces List</param>
+		public void PerformPurchasePiece(int pieceIndex)
+		{
+			//Check the piece is one of the next 3
+			if (pieceIndex != NextPieceIndex && pieceIndex % Pieces.Count != (NextPieceIndex + 1) % Pieces.Count && pieceIndex % Pieces.Count != (NextPieceIndex + 2) % Pieces.Count)
+				throw new Exception("pieceIndex (" + pieceIndex + ") is not one of the next 3 pieces");
+			var piece = PieceDefinition.AllPieceDefinitions[Pieces[pieceIndex]];
+
+			//Check the player can afford it
+			if (PlayerButtonAmount[ActivePlayer] < piece.ButtonCost)
+				throw new Exception("Player is trying to purchase a piece they cannot afford");
+
+			//TODO(?) Check the player can place it
+
+			//1. Choose a Patch
+			Pieces.RemoveAt(pieceIndex);
+			//2. Move the Neutral Token
+			NextPieceIndex = pieceIndex;
+			//3. Pay for the Patch
+			PlayerButtonAmount[ActivePlayer] -= piece.ButtonCost;
+
+			if (Fidelity == SimulationFidelity.NoPiecePlacing)
+			{
+				//4. Place the Patch on Your Quilt Board
+				PlayerBoardUsedLocationsCount[ActivePlayer] += piece.TotalUsedLocations;
+				PlayerButtonIncome[ActivePlayer] += piece.ButtonsIncome;
+
+				//5. Move Your Time Token
+				MoveActivePlayer(Math.Min(EndLocation, PlayerPosition[ActivePlayer] + piece.TimeCost));
+			}
+			else
+			{
+				throw new NotImplementedException("Cannot purchase a piece in hifi");
+				//4. Place the Patch on Your Quilt Board
+				//TODO: Get the player to place it (And update their UsedLocationsCount + ButtonIncome)
+				//5. Move Your Time Token
+				//TODO: Move the player
 			}
 		}
 

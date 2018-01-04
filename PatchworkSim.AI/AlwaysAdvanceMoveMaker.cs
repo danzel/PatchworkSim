@@ -1,13 +1,13 @@
-﻿namespace PatchworkSim
+﻿namespace PatchworkSim.AI
 {
 	/// <summary>
 	/// An IMoveDecisionMaker that always chooses to advance in front of the opponent (never purchases a piece)
 	/// </summary>
-	public class AlwaysAdvanceDecisionMaker : IMoveDecisionMaker
+	public class AlwaysAdvanceMoveMaker : IMoveDecisionMaker
 	{
-		public static readonly AlwaysAdvanceDecisionMaker Instance = new AlwaysAdvanceDecisionMaker();
+		public static readonly AlwaysAdvanceMoveMaker Instance = new AlwaysAdvanceMoveMaker();
 
-		private AlwaysAdvanceDecisionMaker()
+		private AlwaysAdvanceMoveMaker()
 		{
 		}
 

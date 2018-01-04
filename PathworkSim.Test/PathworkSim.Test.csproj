@@ -67,6 +67,10 @@
     <Analyzer Include="..\packages\xunit.analyzers.0.7.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\PatchworkSim.AI\PatchworkSim.AI.csproj">
+      <Project>{b7f26adb-568c-4588-9637-07f184257871}</Project>
+      <Name>PatchworkSim.AI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PatchworkSim\PatchworkSim.csproj">
       <Project>{B01F91FF-1112-430E-BA7B-BA7477034DE4}</Project>
       <Name>PatchworkSim</Name>

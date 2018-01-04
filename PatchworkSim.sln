@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatchworkSim", "PatchworkSi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PathworkSim.Test", "PathworkSim.Test\PathworkSim.Test.csproj", "{FA527787-0683-48D9-8089-17DA0E1D8DB5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatchworkSim.AI", "PatchworkSim.AI\PatchworkSim.AI.csproj", "{B7F26ADB-568C-4588-9637-07F184257871}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{FA527787-0683-48D9-8089-17DA0E1D8DB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA527787-0683-48D9-8089-17DA0E1D8DB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA527787-0683-48D9-8089-17DA0E1D8DB5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7F26ADB-568C-4588-9637-07F184257871}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7F26ADB-568C-4588-9637-07F184257871}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7F26ADB-568C-4588-9637-07F184257871}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7F26ADB-568C-4588-9637-07F184257871}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

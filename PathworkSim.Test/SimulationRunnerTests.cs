@@ -1,4 +1,5 @@
 ﻿using PatchworkSim;
+using PatchworkSim.AI;
 using Xunit;
 
 namespace PathworkSim.Test
@@ -6,14 +7,14 @@ namespace PathworkSim.Test
     public class SimulationRunnerTests
     {
 		/// <summary>
-		/// If both players use AlwaysAdvanceDecisionMaker, they should both advance all the way to the end and the game end
+		/// If both players use AlwaysAdvanceMoveMaker, they should both advance all the way to the end and the game end
 		/// </summary>
 		[Fact]
-		public void AlwaysAdvanceToEnd()
+		public void AlwaysAdvanceToEndNoPiecePlacing()
 		{
 			var state = new SimulationState(SimulationHelpers.GetRandomPieces(), 0);
 			state.Fidelity = SimulationFidelity.NoPiecePlacing;
-			var runner = new SimulationRunner(state, new PlayerDecisionMaker(AlwaysAdvanceDecisionMaker.Instance, null), new PlayerDecisionMaker(AlwaysAdvanceDecisionMaker.Instance, null));
+			var runner = new SimulationRunner(state, new PlayerDecisionMaker(AlwaysAdvanceMoveMaker.Instance, null), new PlayerDecisionMaker(AlwaysAdvanceMoveMaker.Instance, null));
 
 			//The game definitely ends within 200 steps
 			for (var i = 0; i < 200 && !state.GameHasEnded; i++)
@@ -35,12 +36,29 @@ namespace PathworkSim.Test
 			Assert.Equal(SimulationState.EndLocation + SimulationState.PlayerStartingButtons, state.PlayerButtonAmount[0]);
 			Assert.Equal(SimulationState.EndLocation + SimulationState.PlayerStartingButtons, state.PlayerButtonAmount[1]);
 
-			//non-starting player should have won by collecting all of the leather patches
+			//non-starting player should have won by collecting all of the leather patches (https://boardgamegeek.com/thread/1703957/how-break-stalemate)
 			Assert.Equal(1, state.WinningPlayer);
 
 			//Check the ending points are correct
 			Assert.Equal(SimulationState.EndLocation - SimulationState.PlayerBoardSize * SimulationState.PlayerBoardSize * 2 + SimulationState.PlayerStartingButtons, state.CalculatePlayerEndGameWorth(0));
 			Assert.Equal(SimulationState.EndLocation - SimulationState.PlayerBoardSize * SimulationState.PlayerBoardSize * 2 + SimulationState.PlayerStartingButtons + 2 * SimulationState.LeatherPatches.Length, state.CalculatePlayerEndGameWorth(1));
+		}
+
+		[Fact]
+		public void BuyFirstPossibleMoveMakerNoPiecePlacing()
+		{
+			var state = new SimulationState(SimulationHelpers.GetRandomPieces(), 0);
+			state.Fidelity = SimulationFidelity.NoPiecePlacing;
+			var runner = new SimulationRunner(state, new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, null), new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, null));
+
+			//The game definitely ends within 200 steps
+			while (!state.GameHasEnded)
+			{
+				runner.PerformNextStep();
+			}
+
+			//Check someone bought something
+			Assert.True(state.Pieces.Count < PieceDefinition.AllPieceDefinitions.Length);
 		}
 	}
 }

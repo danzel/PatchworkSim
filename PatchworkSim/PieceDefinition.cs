@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace PatchworkSim
+﻿namespace PatchworkSim
 {
 	public class PieceDefinition
 	{
@@ -25,6 +23,8 @@ namespace PatchworkSim
 
 			PossibleOrientations = BitmapOps.CalculatePossibleOrientations(bitmap);
 		}
+
+		public static readonly PieceDefinition LeatherTile = new PieceDefinition("leather tile", 0, 0, 0, new[,] { { true } });
 
 		public static readonly PieceDefinition[] AllPieceDefinitions =
 		{
