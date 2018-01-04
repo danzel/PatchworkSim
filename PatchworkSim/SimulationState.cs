@@ -17,9 +17,14 @@ namespace PatchworkSim
 		public static readonly int[] ButtonIncomeMarkers = { 5, 11, 17, 23, 29, 35, 41, 47, 53 };
 
 		/// <summary>
-		/// The indexes of the leather patches. After arriving on (or after) this location, the player must place a 1x1 piece on their board (and remove that item from here, only the first player to arrive gets one)
+		/// The indexes of the leather patches. After arriving on (or after) this location, the player must place a 1x1 piece on their board
 		/// </summary>
-		public List<int> LeatherPatches; //If removing from and cloning this is slow, can be replaced by a static array and an index
+		public static readonly int[] LeatherPatches = { 20, 26, 32, 44, 50 };
+
+		/// <summary>
+		/// The index of the next LeatherPatch to give (When someone passes it), or the length of the array if all have been claimed
+		/// </summary>
+		public int LeatherPatchesIndex;
 
 		/// <summary>
 		/// What positions on each players board have a patch placed on them (pieces or leather patches)
@@ -82,7 +87,7 @@ namespace PatchworkSim
 
 		public SimulationState()
 		{
-			LeatherPatches = new List<int> { 20, 26, 32, 44, 50 };
+			LeatherPatchesIndex = 0;
 
 			PlayerBoardState = new[] { new bool[9, 9], new bool[9, 9] };
 			PlayerBoardUsedLocationsCount = new[] { 0, 0 };
