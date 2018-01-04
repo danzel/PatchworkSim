@@ -1,5 +1,8 @@
 ﻿namespace PatchworkSim.AI
 {
+	/// <summary>
+	/// An IMoveDecisionMaker that always purchases the first possible piece it can afford (possibly not place), otherwise does the advance move
+	/// </summary>
     public class BuyFirstPossibleMoveMaker : IMoveDecisionMaker
     {
 	    public static readonly BuyFirstPossibleMoveMaker Instance = new BuyFirstPossibleMoveMaker();
@@ -16,7 +19,7 @@
 				var piece = PieceDefinition.AllPieceDefinitions[state.Pieces[(state.NextPieceIndex + i) % state.Pieces.Count]];
 
 				//TODO: Refactor this check out (can purchase lazy edition)
-				if (piece.TotalUsedLocations < state.PlayerBoardUsedLocationsCount[state.ActivePlayer] && piece.ButtonCost < state.PlayerButtonAmount[state.ActivePlayer])
+				if (piece.TotalUsedLocations < SimulationState.PlayerBoardSize * SimulationState.PlayerBoardSize - state.PlayerBoardUsedLocationsCount[state.ActivePlayer] && piece.ButtonCost < state.PlayerButtonAmount[state.ActivePlayer])
 				{
 					state.PerformPurchasePiece(state.NextPieceIndex + i);
 					return;
