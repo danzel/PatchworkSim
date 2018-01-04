@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PieceDefinitionTests.cs" />
+    <Compile Include="SimulationHelpersTests.cs" />
     <Compile Include="SimulationRunnerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -28,6 +28,7 @@ namespace PatchworkSim
 
 		public static readonly PieceDefinition[] AllPieceDefinitions =
 		{
+			//This must be the first item in the list so we know where it is
 			new PieceDefinition("2x1 line (starting piece)", 2, 1, 0,
 				new[,] { { true, true } }),
 

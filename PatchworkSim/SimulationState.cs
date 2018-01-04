@@ -52,6 +52,16 @@ namespace PatchworkSim
 		public int[] PlayerPosition;
 
 		/// <summary>
+		/// The list of pieces (index in to PieceDefinition.AllPieceDefinitions) in picking order
+		/// </summary>
+		public List<int> Pieces;
+
+		/// <summary>
+		/// The index (into Pieces) of the next piece (the next three will include the two after that, use modular maths!)
+		/// </summary>
+		public int NextPieceIndex;
+
+		/// <summary>
 		/// The active player is always the player least far down the board, in the case of a tie it is the last player that moved (They will be on top when played with physical pieces)
 		/// </summary>
 		public int ActivePlayer;
@@ -85,8 +95,11 @@ namespace PatchworkSim
 			}
 		}
 
-		public SimulationState()
+		public SimulationState(IList<int> pieces, int nextPieceIndex)
 		{
+			Pieces = pieces.ToList();
+			NextPieceIndex = nextPieceIndex;
+
 			LeatherPatchesIndex = 0;
 
 			PlayerBoardState = new[] { new bool[9, 9], new bool[9, 9] };

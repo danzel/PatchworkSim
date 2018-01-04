@@ -11,7 +11,7 @@ namespace PathworkSim.Test
 		[Fact]
 		public void AlwaysAdvanceToEnd()
 		{
-			var state = new SimulationState();
+			var state = new SimulationState(SimulationHelpers.GetRandomPieces(), 0);
 			var runner = new SimulationRunner(state, new PlayerDecisionMaker(AlwaysAdvanceDecisionMaker.Instance, null), new PlayerDecisionMaker(AlwaysAdvanceDecisionMaker.Instance, null));
 
 			//The game definitely ends within 200 steps
