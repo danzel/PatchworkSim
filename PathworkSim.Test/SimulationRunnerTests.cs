@@ -12,6 +12,7 @@ namespace PathworkSim.Test
 		public void AlwaysAdvanceToEnd()
 		{
 			var state = new SimulationState(SimulationHelpers.GetRandomPieces(), 0);
+			state.Fidelity = SimulationFidelity.NoPiecePlacing;
 			var runner = new SimulationRunner(state, new PlayerDecisionMaker(AlwaysAdvanceDecisionMaker.Instance, null), new PlayerDecisionMaker(AlwaysAdvanceDecisionMaker.Instance, null));
 
 			//The game definitely ends within 200 steps
@@ -31,11 +32,15 @@ namespace PathworkSim.Test
 			Assert.True(state.GameHasEnded);
 
 			//Players should have one button for each place they moved
-			Assert.Equal(SimulationState.EndLocation, state.PlayerButtonAmount[0]);
-			Assert.Equal(SimulationState.EndLocation, state.PlayerButtonAmount[1]);
+			Assert.Equal(SimulationState.EndLocation + SimulationState.PlayerStartingButtons, state.PlayerButtonAmount[0]);
+			Assert.Equal(SimulationState.EndLocation + SimulationState.PlayerStartingButtons, state.PlayerButtonAmount[1]);
 
-			//Starting player should have won by arriving at the end first
-			Assert.Equal(0, state.WinningPlayer);
+			//non-starting player should have won by collecting all of the leather patches
+			Assert.Equal(1, state.WinningPlayer);
+
+			//Check the ending points are correct
+			Assert.Equal(SimulationState.EndLocation - SimulationState.PlayerBoardSize * SimulationState.PlayerBoardSize * 2 + SimulationState.PlayerStartingButtons, state.CalculatePlayerEndGameWorth(0));
+			Assert.Equal(SimulationState.EndLocation - SimulationState.PlayerBoardSize * SimulationState.PlayerBoardSize * 2 + SimulationState.PlayerStartingButtons + 2 * SimulationState.LeatherPatches.Length, state.CalculatePlayerEndGameWorth(1));
 		}
-    }
+	}
 }

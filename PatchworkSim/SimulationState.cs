@@ -12,6 +12,16 @@ namespace PatchworkSim
 		public const int EndLocation = 53;
 
 		/// <summary>
+		/// The width and height of the board the player places pieces they purchase on
+		/// </summary>
+		public const int PlayerBoardSize = 9;
+
+		/// <summary>
+		/// How many buttons each player starts the game with
+		/// </summary>
+		public const int PlayerStartingButtons = 5;
+
+		/// <summary>
 		/// After moving from before this index to this index (or greater) a player gains button income
 		/// </summary>
 		public static readonly int[] ButtonIncomeMarkers = { 5, 11, 17, 23, 29, 35, 41, 47, 53 };
@@ -25,6 +35,11 @@ namespace PatchworkSim
 		/// The index of the next LeatherPatch to give (When someone passes it), or the length of the array if all have been claimed
 		/// </summary>
 		public int LeatherPatchesIndex;
+
+		/// <summary>
+		/// The quality of the simulation
+		/// </summary>
+		public SimulationFidelity Fidelity;
 
 		/// <summary>
 		/// What positions on each players board have a patch placed on them (pieces or leather patches)
@@ -102,10 +117,12 @@ namespace PatchworkSim
 
 			LeatherPatchesIndex = 0;
 
-			PlayerBoardState = new[] { new bool[9, 9], new bool[9, 9] };
+			Fidelity = SimulationFidelity.FullSimulation;
+
+			PlayerBoardState = new[] { new bool[PlayerBoardSize, PlayerBoardSize], new bool[PlayerBoardSize, PlayerBoardSize] };
 			PlayerBoardUsedLocationsCount = new[] { 0, 0 };
 			PlayerButtonIncome = new[] { 0, 0 };
-			PlayerButtonAmount = new[] { 0, 0 };
+			PlayerButtonAmount = new[] { PlayerStartingButtons, PlayerStartingButtons };
 			PlayerPosition = new[] { 0, 0 };
 			ActivePlayer = 0;
 		}
@@ -144,7 +161,20 @@ namespace PatchworkSim
 				PlayerButtonAmount[ActivePlayer] += PlayerButtonIncome[ActivePlayer];
 			}
 
-			//Check if we get a leather patch to place TODO
+			if (LeatherPatchesIndex < LeatherPatches.Length && targetPosition >= LeatherPatches[LeatherPatchesIndex])
+			{
+				if (Fidelity == SimulationFidelity.FullSimulation)
+				{
+					//Check if we get a leather patch to place TODO
+					throw new Exception("Leather patch check is not implemented");
+				}
+				else
+				{
+					PlayerBoardUsedLocationsCount[ActivePlayer]++;
+				}
+
+				LeatherPatchesIndex++;
+			}
 
 			//We moved in front of them, change the active player
 			if (PlayerPosition[ActivePlayer] > PlayerPosition[NonActivePlayer])
@@ -158,7 +188,7 @@ namespace PatchworkSim
 		/// </summary>
 		public int CalculatePlayerEndGameWorth(int player)
 		{
-			int emptySpaces = 9 * 9 - PlayerBoardUsedLocationsCount[player];
+			int emptySpaces = PlayerBoardSize * PlayerBoardSize - PlayerBoardUsedLocationsCount[player];
 
 			//TODO: 7x7 special tile
 			return PlayerButtonAmount[player] - 2 * emptySpaces;
