@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="MoveMakers\AlwaysAdvanceMoveMaker.cs" />
     <Compile Include="MoveMakers\BuyFirstPossibleMoveMaker.cs" />
+    <Compile Include="MoveMakers\RandomMoveMaker.cs" />
     <Compile Include="PlacementFinders\FirstPossiblePlacementMaker.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

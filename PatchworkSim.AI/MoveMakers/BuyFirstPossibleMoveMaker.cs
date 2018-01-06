@@ -15,8 +15,7 @@
 	    {
 			for (var i = 0; i < 3; i++)
 			{
-				//TODO: Refactor this out
-				var piece = PieceDefinition.AllPieceDefinitions[state.Pieces[(state.NextPieceIndex + i) % state.Pieces.Count]];
+				var piece = Helpers.GetNextPiece(state, i);
 
 				if (Helpers.ActivePlayerCanPurchasePiece(state, piece))
 				{

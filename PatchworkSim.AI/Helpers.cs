@@ -27,5 +27,13 @@
 				&& piece.ButtonCost < state.PlayerButtonAmount[state.ActivePlayer] 
 				&& (state.Fidelity == SimulationFidelity.NoPiecePlacing || CanPlace(state.PlayerBoardState[state.ActivePlayer], piece));
 		}
+
+		/// <summary>
+		/// Gets the next piece available for purchasing, provide 0-2 to get the pieces that can be purchased
+		/// </summary>
+		public static PieceDefinition GetNextPiece(SimulationState state, int lookForwardAmount)
+		{
+			return PieceDefinition.AllPieceDefinitions[state.Pieces[(state.NextPieceIndex + lookForwardAmount) % state.Pieces.Count]];
+		}
 	}
 }

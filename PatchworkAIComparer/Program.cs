@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using PatchworkSim;
-using PatchworkSim.AI;
 using PatchworkSim.AI.MoveMakers;
 using PatchworkSim.AI.PlacementFinders;
 
@@ -16,6 +15,7 @@ namespace PatchworkAIComparer
 		{
 			var aiToTest = new[]
 			{
+				new PlayerDecisionMaker(new RandomMoveMaker(), FirstPossiblePlacementMaker.Instance), //TODO: Really we should make a new RandomMoveMaker every test(?)
 				new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, FirstPossiblePlacementMaker.Instance),
 				new PlayerDecisionMaker(AlwaysAdvanceMoveMaker.Instance, FirstPossiblePlacementMaker.Instance)
 			};
