@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using PatchworkSim;
 using PatchworkSim.AI;
+using PatchworkSim.AI.MoveMakers;
+using PatchworkSim.AI.PlacementFinders;
 
 namespace PatchworkAIComparer
 {

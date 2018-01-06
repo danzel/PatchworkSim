@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PatchworkSim.AI
+namespace PatchworkSim.AI.PlacementFinders
 {
 	public class FirstPossiblePlacementMaker : IPlacementDecisionMaker
 	{

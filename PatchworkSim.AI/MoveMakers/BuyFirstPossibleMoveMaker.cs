@@ -1,4 +1,4 @@
-﻿namespace PatchworkSim.AI
+﻿namespace PatchworkSim.AI.MoveMakers
 {
 	/// <summary>
 	/// An IMoveDecisionMaker that always purchases the first possible piece it can afford (possibly not place), otherwise does the advance move

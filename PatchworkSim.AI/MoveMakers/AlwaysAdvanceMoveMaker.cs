@@ -1,4 +1,4 @@
-﻿namespace PatchworkSim.AI
+﻿namespace PatchworkSim.AI.MoveMakers
 {
 	/// <summary>
 	/// An IMoveDecisionMaker that always chooses to advance in front of the opponent (never purchases a piece)

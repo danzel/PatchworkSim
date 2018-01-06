@@ -1,5 +1,7 @@
 ﻿using PatchworkSim;
 using PatchworkSim.AI;
+using PatchworkSim.AI.MoveMakers;
+using PatchworkSim.AI.PlacementFinders;
 using Xunit;
 
 namespace PathworkSim.Test

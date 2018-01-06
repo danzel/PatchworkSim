@@ -1,6 +1,8 @@
 ﻿using System;
 using PatchworkSim;
 using PatchworkSim.AI;
+using PatchworkSim.AI.MoveMakers;
+using PatchworkSim.AI.PlacementFinders;
 using PatchworkSim.Loggers;
 
 namespace PatchworkRunner

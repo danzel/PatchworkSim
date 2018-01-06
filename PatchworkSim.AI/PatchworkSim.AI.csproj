@@ -40,9 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AlwaysAdvanceMoveMaker.cs" />
-    <Compile Include="BuyFirstPossibleMoveMaker.cs" />
-    <Compile Include="FirstPossiblePlacementMaker.cs" />
+    <Compile Include="MoveMakers\AlwaysAdvanceMoveMaker.cs" />
+    <Compile Include="MoveMakers\BuyFirstPossibleMoveMaker.cs" />
+    <Compile Include="PlacementFinders\FirstPossiblePlacementMaker.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
