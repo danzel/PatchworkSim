@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PathworkSim.Test", "Pathwor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatchworkSim.AI", "PatchworkSim.AI\PatchworkSim.AI.csproj", "{B7F26ADB-568C-4588-9637-07F184257871}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatchworkSim.Loggers", "PatchworkSim.Loggers\PatchworkSim.Loggers.csproj", "{0F57A015-358F-4ADD-AF9D-DD77939BDD25}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatchworkRunner", "PatchworkRunner\PatchworkRunner.csproj", "{FF0B9A3C-67B7-40CF-A1AF-90C6F64FFA02}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{B7F26ADB-568C-4588-9637-07F184257871}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7F26ADB-568C-4588-9637-07F184257871}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7F26ADB-568C-4588-9637-07F184257871}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F57A015-358F-4ADD-AF9D-DD77939BDD25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F57A015-358F-4ADD-AF9D-DD77939BDD25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F57A015-358F-4ADD-AF9D-DD77939BDD25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F57A015-358F-4ADD-AF9D-DD77939BDD25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF0B9A3C-67B7-40CF-A1AF-90C6F64FFA02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF0B9A3C-67B7-40CF-A1AF-90C6F64FFA02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF0B9A3C-67B7-40CF-A1AF-90C6F64FFA02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF0B9A3C-67B7-40CF-A1AF-90C6F64FFA02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

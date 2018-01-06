@@ -32,6 +32,8 @@ namespace PatchworkSim
 		/// </summary>
 		public static readonly int[] LeatherPatches = { 20, 26, 32, 44, 50 };
 
+		public ISimulationLogger Logger = NullSimulationLogger.Instance;
+
 		/// <summary>
 		/// The index of the next LeatherPatch to give (When someone passes it), or the length of the array if all have been claimed
 		/// </summary>
@@ -153,7 +155,10 @@ namespace PatchworkSim
 			//We always get one button for every space we move
 			PlayerButtonAmount[ActivePlayer] += targetPosition - PlayerPosition[ActivePlayer];
 
+			int player = ActivePlayer;
 			MoveActivePlayer(targetPosition);
+
+			Logger.PlayerAdvanced(player);
 		}
 
 		private void MoveActivePlayer(int targetPosition)
@@ -233,6 +238,8 @@ namespace PatchworkSim
 			//3. Pay for the Patch
 			PlayerButtonAmount[ActivePlayer] -= piece.ButtonCost;
 
+			Logger.PlayerPurchasedPiece(ActivePlayer, piece);
+
 			if (Fidelity == SimulationFidelity.NoPiecePlacing)
 			{
 				PerformPurchasePlaceSteps45(piece, ActivePlayer);
@@ -274,6 +281,8 @@ namespace PatchworkSim
 			PieceToPlacePlayer = -1;
 
 			PerformPurchasePlaceSteps45(piece, player);
+
+			Logger.PlayerPlacedPiece(player, piece, x, y, bitmap);
 		}
 
 		/// <summary>

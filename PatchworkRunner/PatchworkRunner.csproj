@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B01F91FF-1112-430E-BA7B-BA7477034DE4}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>PatchworkSim</RootNamespace>
-    <AssemblyName>PatchworkSim</AssemblyName>
+    <ProjectGuid>{FF0B9A3C-67B7-40CF-A1AF-90C6F64FFA02}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>PatchworkRunner</RootNamespace>
+    <AssemblyName>PatchworkRunner</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -42,18 +42,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BitmapOps.cs" />
-    <Compile Include="ISimulationLogger.cs" />
-    <Compile Include="PieceDefinition.cs" />
-    <Compile Include="PlayerDecisionMaker.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SimulationFidelity.cs" />
-    <Compile Include="SimulationHelpers.cs" />
-    <Compile Include="SimulationRunner.cs" />
-    <Compile Include="SimulationState.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PatchworkSim.AI\PatchworkSim.AI.csproj">
+      <Project>{B7F26ADB-568C-4588-9637-07F184257871}</Project>
+      <Name>PatchworkSim.AI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PatchworkSim.Loggers\PatchworkSim.Loggers.csproj">
+      <Project>{0F57A015-358F-4ADD-AF9D-DD77939BDD25}</Project>
+      <Name>PatchworkSim.Loggers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PatchworkSim\PatchworkSim.csproj">
+      <Project>{B01F91FF-1112-430E-BA7B-BA7477034DE4}</Project>
+      <Name>PatchworkSim</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
