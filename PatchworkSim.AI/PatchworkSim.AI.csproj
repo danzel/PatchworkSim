@@ -43,6 +43,7 @@
     <Compile Include="AlwaysAdvanceMoveMaker.cs" />
     <Compile Include="BuyFirstPossibleMoveMaker.cs" />
     <Compile Include="FirstPossiblePlacementMaker.cs" />
+    <Compile Include="Helpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

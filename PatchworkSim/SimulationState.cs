@@ -239,11 +239,8 @@ namespace PatchworkSim
 			}
 			else
 			{
-				throw new NotImplementedException("Cannot purchase a piece in hifi");
-				//4. Place the Patch on Your Quilt Board
-				//TODO: Get the player to place it (And update their UsedLocationsCount + ButtonIncome)
-				//5. Move Your Time Token
-				//TODO: Move the player
+				PieceToPlace = piece;
+				PieceToPlacePlayer = ActivePlayer;
 			}
 		}
 

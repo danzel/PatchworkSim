@@ -18,8 +18,7 @@
 				//TODO: Refactor this out
 				var piece = PieceDefinition.AllPieceDefinitions[state.Pieces[(state.NextPieceIndex + i) % state.Pieces.Count]];
 
-				//TODO: Refactor this check out (can purchase lazy edition)
-				if (piece.TotalUsedLocations < SimulationState.PlayerBoardSize * SimulationState.PlayerBoardSize - state.PlayerBoardUsedLocationsCount[state.ActivePlayer] && piece.ButtonCost < state.PlayerButtonAmount[state.ActivePlayer])
+				if (Helpers.ActivePlayerCanPurchasePiece(state, piece))
 				{
 					state.PerformPurchasePiece(state.NextPieceIndex + i);
 					return;

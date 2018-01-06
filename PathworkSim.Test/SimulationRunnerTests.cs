@@ -102,5 +102,20 @@ namespace PathworkSim.Test
 			}
 			Assert.Equal(SimulationState.LeatherPatches.Length, sum);
 		}
+
+		[Fact]
+		public void BuyFirstPossibleMoveMakerPlacing()
+		{
+			var state = new SimulationState(SimulationHelpers.GetRandomPieces(1), 0);
+			var runner = new SimulationRunner(state, new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, FirstPossiblePlacementMaker.Instance), new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, FirstPossiblePlacementMaker.Instance));
+
+			while (!state.GameHasEnded)
+			{
+				runner.PerformNextStep();
+			}
+
+			//Check someone bought something
+			Assert.True(state.Pieces.Count < PieceDefinition.AllPieceDefinitions.Length);
+		}
 	}
 }
