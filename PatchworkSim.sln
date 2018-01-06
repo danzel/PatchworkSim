@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatchworkSim.Loggers", "Pat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatchworkRunner", "PatchworkRunner\PatchworkRunner.csproj", "{FF0B9A3C-67B7-40CF-A1AF-90C6F64FFA02}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatchworkAIComparer", "PatchworkAIComparer\PatchworkAIComparer.csproj", "{193AD43B-9E23-4B7C-9515-E8133EC56DDA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{FF0B9A3C-67B7-40CF-A1AF-90C6F64FFA02}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF0B9A3C-67B7-40CF-A1AF-90C6F64FFA02}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF0B9A3C-67B7-40CF-A1AF-90C6F64FFA02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{193AD43B-9E23-4B7C-9515-E8133EC56DDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{193AD43B-9E23-4B7C-9515-E8133EC56DDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{193AD43B-9E23-4B7C-9515-E8133EC56DDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{193AD43B-9E23-4B7C-9515-E8133EC56DDA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

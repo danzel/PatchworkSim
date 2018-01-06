@@ -10,6 +10,8 @@
 			MoveDecisionMaker = moveDecisionMaker;
 			PlacementDecisionMaker = placementDecisionMaker;
 		}
+
+		public string Name => MoveDecisionMaker?.GetType().Name + "-" + PlacementDecisionMaker?.GetType().Name;
 	}
 
 	/// <summary>
