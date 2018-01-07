@@ -53,5 +53,7 @@ namespace PatchworkSim.AI.MoveMakers
 
 			state.PerformPurchasePiece(state.NextPieceIndex + 2);
 		}
+
+		public string Name => "Random";
 	}
 }

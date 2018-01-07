@@ -1,6 +1,8 @@
-﻿namespace PatchworkSim.AI
+﻿using System.Linq;
+
+namespace PatchworkSim.AI
 {
-	static class Helpers
+	public static class Helpers
 	{
 		public static bool CanPlace(bool[,] board, PieceDefinition piece)
 		{
@@ -34,6 +36,12 @@
 		public static PieceDefinition GetNextPiece(SimulationState state, int lookForwardAmount)
 		{
 			return PieceDefinition.AllPieceDefinitions[state.Pieces[(state.NextPieceIndex + lookForwardAmount) % state.Pieces.Count]];
+		}
+
+		public static int ButtonIncomeAmountAfterPosition(int currentPosition)
+		{
+			//TODO: This could be a normal loop or an array lookup or some other faster method
+			return SimulationState.ButtonIncomeMarkers.Count(c => c > currentPosition);
 		}
 	}
 }

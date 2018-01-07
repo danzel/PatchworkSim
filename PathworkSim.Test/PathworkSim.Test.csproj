@@ -55,6 +55,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AIHelpersTests.cs" />
     <Compile Include="PieceDefinitionTests.cs" />
     <Compile Include="SimulationHelpersTests.cs" />
     <Compile Include="SimulationRunnerTests.cs" />

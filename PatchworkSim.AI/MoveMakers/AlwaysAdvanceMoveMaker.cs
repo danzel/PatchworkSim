@@ -15,5 +15,7 @@
 		{
 			state.PerformAdvanceMove();
 		}
+
+		public string Name => "AlwaysAdvance";
 	}
 }

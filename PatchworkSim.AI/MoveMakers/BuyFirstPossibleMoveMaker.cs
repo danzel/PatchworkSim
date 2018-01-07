@@ -26,5 +26,7 @@
 
 		    state.PerformAdvanceMove();
 	    }
-    }
+
+	    public string Name => "BuyFirstPossible";
+	}
 }

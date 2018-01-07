@@ -11,7 +11,7 @@
 			PlacementDecisionMaker = placementDecisionMaker;
 		}
 
-		public string Name => MoveDecisionMaker?.GetType().Name + "-" + PlacementDecisionMaker?.GetType().Name;
+		public string Name => MoveDecisionMaker?.Name + "-" + PlacementDecisionMaker?.Name;
 	}
 
 	/// <summary>
@@ -23,10 +23,14 @@
 		/// Make a move for the active player
 		/// </summary>
 		void MakeMove(SimulationState state);
+
+		string Name { get; }
 	}
 
 	public interface IPlacementDecisionMaker
 	{
 		void PlacePiece(SimulationState state);
+
+		string Name { get; }
 	}
 }

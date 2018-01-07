@@ -31,5 +31,7 @@ namespace PatchworkSim.AI.PlacementFinders
 
 			throw new Exception("There is no where to place the piece");
 		}
+
+		public string Name => "FirstPossible";
 	}
 }
