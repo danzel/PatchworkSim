@@ -29,7 +29,7 @@ namespace PathworkSim.Test
 
 			//This number totally relies on the order of pieces in the array.
 			//Update it if the ordering changes, the extact amount isn't important
-			Assert.Equal(8, placed);
+			Assert.Equal(12, placed);
 		}
 	}
 }
