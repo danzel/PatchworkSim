@@ -116,6 +116,12 @@ namespace PatchworkSim
 		/// </summary>
 		public static bool CanPlace(bool[,] board, bool[,] bitmap, int x, int y)
 		{
+			if (x + bitmap.GetLength(0) > board.GetLength(0))
+				return false;
+			if (y + bitmap.GetLength(1) > board.GetLength(1))
+				return false;
+
+
 			for (var bitmapY = 0; bitmapY < bitmap.GetLength(1); bitmapY++)
 			{
 				for (var bitmapX = 0; bitmapX < bitmap.GetLength(0); bitmapX++)

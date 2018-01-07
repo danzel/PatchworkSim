@@ -48,6 +48,7 @@
     <Compile Include="Helpers.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\FirstPossiblePlacementStrategy.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\IPlacementStrategy.cs" />
+    <Compile Include="PlacementFinders\PlacementStrategies\SimpleClosestToWallAndCornerStrategy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -15,9 +15,6 @@ namespace PatchworkAIComparer
 		{
 			var aiToTest = new[]
 			{
-				new PlayerDecisionMaker(new RandomMoveMaker(), PlacementMaker.FirstPossibleInstance), //TODO: Really we should make a new RandomMoveMaker every test(?)
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-5), PlacementMaker.FirstPossibleInstance),
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-4), PlacementMaker.FirstPossibleInstance),
 				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-3), PlacementMaker.FirstPossibleInstance),
 				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-2), PlacementMaker.FirstPossibleInstance),
 				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-1), PlacementMaker.FirstPossibleInstance),
@@ -25,9 +22,22 @@ namespace PatchworkAIComparer
 				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), PlacementMaker.FirstPossibleInstance),
 				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.FirstPossibleInstance),
 				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(3), PlacementMaker.FirstPossibleInstance),
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(4), PlacementMaker.FirstPossibleInstance),
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(5), PlacementMaker.FirstPossibleInstance),
+
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-3), PlacementMaker.SimpleClosestToWallAndCornerInstance),
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-2), PlacementMaker.SimpleClosestToWallAndCornerInstance),
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-1), PlacementMaker.SimpleClosestToWallAndCornerInstance),
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), PlacementMaker.SimpleClosestToWallAndCornerInstance),
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), PlacementMaker.SimpleClosestToWallAndCornerInstance),
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.SimpleClosestToWallAndCornerInstance),
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(3), PlacementMaker.SimpleClosestToWallAndCornerInstance),
+
+
 				new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, PlacementMaker.FirstPossibleInstance),
+				new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, PlacementMaker.SimpleClosestToWallAndCornerInstance),
+
+				new PlayerDecisionMaker(new RandomMoveMaker(), PlacementMaker.FirstPossibleInstance),
+				new PlayerDecisionMaker(new RandomMoveMaker(), PlacementMaker.SimpleClosestToWallAndCornerInstance),
+
 				new PlayerDecisionMaker(AlwaysAdvanceMoveMaker.Instance, PlacementMaker.FirstPossibleInstance)
 			};
 
@@ -41,6 +51,9 @@ namespace PatchworkAIComparer
 			{
 				for (var b = a; b < aiToTest.Length; b++)
 				{
+					if (a == b)
+						continue;
+
 					var aiA = aiToTest[a];
 					var aiB = aiToTest[b];
 					Console.WriteLine($"Running {aiA.Name} vs {aiB.Name}");
@@ -72,17 +85,20 @@ namespace PatchworkAIComparer
 			var filename = "result_" + DateTimeOffset.Now.Ticks + ".csv";
 			var res = new List<string>();
 
-			res.Add("," + string.Join(", ", aiToTest.Select(ai => ai.Name)) + ",Total,Rank");
+			res.Add("," + string.Join(", ", aiToTest.Select(ai => ai.Name)) + ",Win%,Rank");
 			for (var a = 0; a < aiToTest.Length; a++)
 			{
 				var line = aiToTest[a].Name;
 				for (var b = 0; b < aiToTest.Length; b++)
 				{
-					line += "," + totalWins[a, b];
+					if (a == b)
+						line += ",";
+					else
+						line += "," + totalWins[a, b];
 				}
 
-				//Total and rank
-				line += "," + total[a];
+				//Win% and rank
+				line += "," + (total[a] / (float)(aiToTest.Length - 1)).ToString("0.0");
 				line += "," + (aiToTest.Length - total.Count(c => c < total[a]));
 
 				res.Add(line);

@@ -21,10 +21,10 @@ namespace PatchworkRunner
 			var state = new SimulationState(SimulationHelpers.GetRandomPieces(1), 0);
 			var logger = new ConsoleLogger(state);
 
-			var strategies = new[]
+			var strategies = new IPlacementStrategy[]
 			{
 				FirstPossiblePlacementStrategy.Instance,
-				FirstPossiblePlacementStrategy.Instance
+				SimpleClosestToWallAndCornerStrategy.Instance
 			};
 
 			var pieces = SimulationHelpers.GetRandomPieces(1);
