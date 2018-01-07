@@ -15,20 +15,20 @@ namespace PatchworkAIComparer
 		{
 			var aiToTest = new[]
 			{
-				new PlayerDecisionMaker(new RandomMoveMaker(), FirstPossiblePlacementMaker.Instance), //TODO: Really we should make a new RandomMoveMaker every test(?)
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-5), FirstPossiblePlacementMaker.Instance),
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-4), FirstPossiblePlacementMaker.Instance),
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-3), FirstPossiblePlacementMaker.Instance),
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-2), FirstPossiblePlacementMaker.Instance),
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-1), FirstPossiblePlacementMaker.Instance),
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), FirstPossiblePlacementMaker.Instance),
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), FirstPossiblePlacementMaker.Instance),
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), FirstPossiblePlacementMaker.Instance),
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(3), FirstPossiblePlacementMaker.Instance),
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(4), FirstPossiblePlacementMaker.Instance),
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(5), FirstPossiblePlacementMaker.Instance),
-				new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, FirstPossiblePlacementMaker.Instance),
-				new PlayerDecisionMaker(AlwaysAdvanceMoveMaker.Instance, FirstPossiblePlacementMaker.Instance)
+				new PlayerDecisionMaker(new RandomMoveMaker(), PlacementMaker.FirstPossibleInstance), //TODO: Really we should make a new RandomMoveMaker every test(?)
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-5), PlacementMaker.FirstPossibleInstance),
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-4), PlacementMaker.FirstPossibleInstance),
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-3), PlacementMaker.FirstPossibleInstance),
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-2), PlacementMaker.FirstPossibleInstance),
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-1), PlacementMaker.FirstPossibleInstance),
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), PlacementMaker.FirstPossibleInstance),
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), PlacementMaker.FirstPossibleInstance),
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.FirstPossibleInstance),
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(3), PlacementMaker.FirstPossibleInstance),
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(4), PlacementMaker.FirstPossibleInstance),
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(5), PlacementMaker.FirstPossibleInstance),
+				new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, PlacementMaker.FirstPossibleInstance),
+				new PlayerDecisionMaker(AlwaysAdvanceMoveMaker.Instance, PlacementMaker.FirstPossibleInstance)
 			};
 
 			const int TotalRuns = 100;

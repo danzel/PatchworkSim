@@ -12,7 +12,7 @@ namespace PatchworkRunner
 		static void Main(string[] args)
 		{
 			var state = new SimulationState(SimulationHelpers.GetRandomPieces(1), 0);
-			var runner = new SimulationRunner(state, new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, FirstPossiblePlacementMaker.Instance), new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, FirstPossiblePlacementMaker.Instance));
+			var runner = new SimulationRunner(state, new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, PlacementMaker.FirstPossibleInstance), new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, PlacementMaker.FirstPossibleInstance));
 			var logger = new ConsoleLogger(state);
 			logger.PrintBoardsAfterPlacement = true;
 			state.Logger = logger;

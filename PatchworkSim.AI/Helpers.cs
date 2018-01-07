@@ -4,13 +4,16 @@ namespace PatchworkSim.AI
 {
 	public static class Helpers
 	{
+		/// <summary>
+		/// This runs from the highest x/y backwards, as a rule of thumb placement strategies should try place starting at 0,0 so this is likely to finish quicker
+		/// </summary>
 		public static bool CanPlace(bool[,] board, PieceDefinition piece)
 		{
 			foreach (var bitmap in piece.PossibleOrientations)
 			{
-				for (var y = 0; y < SimulationState.PlayerBoardSize - bitmap.GetLength(1); y++)
+				for (var y = SimulationState.PlayerBoardSize - bitmap.GetLength(1) - 1; y >= 0; y--)
 				{
-					for (var x = 0; x < SimulationState.PlayerBoardSize - bitmap.GetLength(0); x++)
+					for (var x = SimulationState.PlayerBoardSize - bitmap.GetLength(0) - 1; x >= 0 ; x--)
 					{
 						if (BitmapOps.CanPlace(board, bitmap, x, y))
 						{

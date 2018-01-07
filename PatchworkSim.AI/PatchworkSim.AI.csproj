@@ -44,8 +44,10 @@
     <Compile Include="MoveMakers\BuyFirstPossibleMoveMaker.cs" />
     <Compile Include="MoveMakers\GreedyCardValueUtilityMoveMaker.cs" />
     <Compile Include="MoveMakers\RandomMoveMaker.cs" />
-    <Compile Include="PlacementFinders\FirstPossiblePlacementMaker.cs" />
+    <Compile Include="PlacementFinders\PlacementMaker.cs" />
     <Compile Include="Helpers.cs" />
+    <Compile Include="PlacementFinders\PlacementStrategies\FirstPossiblePlacementStrategy.cs" />
+    <Compile Include="PlacementFinders\PlacementStrategies\IPlacementStrategy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

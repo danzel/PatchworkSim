@@ -67,7 +67,7 @@ namespace PathworkSim.Test
 		{
 			var state = new SimulationState(SimulationHelpers.GetRandomPieces(), 0);
 			state.Fidelity = SimulationFidelity.FullSimulation;
-			var runner = new SimulationRunner(state, new PlayerDecisionMaker(AlwaysAdvanceMoveMaker.Instance, FirstPossiblePlacementMaker.Instance), new PlayerDecisionMaker(AlwaysAdvanceMoveMaker.Instance, FirstPossiblePlacementMaker.Instance));
+			var runner = new SimulationRunner(state, new PlayerDecisionMaker(AlwaysAdvanceMoveMaker.Instance, PlacementMaker.FirstPossibleInstance), new PlayerDecisionMaker(AlwaysAdvanceMoveMaker.Instance, PlacementMaker.FirstPossibleInstance));
 
 			while (!state.GameHasEnded)
 			{
@@ -109,7 +109,7 @@ namespace PathworkSim.Test
 		public void BuyFirstPossibleMoveMakerPlacing()
 		{
 			var state = new SimulationState(SimulationHelpers.GetRandomPieces(1), 0);
-			var runner = new SimulationRunner(state, new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, FirstPossiblePlacementMaker.Instance), new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, FirstPossiblePlacementMaker.Instance));
+			var runner = new SimulationRunner(state, new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, PlacementMaker.FirstPossibleInstance), new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, PlacementMaker.FirstPossibleInstance));
 
 			while (!state.GameHasEnded)
 			{
