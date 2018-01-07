@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="AIHelpersTests.cs" />
     <Compile Include="PieceDefinitionTests.cs" />
+    <Compile Include="PlacementStrategyTests.cs" />
     <Compile Include="SimulationHelpersTests.cs" />
     <Compile Include="SimulationRunnerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
