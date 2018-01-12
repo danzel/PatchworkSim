@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PatchworkSim;
+﻿using PatchworkSim;
 using Xunit;
 
 namespace PathworkSim.Test
@@ -14,9 +9,9 @@ namespace PathworkSim.Test
 		public void SinglePossibleOrientation()
 		{
 			var piece = new PieceDefinition("test", 0, 0, 0,
-				new[,]
+				new[]
 				{
-					{ true }
+					"#"
 				});
 
 			Assert.Single(piece.PossibleOrientations);
@@ -27,9 +22,9 @@ namespace PathworkSim.Test
 		public void TwoPossibleOrientations()
 		{
 			var piece = new PieceDefinition("test", 0, 0, 0,
-				new[,]
+				new[]
 				{
-					{ true, true }
+					"##"
 				});
 
 			Assert.Equal(2, piece.PossibleOrientations.Length);
@@ -40,10 +35,10 @@ namespace PathworkSim.Test
 		public void FourPossibleOrientations()
 		{
 			var piece = new PieceDefinition("test", 0, 0, 0,
-				new[,]
+				new[]
 				{
-					{ true, true, true },
-					{ false, true, false }
+					"###",
+					" # "
 				});
 
 			Assert.Equal(4, piece.PossibleOrientations.Length);
@@ -54,10 +49,10 @@ namespace PathworkSim.Test
 		public void EightPossibleOrientations()
 		{
 			var piece = new PieceDefinition("test", 0, 0, 0,
-				new[,]
+				new[]
 				{
-					{ true, true, true },
-					{ false, false, true }
+					"###",
+					"  #"
 				});
 
 			Assert.Equal(8, piece.PossibleOrientations.Length);

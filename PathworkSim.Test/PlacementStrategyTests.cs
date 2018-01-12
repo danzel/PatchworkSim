@@ -56,7 +56,7 @@ namespace PathworkSim.Test
 			//This number totally relies on the order of pieces in the array.
 			//Update it if the ordering changes, the extact amount isn't important
 			//Hopefully this is at least as many places as FirstPossible
-			Assert.Equal(12, placed);
+			Assert.Equal(13, placed);
 		}
 	}
 }
