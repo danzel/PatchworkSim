@@ -40,7 +40,7 @@ namespace PatchworkSim
 			if (y + bitmap.Height > Height)
 				return false;
 
-			var shifted = bitmap._bitmap << x << (9 * y);
+			var shifted = bitmap._bitmap << (x + y * Width);
 			return (shifted & _state) == UInt128.Zero;
 		}
 
@@ -48,7 +48,7 @@ namespace PatchworkSim
 		{
 			if (!CanPlace(bitmap, x, y))
 				throw new Exception("Cannot place piece here, it overlaps");
-			var shifted = bitmap._bitmap << x << (9 * y);
+			var shifted = bitmap._bitmap << (x + y * Width);
 			_state |= shifted;
 		}
 

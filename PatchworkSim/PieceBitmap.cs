@@ -19,7 +19,7 @@
 				{
 					if (boolmap[x, y])
 					{
-						_bitmap |= UInt128.One << x << (y * BoardState.Width);
+						_bitmap |= UInt128.One << (x  + y * BoardState.Width);
 					}
 				}
 			}
