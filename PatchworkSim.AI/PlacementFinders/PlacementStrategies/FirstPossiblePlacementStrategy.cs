@@ -10,13 +10,13 @@
 		{
 		}
 
-		public bool TryPlacePiece(BoardState board, PieceDefinition piece, out bool[,] resultBitmap, out int resultX, out int resultY)
+		public bool TryPlacePiece(BoardState board, PieceDefinition piece, out PieceBitmap resultBitmap, out int resultX, out int resultY)
 		{
 			foreach (var bitmap in piece.PossibleOrientations)
 			{
-				for (var y = 0; y <= BoardState.Height - bitmap.GetLength(1); y++)
+				for (var y = 0; y <= BoardState.Height - bitmap.Height; y++)
 				{
-					for (var x = 0; x <= BoardState.Width - bitmap.GetLength(0); x++)
+					for (var x = 0; x <= BoardState.Width - bitmap.Width; x++)
 					{
 						if (board.CanPlace(bitmap, x, y))
 						{

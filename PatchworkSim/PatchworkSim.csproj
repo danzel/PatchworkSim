@@ -43,9 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BitmapOps.cs" />
+    <Compile Include="BoolmapOps.cs" />
     <Compile Include="BoardState.cs" />
     <Compile Include="ISimulationLogger.cs" />
+    <Compile Include="PieceBitmap.cs" />
     <Compile Include="PieceDefinition.cs" />
     <Compile Include="PlayerDecisionMaker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,4 +1,6 @@
-﻿namespace PatchworkSim
+﻿using System.Linq;
+
+namespace PatchworkSim
 {
 	public class PieceDefinition
 	{
@@ -7,10 +9,10 @@
 		public int TimeCost { get; }
 		public int ButtonsIncome { get; }
 
-		public bool[,] Bitmap { get; }
+		public PieceBitmap Bitmap { get; }
 		public int TotalUsedLocations { get; }
 
-		public bool[][,] PossibleOrientations { get; }
+		public PieceBitmap[] PossibleOrientations { get; }
 
 		public PieceDefinition(string name, int buttonCost, int timeCost, int buttonsIncome, string[] bitmap)
 		{
@@ -18,10 +20,11 @@
 			ButtonCost = buttonCost;
 			TimeCost = timeCost;
 			ButtonsIncome = buttonsIncome;
-			Bitmap = Parse(bitmap);
-			TotalUsedLocations = BitmapOps.SumUsed(Bitmap);
+			var boolmap = Parse(bitmap);
+			Bitmap = new PieceBitmap(boolmap);
+			TotalUsedLocations = BoolmapOps.SumUsed(boolmap);
 
-			PossibleOrientations = BitmapOps.CalculatePossibleOrientations(Bitmap);
+			PossibleOrientations = BoolmapOps.CalculatePossibleOrientations(boolmap).Select(b => new PieceBitmap(b)).ToArray();
 		}
 
 		private bool[,] Parse(string[] bitmap)

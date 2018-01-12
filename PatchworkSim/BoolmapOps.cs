@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace PatchworkSim
 {
-	public static class BitmapOps
+	public static class BoolmapOps
 	{
 		public static bool[][,] CalculatePossibleOrientations(bool[,] bitmap)
 		{

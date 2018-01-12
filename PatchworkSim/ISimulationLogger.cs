@@ -6,7 +6,7 @@
 
 		void PlayerPurchasedPiece(int player, PieceDefinition piece);
 
-		void PlayerPlacedPiece(int player, PieceDefinition piece, int x, int y, bool[,] bitmap);
+		void PlayerPlacedPiece(int player, PieceDefinition piece, int x, int y, PieceBitmap bitmap);
 	}
 
 	public class NullSimulationLogger : ISimulationLogger
@@ -25,7 +25,7 @@
 		{
 		}
 
-		public void PlayerPlacedPiece(int player, PieceDefinition piece, int x, int y, bool[,] bitmap)
+		public void PlayerPlacedPiece(int player, PieceDefinition piece, int x, int y, PieceBitmap bitmap)
 		{
 		}
 	}

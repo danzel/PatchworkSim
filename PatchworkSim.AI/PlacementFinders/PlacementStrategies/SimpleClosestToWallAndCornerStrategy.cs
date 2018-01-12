@@ -20,7 +20,7 @@
 
 		public string Name => "SimpleClosestToWallAndCorner";
 
-		public bool TryPlacePiece(BoardState board, PieceDefinition piece, out bool[,] resultBitmap, out int x, out int y)
+		public bool TryPlacePiece(BoardState board, PieceDefinition piece, out PieceBitmap resultBitmap, out int x, out int y)
 		{
 			for (var oppositeWallGap = 0; oppositeWallGap < BoardState.Width; oppositeWallGap++)
 			{

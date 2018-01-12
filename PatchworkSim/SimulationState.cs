@@ -260,7 +260,7 @@ namespace PatchworkSim
 		/// <summary>
 		/// Place the piece in the given orientation at the given x,y position
 		/// </summary>
-		public void PerformPlacePiece(bool[,] bitmap, int x, int y)
+		public void PerformPlacePiece(PieceBitmap bitmap, int x, int y)
 		{
 			if (PieceToPlace == null)
 				throw new Exception("Cannot place a piece when there is none to place");

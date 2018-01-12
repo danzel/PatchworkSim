@@ -33,44 +33,23 @@ namespace PatchworkSim
 			}
 		}
 
-		[Obsolete("Pieces should be stored in UInt128 too, then this can be a simple bitmask op")]
-		public bool CanPlace(bool[,] bitmap, int x, int y)
+		public bool CanPlace(PieceBitmap bitmap, int x, int y)
 		{
-			//TODO: This should be done using awesome bitmap ops instead
-
-			if (x + bitmap.GetLength(0) > Width)
+			if (x + bitmap.Width > Width)
 				return false;
-			if (y + bitmap.GetLength(1) > Height)
+			if (y + bitmap.Height > Height)
 				return false;
 
-
-			for (var bitmapY = 0; bitmapY < bitmap.GetLength(1); bitmapY++)
-			{
-				for (var bitmapX = 0; bitmapX < bitmap.GetLength(0); bitmapX++)
-				{
-					if (this[x + bitmapX, y + bitmapY] && bitmap[bitmapX, bitmapY])
-						return false;
-				}
-			}
-
-			return true;
+			var shifted = bitmap._bitmap << x << (9 * y);
+			return (shifted & _state) == UInt128.Zero;
 		}
 
-		[Obsolete("Pieces should be stored in UInt128 too, then this can be a simple bitmask op")]
-		public void Place(bool[,] bitmap, int x, int y)
+		public void Place(PieceBitmap bitmap, int x, int y)
 		{
-			for (var bitmapY = 0; bitmapY < bitmap.GetLength(1); bitmapY++)
-			{
-				for (var bitmapX = 0; bitmapX < bitmap.GetLength(0); bitmapX++)
-				{
-					if (bitmap[bitmapX, bitmapY])
-					{
-						if (this[x + bitmapX, y + bitmapY])
-							throw new Exception("Cannot place piece here, it overlaps");
-						this[x + bitmapX, y + bitmapY] = true;
-					}
-				}
-			}
+			if (!CanPlace(bitmap, x, y))
+				throw new Exception("Cannot place piece here, it overlaps");
+			var shifted = bitmap._bitmap << x << (9 * y);
+			_state |= shifted;
 		}
 
 		public int UsedPositionCount

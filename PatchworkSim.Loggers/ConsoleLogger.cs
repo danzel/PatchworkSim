@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 
 namespace PatchworkSim.Loggers
 {
@@ -29,7 +28,7 @@ namespace PatchworkSim.Loggers
 		    Console.WriteLine($"Player {player} purchased {piece.Name}");
 	    }
 
-	    public void PlayerPlacedPiece(int player, PieceDefinition piece, int x, int y, bool[,] bitmap)
+	    public void PlayerPlacedPiece(int player, PieceDefinition piece, int x, int y, PieceBitmap bitmap)
 	    {
 		    Console.WriteLine($"Player {player} placed {piece.Name} at {x},{y}");
 
