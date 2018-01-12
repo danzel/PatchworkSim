@@ -7,15 +7,15 @@ namespace PatchworkSim.AI
 		/// <summary>
 		/// This runs from the highest x/y backwards, as a rule of thumb placement strategies should try place starting at 0,0 so this is likely to finish quicker
 		/// </summary>
-		public static bool CanPlace(bool[,] board, PieceDefinition piece)
+		public static bool CanPlace(BoardState board, PieceDefinition piece)
 		{
 			foreach (var bitmap in piece.PossibleOrientations)
 			{
-				for (var y = SimulationState.PlayerBoardSize - bitmap.GetLength(1) - 1; y >= 0; y--)
+				for (var y = BoardState.Height - bitmap.GetLength(1) - 1; y >= 0; y--)
 				{
-					for (var x = SimulationState.PlayerBoardSize - bitmap.GetLength(0) - 1; x >= 0 ; x--)
+					for (var x = BoardState.Width - bitmap.GetLength(0) - 1; x >= 0 ; x--)
 					{
-						if (BitmapOps.CanPlace(board, bitmap, x, y))
+						if (board.CanPlace(bitmap, x, y))
 						{
 							return true;
 						}
@@ -28,7 +28,7 @@ namespace PatchworkSim.AI
 
 		public static bool ActivePlayerCanPurchasePiece(SimulationState state, PieceDefinition piece)
 		{
-			return piece.TotalUsedLocations < SimulationState.PlayerBoardSize * SimulationState.PlayerBoardSize - state.PlayerBoardUsedLocationsCount[state.ActivePlayer] 
+			return piece.TotalUsedLocations < BoardState.Width * BoardState.Height - state.PlayerBoardUsedLocationsCount[state.ActivePlayer] 
 				&& piece.ButtonCost < state.PlayerButtonAmount[state.ActivePlayer] 
 				&& (state.Fidelity == SimulationFidelity.NoPiecePlacing || CanPlace(state.PlayerBoardState[state.ActivePlayer], piece));
 		}

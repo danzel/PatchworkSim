@@ -13,11 +13,6 @@ namespace PatchworkSim
 		public const int EndLocation = 53;
 
 		/// <summary>
-		/// The width and height of the board the player places pieces they purchase on
-		/// </summary>
-		public const int PlayerBoardSize = 9;
-
-		/// <summary>
 		/// How many buttons each player starts the game with
 		/// </summary>
 		public const int PlayerStartingButtons = 5;
@@ -47,7 +42,7 @@ namespace PatchworkSim
 		/// <summary>
 		/// What positions on each players board have a patch placed on them (pieces or leather patches)
 		/// </summary>
-		public bool[][,] PlayerBoardState;
+		public BoardState[] PlayerBoardState;
 
 		/// <summary>
 		/// How many positions on each players board have been covered by patches (pieces or leather patches)
@@ -132,7 +127,7 @@ namespace PatchworkSim
 
 			Fidelity = SimulationFidelity.FullSimulation;
 
-			PlayerBoardState = new[] { new bool[PlayerBoardSize, PlayerBoardSize], new bool[PlayerBoardSize, PlayerBoardSize] };
+			PlayerBoardState = new BoardState[2];
 			PlayerBoardUsedLocationsCount = new[] { 0, 0 };
 			PlayerButtonIncome = new[] { 0, 0 };
 			PlayerButtonAmount = new[] { PlayerStartingButtons, PlayerStartingButtons };
@@ -187,7 +182,7 @@ namespace PatchworkSim
 				if (Fidelity == SimulationFidelity.FullSimulation)
 				{
 					//Only get the piece if their board isn't full
-					if (PlayerBoardUsedLocationsCount[ActivePlayer] < PlayerBoardSize * PlayerBoardSize)
+					if (PlayerBoardUsedLocationsCount[ActivePlayer] < BoardState.Width * BoardState.Height)
 					{
 						PieceToPlace = PieceDefinition.LeatherTile;
 						PieceToPlacePlayer = ActivePlayer;
@@ -196,7 +191,7 @@ namespace PatchworkSim
 				else
 				{
 					//Only get the points if their board isn't full
-					if (PlayerBoardUsedLocationsCount[ActivePlayer] < PlayerBoardSize * PlayerBoardSize)
+					if (PlayerBoardUsedLocationsCount[ActivePlayer] < BoardState.Width * BoardState.Height)
 						PlayerBoardUsedLocationsCount[ActivePlayer]++;
 				}
 
@@ -272,7 +267,7 @@ namespace PatchworkSim
 			if (!PieceToPlace.PossibleOrientations.Contains(bitmap))
 				throw new Exception("Given bitmap does not belong to the piece to be placed");
 
-			BitmapOps.Place(PlayerBoardState[PieceToPlacePlayer], bitmap, x, y);
+			PlayerBoardState[PieceToPlacePlayer].Place(bitmap, x, y);
 
 			var piece = PieceToPlace;
 			var player = PieceToPlacePlayer;
@@ -290,7 +285,7 @@ namespace PatchworkSim
 		/// </summary>
 		public int CalculatePlayerEndGameWorth(int player)
 		{
-			int emptySpaces = PlayerBoardSize * PlayerBoardSize - PlayerBoardUsedLocationsCount[player];
+			int emptySpaces = BoardState.Width * BoardState.Height - PlayerBoardUsedLocationsCount[player];
 
 			//TODO: 7x7 special tile
 			return PlayerButtonAmount[player] - 2 * emptySpaces;

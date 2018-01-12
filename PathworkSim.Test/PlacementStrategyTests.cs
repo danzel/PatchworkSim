@@ -12,14 +12,14 @@ namespace PathworkSim.Test
 			var pieces = SimulationHelpers.GetRandomPieces(1);
 			int placed = 0;
 
-			var board = new bool[9, 9];
+			var board = new BoardState();
 
 			foreach (var piece in pieces)
 			{
 				if (FirstPossiblePlacementStrategy.Instance.TryPlacePiece(board, PieceDefinition.AllPieceDefinitions[piece], out var bitmap, out var x, out var y))
 				{
 					placed++;
-					BitmapOps.Place(board, bitmap, x, y);
+					board.Place(bitmap, x, y);
 				}
 				else
 				{
@@ -38,14 +38,14 @@ namespace PathworkSim.Test
 			var pieces = SimulationHelpers.GetRandomPieces(1);
 			int placed = 0;
 
-			var board = new bool[9, 9];
+			var board = new BoardState();
 
 			foreach (var piece in pieces)
 			{
 				if (SimpleClosestToWallAndCornerStrategy.Instance.TryPlacePiece(board, PieceDefinition.AllPieceDefinitions[piece], out var bitmap, out var x, out var y))
 				{
 					placed++;
-					BitmapOps.Place(board, bitmap, x, y);
+					board.Place(bitmap, x, y);
 				}
 				else
 				{

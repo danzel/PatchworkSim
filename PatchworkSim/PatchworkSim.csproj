@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BitmapOps.cs" />
+    <Compile Include="BoardState.cs" />
     <Compile Include="ISimulationLogger.cs" />
     <Compile Include="PieceDefinition.cs" />
     <Compile Include="PlayerDecisionMaker.cs" />

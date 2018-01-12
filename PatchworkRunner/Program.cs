@@ -45,7 +45,7 @@ namespace PatchworkRunner
 					if (strategies[i].TryPlacePiece(state.PlayerBoardState[i], piece, out var bitmap, out var x, out var y))
 					{
 						placed[i]++;
-						BitmapOps.Place(state.PlayerBoardState[i], bitmap, x, y);
+						state.PlayerBoardState[i].Place(bitmap, x, y);
 					}
 					else
 					{

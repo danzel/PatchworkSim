@@ -8,14 +8,14 @@ namespace PatchworkSim.Loggers
 	    public bool PrintBoardsAfterPlacement;
 
 		private readonly SimulationState _sim;
-	    private bool[][,] _previousBoards = new bool[2][,];
+	    private BoardState[] _previousBoards = new BoardState[2];
 
 	    public ConsoleLogger(SimulationState sim)
 	    {
 		    _sim = sim;
 
-		    _previousBoards[0] = (bool[,])sim.PlayerBoardState[0].Clone();
-		    _previousBoards[1] = (bool[,])sim.PlayerBoardState[1].Clone();
+		    _previousBoards[0] = sim.PlayerBoardState[0];
+		    _previousBoards[1] = sim.PlayerBoardState[1];
 		}
 
 
@@ -39,11 +39,11 @@ namespace PatchworkSim.Loggers
 
 	    public void PrintBoards(bool showDifferenceToLastPrint)
 	    {
-			for (var y = 0; y < SimulationState.PlayerBoardSize; y++)
+			for (var y = 0; y < BoardState.Height; y++)
 			{
 				for (var player = 0; player <= 1; player++)
 				{
-					for (var x = 0; x < SimulationState.PlayerBoardSize; x++)
+					for (var x = 0; x < BoardState.Width; x++)
 					{
 						if (showDifferenceToLastPrint && _sim.PlayerBoardState[player][x, y] != _previousBoards[player][x, y])
 							Console.BackgroundColor = ConsoleColor.DarkGreen;
@@ -57,10 +57,9 @@ namespace PatchworkSim.Loggers
 
 			if (showDifferenceToLastPrint)
 			{
-				_previousBoards[0] = (bool[,])_sim.PlayerBoardState[0].Clone();
-				_previousBoards[1] = (bool[,])_sim.PlayerBoardState[1].Clone();
+				_previousBoards[0] = _sim.PlayerBoardState[0];
+				_previousBoards[1] = _sim.PlayerBoardState[1];
 			}
-
 		}
     }
 }

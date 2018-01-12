@@ -42,8 +42,8 @@ namespace PathworkSim.Test
 			Assert.Equal(1, state.WinningPlayer);
 
 			//Check the ending points are correct
-			Assert.Equal(SimulationState.EndLocation - SimulationState.PlayerBoardSize * SimulationState.PlayerBoardSize * 2 + SimulationState.PlayerStartingButtons, state.CalculatePlayerEndGameWorth(0));
-			Assert.Equal(SimulationState.EndLocation - SimulationState.PlayerBoardSize * SimulationState.PlayerBoardSize * 2 + SimulationState.PlayerStartingButtons + 2 * SimulationState.LeatherPatches.Length, state.CalculatePlayerEndGameWorth(1));
+			Assert.Equal(SimulationState.EndLocation - BoardState.Width * BoardState.Height * 2 + SimulationState.PlayerStartingButtons, state.CalculatePlayerEndGameWorth(0));
+			Assert.Equal(SimulationState.EndLocation - BoardState.Width * BoardState.Height * 2 + SimulationState.PlayerStartingButtons + 2 * SimulationState.LeatherPatches.Length, state.CalculatePlayerEndGameWorth(1));
 		}
 
 		[Fact]
@@ -89,14 +89,14 @@ namespace PathworkSim.Test
 			Assert.Equal(1, state.WinningPlayer);
 
 			//Check the ending points are correct
-			Assert.Equal(SimulationState.EndLocation - SimulationState.PlayerBoardSize * SimulationState.PlayerBoardSize * 2 + SimulationState.PlayerStartingButtons, state.CalculatePlayerEndGameWorth(0));
-			Assert.Equal(SimulationState.EndLocation - SimulationState.PlayerBoardSize * SimulationState.PlayerBoardSize * 2 + SimulationState.PlayerStartingButtons + 2 * SimulationState.LeatherPatches.Length, state.CalculatePlayerEndGameWorth(1));
+			Assert.Equal(SimulationState.EndLocation - BoardState.Width * BoardState.Height * 2 + SimulationState.PlayerStartingButtons, state.CalculatePlayerEndGameWorth(0));
+			Assert.Equal(SimulationState.EndLocation - BoardState.Width * BoardState.Height * 2 + SimulationState.PlayerStartingButtons + 2 * SimulationState.LeatherPatches.Length, state.CalculatePlayerEndGameWorth(1));
 
 			//Check the pieces are on their board
 			int sum = 0;
-			for (var x = 0; x < state.PlayerBoardState[1].GetLength(0); x++)
+			for (var x = 0; x < BoardState.Width; x++)
 			{
-				for (var y = 0; y < state.PlayerBoardState[1].GetLength(1); y++)
+				for (var y = 0; y < BoardState.Height; y++)
 				{
 					if (state.PlayerBoardState[1][x, y])
 						sum++;

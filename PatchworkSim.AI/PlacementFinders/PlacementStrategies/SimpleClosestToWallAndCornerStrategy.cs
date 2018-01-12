@@ -20,16 +20,16 @@
 
 		public string Name => "SimpleClosestToWallAndCorner";
 
-		public bool TryPlacePiece(bool[,] board, PieceDefinition piece, out bool[,] resultBitmap, out int x, out int y)
+		public bool TryPlacePiece(BoardState board, PieceDefinition piece, out bool[,] resultBitmap, out int x, out int y)
 		{
-			for (var oppositeWallGap = 0; oppositeWallGap < SimulationState.PlayerBoardSize; oppositeWallGap++)
+			for (var oppositeWallGap = 0; oppositeWallGap < BoardState.Width; oppositeWallGap++)
 			{
-				for (var gap = 0; gap < SimulationState.PlayerBoardSize; gap++)
+				for (var gap = 0; gap < BoardState.Height; gap++)
 				{
 					foreach (var bitmap in piece.PossibleOrientations)
 					{
 						//Try place in x direction
-						if (BitmapOps.CanPlace(board, bitmap, gap, oppositeWallGap))
+						if (board.CanPlace(bitmap, gap, oppositeWallGap))
 						{
 							resultBitmap = bitmap;
 							x = gap;
@@ -38,7 +38,7 @@
 						}
 
 						//Try place in y direction
-						if (BitmapOps.CanPlace(board, bitmap, oppositeWallGap, gap))
+						if (board.CanPlace(bitmap, oppositeWallGap, gap))
 						{
 							resultBitmap = bitmap;
 							x = oppositeWallGap;
