@@ -34,6 +34,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -51,6 +52,7 @@
     <Compile Include="SimulationHelpers.cs" />
     <Compile Include="SimulationRunner.cs" />
     <Compile Include="SimulationState.cs" />
+    <Compile Include="UInt128.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
