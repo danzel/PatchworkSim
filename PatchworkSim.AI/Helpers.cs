@@ -4,6 +4,17 @@ namespace PatchworkSim.AI
 {
 	public static class Helpers
 	{
+		private static int[] _buttonIncomeAmountAfterPositionCache;
+
+		static Helpers()
+		{
+			_buttonIncomeAmountAfterPositionCache = new int[SimulationState.EndLocation + 1];
+			for (var i = 0; i < _buttonIncomeAmountAfterPositionCache.Length; i++)
+			{
+				_buttonIncomeAmountAfterPositionCache[i] = SimulationState.ButtonIncomeMarkers.Count(c => c > i);
+			}
+		}
+
 		/// <summary>
 		/// This runs from the highest x/y backwards, as a rule of thumb placement strategies should try place starting at 0,0 so this is likely to finish quicker
 		/// </summary>
@@ -43,8 +54,7 @@ namespace PatchworkSim.AI
 
 		public static int ButtonIncomeAmountAfterPosition(int currentPosition)
 		{
-			//TODO: This could be a normal loop or an array lookup or some other faster method
-			return SimulationState.ButtonIncomeMarkers.Count(c => c > currentPosition);
+			return _buttonIncomeAmountAfterPositionCache[currentPosition];
 		}
 	}
 }

@@ -169,9 +169,12 @@ namespace PatchworkSim
 
 
 			//Check if we get buttons for passing a button marker
-			if (ButtonIncomeMarkers.Any(b => b > startPosition && b <= targetPosition))
+			foreach (var pos in ButtonIncomeMarkers)
 			{
-				PlayerButtonAmount[ActivePlayer] += PlayerButtonIncome[ActivePlayer];
+				if (pos > startPosition && pos <= targetPosition)
+				{
+					PlayerButtonAmount[ActivePlayer] += PlayerButtonIncome[ActivePlayer];
+				}
 			}
 
 			//Check if the player gets a leather patch
