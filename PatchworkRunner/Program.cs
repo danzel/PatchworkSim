@@ -32,7 +32,7 @@ namespace PatchworkRunner
 			var placed = new[] { 0, 0 };
 			var stillPlacing = new[] { true, true };
 
-			for (var index = 0; index < pieces.Length; index++)
+			for (var index = 0; index < pieces.Count; index++)
 			{
 				var pieceIndex = pieces[index];
 				var piece = PieceDefinition.AllPieceDefinitions[pieceIndex];

@@ -118,9 +118,10 @@ namespace PatchworkSim
 			}
 		}
 
-		public SimulationState(IList<int> pieces, int nextPieceIndex)
+		/// <param name="pieces">This list is not cloned, we take ownership and modify the given list</param>
+		public SimulationState(List<int> pieces, int nextPieceIndex)
 		{
-			Pieces = pieces.ToList();
+			Pieces = pieces;
 			NextPieceIndex = nextPieceIndex;
 
 			LeatherPatchesIndex = 0;

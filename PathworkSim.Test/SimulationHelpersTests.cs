@@ -14,11 +14,11 @@ namespace PathworkSim.Test
 				var pieces = SimulationHelpers.GetRandomPieces(i);
 
 				//0 at end
-				Assert.Equal(0, pieces[pieces.Length - 1]);
+				Assert.Equal(0, pieces[pieces.Count - 1]);
 
 				//Array contains all pieces
-				pieces = pieces.OrderBy(p => p).ToArray();
-				for (var j = 0; j < pieces.Length; j++)
+				pieces = pieces.OrderBy(p => p).ToList();
+				for (var j = 0; j < pieces.Count; j++)
 					Assert.Equal(j, pieces[j]);
 			}
 		}
