@@ -46,8 +46,10 @@
     <Compile Include="MoveMakers\RandomMoveMaker.cs" />
     <Compile Include="PlacementFinders\PlacementMaker.cs" />
     <Compile Include="Helpers.cs" />
+    <Compile Include="PlacementFinders\PlacementStrategies\ClosestToCornerLeastHolesTieBreakerPlacementStrategy.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\FirstPossiblePlacementStrategy.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\IPlacementStrategy.cs" />
+    <Compile Include="PlacementFinders\PlacementStrategies\PlacementHelper.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\SimpleClosestToWallAndCornerStrategy.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\SmallestBoundingBoxPlacementStrategy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

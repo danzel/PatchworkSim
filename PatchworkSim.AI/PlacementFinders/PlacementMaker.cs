@@ -7,6 +7,7 @@ namespace PatchworkSim.AI.PlacementFinders
 	{
 		public static readonly PlacementMaker FirstPossibleInstance = new PlacementMaker(FirstPossiblePlacementStrategy.Instance);
 		public static readonly PlacementMaker SimpleClosestToWallAndCornerInstance = new PlacementMaker(SimpleClosestToWallAndCornerStrategy.Instance);
+		public static readonly PlacementMaker ClosestToCornerLeastHolesTieBreakerInstance = new PlacementMaker(ClosestToCornerLeastHolesTieBreakerPlacementStrategy.Instance);
 
 		private readonly IPlacementStrategy _strategy;
 
