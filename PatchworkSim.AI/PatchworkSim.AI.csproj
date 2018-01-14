@@ -49,6 +49,7 @@
     <Compile Include="PlacementFinders\PlacementStrategies\ClosestToCornerLeastHolesTieBreakerPlacementStrategy.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\FirstPossiblePlacementStrategy.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\IPlacementStrategy.cs" />
+    <Compile Include="PlacementFinders\PlacementStrategies\NextToPieceEdgeLeastHolesTieBreakerPlacementStrategy.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\PlacementHelper.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\SimpleClosestToWallAndCornerStrategy.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\SmallestBoundingBoxPlacementStrategy.cs" />

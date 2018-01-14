@@ -53,6 +53,10 @@
       <Project>{B7F26ADB-568C-4588-9637-07F184257871}</Project>
       <Name>PatchworkSim.AI</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PatchworkSim.Loggers\PatchworkSim.Loggers.csproj">
+      <Project>{0F57A015-358F-4ADD-AF9D-DD77939BDD25}</Project>
+      <Name>PatchworkSim.Loggers</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PatchworkSim\PatchworkSim.csproj">
       <Project>{B01F91FF-1112-430E-BA7B-BA7477034DE4}</Project>
       <Name>PatchworkSim</Name>

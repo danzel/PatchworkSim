@@ -6,6 +6,7 @@ using System.Linq;
 using PatchworkSim;
 using PatchworkSim.AI.MoveMakers;
 using PatchworkSim.AI.PlacementFinders;
+using PatchworkSim.Loggers;
 
 namespace PatchworkAIComparer
 {
@@ -39,6 +40,14 @@ namespace PatchworkAIComparer
 				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.ClosestToCornerLeastHolesTieBreakerInstance),
 				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(3), PlacementMaker.ClosestToCornerLeastHolesTieBreakerInstance),
 
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-3), PlacementMaker.NextToPieceEdgeLeastHolesTieBreakerInstance),
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-2), PlacementMaker.NextToPieceEdgeLeastHolesTieBreakerInstance),
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-1), PlacementMaker.NextToPieceEdgeLeastHolesTieBreakerInstance),
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), PlacementMaker.NextToPieceEdgeLeastHolesTieBreakerInstance),
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), PlacementMaker.NextToPieceEdgeLeastHolesTieBreakerInstance),
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.NextToPieceEdgeLeastHolesTieBreakerInstance),
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(3), PlacementMaker.NextToPieceEdgeLeastHolesTieBreakerInstance),
+
 
 				new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, PlacementMaker.FirstPossibleInstance),
 				new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, PlacementMaker.SimpleClosestToWallAndCornerInstance),
@@ -50,6 +59,7 @@ namespace PatchworkAIComparer
 			};
 
 			const int TotalRuns = 100;
+			const bool enableConsoleLogging = false;
 
 			//TODO: Play each AI against each other AI 100 times and print a table of results
 
@@ -69,12 +79,19 @@ namespace PatchworkAIComparer
 					for (var run = 0; run < TotalRuns; run++)
 					{
 						var state = new SimulationState(SimulationHelpers.GetRandomPieces(run), 0);
+						ConsoleLogger logger = null;
+						if (enableConsoleLogging)
+							state.Logger = logger = new ConsoleLogger(state);
 						//state.Fidelity = SimulationFidelity.NoPiecePlacing;
 						//Let each Ai have half of the goes first and half second
 						var runner = new SimulationRunner(state, run % 2 == 0 ? aiA : aiB, run % 2 == 1 ? aiA : aiB);
 
 						while (!state.GameHasEnded)
+						{
 							runner.PerformNextStep();
+							if (logger != null)
+								logger.PrintBoards(true);
+						}
 
 						var aWin = run % 2 == state.WinningPlayer;
 

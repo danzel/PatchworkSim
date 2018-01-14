@@ -60,5 +60,18 @@ namespace PatchworkSim.Loggers
 				_previousBoards[1] = _sim.PlayerBoardState[1];
 			}
 		}
-    }
+
+		public static void PrintBoard(BoardState board)
+		{
+			for (var y = 0; y < BoardState.Height; y++)
+			{
+				for (var x = 0; x < BoardState.Width; x++)
+				{
+					Console.Write(board[x, y] ? '#' : ' ');
+				}
+				Console.WriteLine("|");
+			}
+			Console.WriteLine("---------+");
+		}
+	}
 }
