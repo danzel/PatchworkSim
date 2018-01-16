@@ -78,7 +78,7 @@ namespace PatchworkAIComparer
 
 					for (var run = 0; run < TotalRuns; run++)
 					{
-						var state = new SimulationState(SimulationHelpers.GetRandomPieces(run), 0);
+						var state = new SimulationState(SimulationHelpers.GetRandomPieces(run / 2), 0);
 						ConsoleLogger logger = null;
 						if (enableConsoleLogging)
 							state.Logger = logger = new ConsoleLogger(state);
