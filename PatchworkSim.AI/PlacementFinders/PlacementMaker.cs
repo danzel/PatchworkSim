@@ -9,6 +9,8 @@ namespace PatchworkSim.AI.PlacementFinders
 		public static readonly PlacementMaker SimpleClosestToWallAndCornerInstance = new PlacementMaker(SimpleClosestToWallAndCornerStrategy.Instance);
 		public static readonly PlacementMaker ClosestToCornerLeastHolesTieBreakerInstance = new PlacementMaker(ClosestToCornerLeastHolesTieBreakerPlacementStrategy.Instance);
 		public static readonly PlacementMaker NextToPieceEdgeLeastHolesTieBreakerInstance = new PlacementMaker(NextToPieceEdgeLeastHolesTieBreakerPlacementStrategy.Instance);
+		public static readonly PlacementMaker TightDoublerInstance = new PlacementMaker(TightPlacementStrategy.InstanceDoubler);
+		public static readonly PlacementMaker TightIncrementInstance = new PlacementMaker(TightPlacementStrategy.InstanceIncrement);
 
 		private readonly IPlacementStrategy _strategy;
 

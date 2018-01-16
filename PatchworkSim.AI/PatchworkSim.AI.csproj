@@ -53,6 +53,7 @@
     <Compile Include="PlacementFinders\PlacementStrategies\PlacementHelper.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\SimpleClosestToWallAndCornerStrategy.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\SmallestBoundingBoxPlacementStrategy.cs" />
+    <Compile Include="PlacementFinders\PlacementStrategies\TightPlacementStrategy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
