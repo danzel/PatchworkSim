@@ -31,7 +31,6 @@ namespace PatchworkRunner
 				NextToPieceEdgeLeastHolesTieBreakerPlacementStrategy.Instance,
 				TightPlacementStrategy.InstanceDoubler,
 				TightPlacementStrategy.InstanceIncrement
-				//new NextToPieceEdgeAllowedHolesTieBreakerPlacementStrategy(15)
 			};
 
 
