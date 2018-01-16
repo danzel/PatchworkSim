@@ -1,16 +1,19 @@
-﻿using System;
-
-namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
+﻿namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 {
+	/// <summary>
+	/// Strategy that tries to minimise amount of toggles between filled and not filled when looking across and up/down the board.
+	/// This minimises the amount of holes, and helps to get holes filled in (even if it won't fill them in completely).
+	/// Holes here are not strictly defined by flood filling, but can also include cave-like areas that are fully connected to the unused area but function like holes.
+	/// </summary>
 	public class TightPlacementStrategy : IPlacementStrategy
 	{
 		private readonly bool _doubler;
 		public string Name => "Tight" + (_doubler ? " x2" : " +1");
 
-		public static TightPlacementStrategy InstanceDoubler = new TightPlacementStrategy(true);
-		public static TightPlacementStrategy InstanceIncrement = new TightPlacementStrategy(false);
+		public static readonly TightPlacementStrategy InstanceDoubler = new TightPlacementStrategy(true);
+		public static readonly TightPlacementStrategy InstanceIncrement = new TightPlacementStrategy(false);
 
-		/// <param name="doubler">If set, each toggle is 2x, otherwise each toggle is +1</param>
+		/// <param name="doubler">If set, each toggle is 2x, otherwise each toggle is +1 score. Not sure which should be better</param>
 		private TightPlacementStrategy(bool doubler)
 		{
 			_doubler = doubler;
