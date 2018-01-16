@@ -25,8 +25,10 @@
 			resultX = -1;
 			resultY = -1;
 
-			//TODO: We would do better with a good tiebreaker
+			//TODO: We could do better with a good tiebreaker
 			int bestScore = int.MaxValue;
+			int tieBreakerScore = int.MaxValue;
+			int tiedForBest = 0;
 
 			foreach (var bitmap in piece.PossibleOrientations)
 			{
@@ -40,15 +42,36 @@
 							if (score < bestScore)
 							{
 								bestScore = score;
+								tieBreakerScore = x + y;
 
 								resultBitmap = bitmap;
 								resultX = x;
 								resultY = y;
+								tiedForBest = 0;
+							}
+							else if (score == bestScore)
+							{
+								tiedForBest++;
+
+								int ourTieBreaker = x + y;
+
+								if (ourTieBreaker < tieBreakerScore)
+								{
+									//Console.WriteLine("Beat the tie");
+									tieBreakerScore = ourTieBreaker;
+
+									resultBitmap = bitmap;
+									resultX = x;
+									resultY = y;
+								}
 							}
 						}
 					}
 				}
 			}
+
+			//if (tiedForBest > 0)
+			//	Console.WriteLine($"{_doubler} {tiedForBest}");
 
 			return resultBitmap != null;
 		}
