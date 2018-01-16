@@ -16,20 +16,14 @@ namespace PatchworkSim
 		/// </summary>
 		private UInt128 _state;
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private UInt128 XYToPositionMask(int x, int y)
-		{
-			return UInt128.One << (x + y * Width);
-		}
-
 		[Obsolete("Shouldnt need bitwise operations like this hopefully")]
 		public bool this[int x, int y]
 		{
-			get { return (_state & XYToPositionMask(x, y)) != UInt128.Zero; }
+			get { return !(_state & XYToPositionMask[x, y]).IsZero; }
 			set
 			{
 				if (!value) throw new Exception("Can only set positions, not unset them");
-				_state |= XYToPositionMask(x, y);
+				_state |= XYToPositionMask[x, y];
 			}
 		}
 
@@ -41,7 +35,7 @@ namespace PatchworkSim
 				return false;
 
 			var shifted = bitmap._bitmap << (x + y * Width);
-			return (shifted & _state) == UInt128.Zero;
+			return (shifted & _state).IsZero;
 		}
 
 		public void Place(PieceBitmap bitmap, int x, int y)
@@ -61,13 +55,23 @@ namespace PatchworkSim
 				{
 					for (var y = 0; y < Height; y++)
 					{
-						if ((XYToPositionMask(x, y) & _state) != UInt128.Zero)
+						if (!(XYToPositionMask[x, y] & _state).IsZero)
 							sum++;
 					}
 				}
 
 				return sum;
 			}
+		}
+
+		private static readonly UInt128[,] XYToPositionMask;
+
+		static BoardState()
+		{
+			XYToPositionMask = new UInt128[Width, Height];
+			for (var x = 0; x < Width; x++)
+				for (var y = 0; y < Height; y++)
+					XYToPositionMask[x, y] = UInt128.One << (x + y * Width);
 		}
 	}
 }
