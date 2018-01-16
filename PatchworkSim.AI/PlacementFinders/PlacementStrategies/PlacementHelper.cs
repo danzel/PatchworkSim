@@ -25,6 +25,8 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 	/// <summary>
 	/// FloodFill algorithm taken from http://www.adammil.net/blog/v126_A_More_Efficient_Flood_Fill.html
 	/// Licence unknown
+	/// 
+	/// May be worth considering https://www.codeproject.com/Articles/6017/QuickFill-An-efficient-flood-fill-algorithm
 	/// </summary>
 	static class FloodFiller
 	{
