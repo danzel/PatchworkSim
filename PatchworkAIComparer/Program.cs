@@ -6,6 +6,7 @@ using System.Linq;
 using PatchworkSim;
 using PatchworkSim.AI.MoveMakers;
 using PatchworkSim.AI.PlacementFinders;
+using PatchworkSim.AI.PlacementFinders.PlacementStrategies;
 using PatchworkSim.Loggers;
 
 namespace PatchworkAIComparer
@@ -14,6 +15,14 @@ namespace PatchworkAIComparer
 	{
 		static void Main(string[] args)
 		{
+			TestFullAi();
+
+			//TestPlacementOnly();
+		}
+
+		static void TestFullAi()
+		{
+
 			var aiToTest = new[]
 			{
 				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-3), PlacementMaker.FirstPossibleInstance),
@@ -133,6 +142,57 @@ namespace PatchworkAIComparer
 			File.WriteAllLines(filename, res);
 
 			Process.Start(filename);
+		}
+
+		static void TestPlacementOnly()
+		{
+			var strategies = new IPlacementStrategy[]
+			{
+				FirstPossiblePlacementStrategy.Instance,
+				SimpleClosestToWallAndCornerStrategy.Instance,
+				ClosestToCornerLeastHolesTieBreakerPlacementStrategy.Instance,
+				NextToPieceEdgeLeastHolesTieBreakerPlacementStrategy.Instance,
+				//new NextToPieceEdgeAllowedHolesTieBreakerPlacementStrategy(5),
+				//new NextToPieceEdgeAllowedHolesTieBreakerPlacementStrategy(10),
+				//new NextToPieceEdgeAllowedHolesTieBreakerPlacementStrategy(15),
+				//new NextToPieceEdgeAllowedHolesTieBreakerPlacementStrategy(20),
+				//new NextToPieceEdgeAllowedHolesTieBreakerPlacementStrategy(25),
+				//new NextToPieceEdgeAllowedHolesTieBreakerPlacementStrategy(30),
+				TightPlacementStrategy.InstanceDoubler,
+				TightPlacementStrategy.InstanceIncrement
+			};
+
+			foreach (var strategy in strategies)
+			{
+				int totalPlaced = 0;
+
+				for (var i = 0; i < 100; i++)
+				{
+					var pieces = SimulationHelpers.GetRandomPieces(i);
+					int placed = 0;
+
+					var board = new BoardState();
+
+					foreach (var piece in pieces)
+					{
+						if (strategy.TryPlacePiece(board, PieceDefinition.AllPieceDefinitions[piece], out var bitmap, out var x, out var y))
+						{
+							placed++;
+							board.Place(bitmap, x, y);
+						}
+						else
+						{
+							break;
+						}
+					}
+
+					totalPlaced += placed;
+				}
+
+				Console.WriteLine($"{strategy.Name}    {totalPlaced}");
+			}
+
+			Console.ReadLine();
 		}
 	}
 }
