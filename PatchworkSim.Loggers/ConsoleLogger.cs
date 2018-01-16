@@ -73,5 +73,24 @@ namespace PatchworkSim.Loggers
 			}
 			Console.WriteLine("---------+");
 		}
+
+	    public static void PrintBoardsDiff(BoardState[] oldBoards, BoardState[] boards)
+	    {
+		    for (var y = 0; y < BoardState.Height; y++)
+		    {
+			    for (var player = 0; player < boards.Length; player++)
+			    {
+				    for (var x = 0; x < BoardState.Width; x++)
+				    {
+					    if (oldBoards[player][x, y] != boards[player][x, y])
+						    Console.BackgroundColor = ConsoleColor.DarkGreen;
+					    Console.Write(boards[player][x, y] ? '#' : ' ');
+					    Console.BackgroundColor = ConsoleColor.Black;
+				    }
+				    Console.Write('|');
+			    }
+			    Console.WriteLine();
+		    }
+	    }
 	}
 }
