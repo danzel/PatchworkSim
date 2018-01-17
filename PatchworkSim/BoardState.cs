@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 
 namespace PatchworkSim
 {
@@ -16,7 +15,6 @@ namespace PatchworkSim
 		/// </summary>
 		private UInt128 _state;
 
-		[Obsolete("Shouldnt need bitwise operations like this hopefully")]
 		public bool this[int x, int y]
 		{
 			get { return !(_state & XYToPositionMask[x, y]).IsZero; }
