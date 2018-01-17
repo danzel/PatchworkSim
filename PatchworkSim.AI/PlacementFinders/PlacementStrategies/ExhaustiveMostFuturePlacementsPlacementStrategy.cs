@@ -1,14 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 {
+	/// <summary>
+	/// Strategy that exhaustively tries all possible placements of future pieces and chooses the best placement for the given piece based on how many possible future placements will be possible.
+	/// This strategy assumes that the next piece in possibleFuturePieces is guaranteed to be the next piece, which is untrue in real game play.
+	/// </summary>
 	public class ExhaustiveMostFuturePlacementsPlacementStrategy : IPlacementStrategy
 	{
 		public static readonly ExhaustiveMostFuturePlacementsPlacementStrategy Instance1 = new ExhaustiveMostFuturePlacementsPlacementStrategy(1);
 
 		public string Name => $"ExhaustiveMostFuturePlacements({_lookAheadAmount})";
-		public bool ImplementsAdvanced => true;
+		public bool ImplementsLookahead => true;
 
 		private readonly int _lookAheadAmount;
 
@@ -17,12 +20,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 			_lookAheadAmount = lookAheadAmount;
 		}
 
-		public bool TryPlacePiece(BoardState board, PieceDefinition piece, out PieceBitmap bitmap, out int x, out int y)
-		{
-			throw new NotImplementedException("Use the advanced version");
-		}
-
-		public bool TryPlacePieceAdvanced(BoardState board, PieceDefinition piece, List<int> possibleFuturePieces, int possibleFuturePiecesOffset, out PieceBitmap resultBitmap, out int resultX, out int resultY)
+		public bool TryPlacePiece(BoardState board, PieceDefinition piece, List<int> possibleFuturePieces, int possibleFuturePiecesOffset, out PieceBitmap resultBitmap, out int resultX, out int resultY)
 		{
 			resultBitmap = null;
 			resultX = -1;

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
+namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead
 {
 	/// <summary>
 	/// Starting at 0,0 move out along the walls attempting to place the piece.
@@ -12,18 +12,17 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 	///  - Minimize the amount of holes left. We probably leave lots of 1x1 and larger holes. These are bad
 	///  - Consider other close to the origin placements - often there are tidier placements than just the next one along that fit closer and leave less ugly gaps
 	/// </remarks>
-	public class SimpleClosestToWallAndCornerStrategy : IPlacementStrategy
+	public class SimpleClosestToWallAndCornerStrategy : NoLookaheadStrategy
 	{
+		public override string Name => "SimpleClosestToWallAndCorner";
+
 		public static SimpleClosestToWallAndCornerStrategy Instance = new SimpleClosestToWallAndCornerStrategy();
 
 		private SimpleClosestToWallAndCornerStrategy()
 		{
 		}
 
-		public string Name => "SimpleClosestToWallAndCorner";
-		public bool ImplementsAdvanced => false;
-
-		public bool TryPlacePiece(BoardState board, PieceDefinition piece, out PieceBitmap resultBitmap, out int x, out int y)
+		protected override bool TryPlacePiece(BoardState board, PieceDefinition piece, out PieceBitmap resultBitmap, out int x, out int y)
 		{
 			for (var oppositeWallGap = 0; oppositeWallGap < BoardState.Width; oppositeWallGap++)
 			{
@@ -56,11 +55,6 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 			x = -1;
 			y = -1;
 			return false;
-		}
-
-		public bool TryPlacePieceAdvanced(BoardState board, PieceDefinition piece, List<int> possibleFuturePieces, int possibleFuturePiecesOffset, out PieceBitmap bitmap, out int x, out int y)
-		{
-			throw new System.NotImplementedException();
 		}
 	}
 }

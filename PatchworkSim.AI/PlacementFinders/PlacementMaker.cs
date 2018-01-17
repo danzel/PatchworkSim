@@ -1,5 +1,6 @@
 ﻿using System;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies;
+using PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
 
 namespace PatchworkSim.AI.PlacementFinders
 {
@@ -11,6 +12,7 @@ namespace PatchworkSim.AI.PlacementFinders
 		public static readonly PlacementMaker NextToPieceEdgeLeastHolesTieBreakerInstance = new PlacementMaker(NextToPieceEdgeLeastHolesTieBreakerPlacementStrategy.Instance);
 		public static readonly PlacementMaker TightDoublerInstance = new PlacementMaker(TightPlacementStrategy.InstanceDoubler);
 		public static readonly PlacementMaker TightIncrementInstance = new PlacementMaker(TightPlacementStrategy.InstanceIncrement);
+		public static readonly PlacementMaker ExhaustiveMostFuturePlacementsInstance = new PlacementMaker(ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1);
 
 		private readonly IPlacementStrategy _strategy;
 
@@ -21,7 +23,7 @@ namespace PatchworkSim.AI.PlacementFinders
 
 		public void PlacePiece(SimulationState state)
 		{
-			if (_strategy.TryPlacePiece(state.PlayerBoardState[state.PieceToPlacePlayer], state.PieceToPlace, out var bitmap, out var x, out var y))
+			if (_strategy.TryPlacePiece(state.PlayerBoardState[state.PieceToPlacePlayer], state.PieceToPlace, state.Pieces, state.NextPieceIndex, out var bitmap, out var x, out var y))
 				state.PerformPlacePiece(bitmap, x, y);
 			else
 				throw new Exception("There is no where to place the piece");

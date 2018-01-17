@@ -1,5 +1,6 @@
 ﻿using PatchworkSim;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies;
+using PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
 using Xunit;
 
 namespace PathworkSim.Test
@@ -16,7 +17,7 @@ namespace PathworkSim.Test
 
 			foreach (var piece in pieces)
 			{
-				if (FirstPossiblePlacementStrategy.Instance.TryPlacePiece(board, PieceDefinition.AllPieceDefinitions[piece], out var bitmap, out var x, out var y))
+				if (FirstPossiblePlacementStrategy.Instance.TryPlacePiece(board, PieceDefinition.AllPieceDefinitions[piece], null, 0, out var bitmap, out var x, out var y))
 				{
 					placed++;
 					board.Place(bitmap, x, y);
@@ -42,7 +43,7 @@ namespace PathworkSim.Test
 
 			foreach (var piece in pieces)
 			{
-				if (SimpleClosestToWallAndCornerStrategy.Instance.TryPlacePiece(board, PieceDefinition.AllPieceDefinitions[piece], out var bitmap, out var x, out var y))
+				if (SimpleClosestToWallAndCornerStrategy.Instance.TryPlacePiece(board, PieceDefinition.AllPieceDefinitions[piece], null, 0, out var bitmap, out var x, out var y))
 				{
 					placed++;
 					board.Place(bitmap, x, y);
@@ -69,7 +70,7 @@ namespace PathworkSim.Test
 
 			foreach (var piece in pieces)
 			{
-				if (SmallestBoundingBoxPlacementStrategy.Instance.TryPlacePiece(board, PieceDefinition.AllPieceDefinitions[piece], out var bitmap, out var x, out var y))
+				if (SmallestBoundingBoxPlacementStrategy.Instance.TryPlacePiece(board, PieceDefinition.AllPieceDefinitions[piece], null, 0, out var bitmap, out var x, out var y))
 				{
 					placed++;
 					board.Place(bitmap, x, y);

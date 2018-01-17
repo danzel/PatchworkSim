@@ -7,6 +7,7 @@ using PatchworkSim;
 using PatchworkSim.AI.MoveMakers;
 using PatchworkSim.AI.PlacementFinders;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies;
+using PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
 using PatchworkSim.Loggers;
 
 namespace PatchworkAIComparer
@@ -25,13 +26,13 @@ namespace PatchworkAIComparer
 
 			var aiToTest = new[]
 			{
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-3), PlacementMaker.FirstPossibleInstance),
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-2), PlacementMaker.FirstPossibleInstance),
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-1), PlacementMaker.FirstPossibleInstance),
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), PlacementMaker.FirstPossibleInstance),
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), PlacementMaker.FirstPossibleInstance),
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.FirstPossibleInstance),
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(3), PlacementMaker.FirstPossibleInstance),
+				//new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-3), PlacementMaker.FirstPossibleInstance),
+				//new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-2), PlacementMaker.FirstPossibleInstance),
+				//new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-1), PlacementMaker.FirstPossibleInstance),
+				//new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), PlacementMaker.FirstPossibleInstance),
+				//new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), PlacementMaker.FirstPossibleInstance),
+				//new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.FirstPossibleInstance),
+				//new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(3), PlacementMaker.FirstPossibleInstance),
 
 				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-3), PlacementMaker.SimpleClosestToWallAndCornerInstance),
 				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-2), PlacementMaker.SimpleClosestToWallAndCornerInstance),
@@ -65,22 +66,29 @@ namespace PatchworkAIComparer
 				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.TightDoublerInstance),
 				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(3), PlacementMaker.TightDoublerInstance),
 
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-3), PlacementMaker.TightIncrementInstance),
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-2), PlacementMaker.TightIncrementInstance),
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-1), PlacementMaker.TightIncrementInstance),
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), PlacementMaker.TightIncrementInstance),
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), PlacementMaker.TightIncrementInstance),
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.TightIncrementInstance),
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(3), PlacementMaker.TightIncrementInstance),
+				//new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-3), PlacementMaker.TightIncrementInstance),
+				//new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-2), PlacementMaker.TightIncrementInstance),
+				//new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-1), PlacementMaker.TightIncrementInstance),
+				//new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), PlacementMaker.TightIncrementInstance),
+				//new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), PlacementMaker.TightIncrementInstance),
+				//new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.TightIncrementInstance),
+				//new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(3), PlacementMaker.TightIncrementInstance),
 
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-3), PlacementMaker.ExhaustiveMostFuturePlacementsInstance),
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-2), PlacementMaker.ExhaustiveMostFuturePlacementsInstance),
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance),
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), PlacementMaker.ExhaustiveMostFuturePlacementsInstance),
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance),
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.ExhaustiveMostFuturePlacementsInstance),
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(3), PlacementMaker.ExhaustiveMostFuturePlacementsInstance),
 
 				new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, PlacementMaker.FirstPossibleInstance),
 				new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, PlacementMaker.SimpleClosestToWallAndCornerInstance),
 
-				new PlayerDecisionMaker(new RandomMoveMaker(), PlacementMaker.FirstPossibleInstance),
-				new PlayerDecisionMaker(new RandomMoveMaker(), PlacementMaker.SimpleClosestToWallAndCornerInstance),
+				//new PlayerDecisionMaker(new RandomMoveMaker(), PlacementMaker.FirstPossibleInstance),
+				//new PlayerDecisionMaker(new RandomMoveMaker(), PlacementMaker.SimpleClosestToWallAndCornerInstance),
 
-				new PlayerDecisionMaker(AlwaysAdvanceMoveMaker.Instance, PlacementMaker.FirstPossibleInstance)
+				//new PlayerDecisionMaker(AlwaysAdvanceMoveMaker.Instance, PlacementMaker.FirstPossibleInstance)
 			};
 
 			const int TotalRuns = 100;
@@ -162,6 +170,8 @@ namespace PatchworkAIComparer
 
 		static void TestPlacementOnly()
 		{
+			var stopwatch = Stopwatch.StartNew();
+
 			var strategies = new IPlacementStrategy[]
 			{
 				FirstPossiblePlacementStrategy.Instance,
@@ -169,26 +179,36 @@ namespace PatchworkAIComparer
 				ClosestToCornerLeastHolesTieBreakerPlacementStrategy.Instance,
 				NextToPieceEdgeLeastHolesTieBreakerPlacementStrategy.Instance,
 				TightPlacementStrategy.InstanceDoubler,
-				TightPlacementStrategy.InstanceIncrement
+				TightPlacementStrategy.InstanceIncrement,
+				ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1,
 			};
 
 			foreach (var strategy in strategies)
 			{
+				var rand = new Random(0);
 				int totalPlaced = 0;
 
 				for (var i = 0; i < 100; i++)
 				{
 					var pieces = SimulationHelpers.GetRandomPieces(i);
+					int index = 0;
 					int placed = 0;
 
 					var board = new BoardState();
 
-					foreach (var piece in pieces)
+					while (true)
 					{
-						if (strategy.TryPlacePiece(board, PieceDefinition.AllPieceDefinitions[piece], out var bitmap, out var x, out var y))
+						var piece = pieces[index];
+						pieces.RemoveAt(index);
+						index = index % pieces.Count;
+
+						if (strategy.TryPlacePiece(board, PieceDefinition.AllPieceDefinitions[piece], pieces, 0, out var bitmap, out var x, out var y))
 						{
 							placed++;
 							board.Place(bitmap, x, y);
+
+							//Advance to a random one in the next 6 pieces (TODO: Would be good to bias this towards 1-3 as these are more likely)
+							index = (index + rand.Next(0, 6)) % pieces.Count;
 						}
 						else
 						{
@@ -201,6 +221,8 @@ namespace PatchworkAIComparer
 
 				Console.WriteLine($"{strategy.Name}    {totalPlaced}");
 			}
+
+			Console.WriteLine($"Time taken {stopwatch.ElapsedMilliseconds}");
 
 			Console.ReadLine();
 		}

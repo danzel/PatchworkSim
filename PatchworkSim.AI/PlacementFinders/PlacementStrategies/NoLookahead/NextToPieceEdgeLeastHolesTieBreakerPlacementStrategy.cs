@@ -1,16 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
+namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead
 {
 	/// <summary>
 	/// Can place pieces at 0,0 - or next to any other piece.
 	/// Ties are broken by: Least Holes, Largest Largest Hole, (TODO: For final tiebreak try: Smallest Bounding box, closest to 0,0 (direct and straight lines)
 	/// </summary>
-	public class NextToPieceEdgeLeastHolesTieBreakerPlacementStrategy : IPlacementStrategy
+	public class NextToPieceEdgeLeastHolesTieBreakerPlacementStrategy : NoLookaheadStrategy
 	{
-		public string Name => "NextToPieceEdgeLeastHolesTieBreaker";
-		public bool ImplementsAdvanced => false;
+		public override string Name => "NextToPieceEdgeLeastHolesTieBreaker";
 
 		public static readonly NextToPieceEdgeLeastHolesTieBreakerPlacementStrategy Instance = new NextToPieceEdgeLeastHolesTieBreakerPlacementStrategy();
 
@@ -18,7 +17,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 		{
 		}
 
-		public bool TryPlacePiece(BoardState board, PieceDefinition piece, out PieceBitmap resultBitmap, out int resultX, out int resultY)
+		protected override bool TryPlacePiece(BoardState board, PieceDefinition piece, out PieceBitmap resultBitmap, out int resultX, out int resultY)
 		{
 			resultBitmap = null;
 			resultX = -1;
@@ -92,11 +91,6 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 			}
 
 			return resultBitmap != null;
-		}
-
-		public bool TryPlacePieceAdvanced(BoardState board, PieceDefinition piece, List<int> possibleFuturePieces, int possibleFuturePiecesOffset, out PieceBitmap bitmap, out int x, out int y)
-		{
-			throw new System.NotImplementedException();
 		}
 
 		private void TryPlacement(BoardState board, PieceBitmap bitmap, int x, int y, ref PieceBitmap resultBitmap, ref int resultX, ref int resultY, ref int bestLeastHoles, ref int bestLargestHole, ref int bestDistance, List<int> holes)

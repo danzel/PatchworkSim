@@ -46,15 +46,16 @@
     <Compile Include="MoveMakers\RandomMoveMaker.cs" />
     <Compile Include="PlacementFinders\PlacementMaker.cs" />
     <Compile Include="Helpers.cs" />
-    <Compile Include="PlacementFinders\PlacementStrategies\ClosestToCornerLeastHolesTieBreakerPlacementStrategy.cs" />
-    <Compile Include="PlacementFinders\PlacementStrategies\FirstPossiblePlacementStrategy.cs" />
+    <Compile Include="PlacementFinders\PlacementStrategies\NoLookahead\ClosestToCornerLeastHolesTieBreakerPlacementStrategy.cs" />
+    <Compile Include="PlacementFinders\PlacementStrategies\NoLookahead\FirstPossiblePlacementStrategy.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\IPlacementStrategy.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\ExhaustiveMostFuturePlacementsPlacementStrategy.cs" />
-    <Compile Include="PlacementFinders\PlacementStrategies\NextToPieceEdgeLeastHolesTieBreakerPlacementStrategy.cs" />
+    <Compile Include="PlacementFinders\PlacementStrategies\NoLookahead\NextToPieceEdgeLeastHolesTieBreakerPlacementStrategy.cs" />
+    <Compile Include="PlacementFinders\PlacementStrategies\NoLookahead\NoLookaheadStrategy.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\PlacementHelper.cs" />
-    <Compile Include="PlacementFinders\PlacementStrategies\SimpleClosestToWallAndCornerStrategy.cs" />
-    <Compile Include="PlacementFinders\PlacementStrategies\SmallestBoundingBoxPlacementStrategy.cs" />
-    <Compile Include="PlacementFinders\PlacementStrategies\TightPlacementStrategy.cs" />
+    <Compile Include="PlacementFinders\PlacementStrategies\NoLookahead\SimpleClosestToWallAndCornerStrategy.cs" />
+    <Compile Include="PlacementFinders\PlacementStrategies\NoLookahead\SmallestBoundingBoxPlacementStrategy.cs" />
+    <Compile Include="PlacementFinders\PlacementStrategies\NoLookahead\TightPlacementStrategy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

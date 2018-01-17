@@ -1,27 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
 
-namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
+namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead
 {
-	public class SmallestBoundingBoxPlacementStrategy : IPlacementStrategy
+	/// <summary>
+	/// Places the piece to minimise the bounding box of used spaces
+	/// </summary>
+	public class SmallestBoundingBoxPlacementStrategy : NoLookaheadStrategy
 	{
 		public static readonly SmallestBoundingBoxPlacementStrategy Instance = new SmallestBoundingBoxPlacementStrategy();
 
-		public string Name => "SmallestBoundingBox";
-		public bool ImplementsAdvanced => false;
+		public override string Name => "SmallestBoundingBox";
 
 		private SmallestBoundingBoxPlacementStrategy()
 		{
 		}
 
-		public bool TryPlacePiece(BoardState board, PieceDefinition piece, out PieceBitmap resultBitmap, out int resultX, out int resultY)
+		protected override bool TryPlacePiece(BoardState board, PieceDefinition piece, out PieceBitmap resultBitmap, out int resultX, out int resultY)
 		{
 			int smallestSize = BoardState.Height * BoardState.Width + 1;
 
 			resultBitmap = null;
 			resultX = 0;
 			resultY = 0;
-
 
 			//TODO: If we weren't a singleton we could track our used Width/Height
 			int currentHeight = CalcUsedHeight(ref board);
@@ -48,11 +48,6 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 			}
 
 			return resultBitmap != null;
-		}
-
-		public bool TryPlacePieceAdvanced(BoardState board, PieceDefinition piece, List<int> possibleFuturePieces, int possibleFuturePiecesOffset, out PieceBitmap bitmap, out int x, out int y)
-		{
-			throw new NotImplementedException();
 		}
 
 		private static int CalcUsedHeight(ref BoardState board)

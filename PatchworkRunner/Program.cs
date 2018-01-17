@@ -4,6 +4,7 @@ using PatchworkSim;
 using PatchworkSim.AI.MoveMakers;
 using PatchworkSim.AI.PlacementFinders;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies;
+using PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
 using PatchworkSim.Loggers;
 
 namespace PatchworkRunner
@@ -46,6 +47,7 @@ namespace PatchworkRunner
 			var stillPlacing = strategies.Select(s => true).ToArray();
 			int stillPlacingCount = strategies.Length;
 
+			//TODO: Should change this to advance semi-randomly like a real game would
 			for (var index = 0; index < pieces.Count; index++)
 			{
 				var pieceIndex = pieces[index];
@@ -57,12 +59,7 @@ namespace PatchworkRunner
 					if (!stillPlacing[i])
 						continue;
 
-					if (strategies[i].ImplementsAdvanced && strategies[i].TryPlacePieceAdvanced(boards[i], piece, pieces, index + 1, out var bitmapA, out var xA, out var yA))
-					{
-						placed[i]++;
-						boards[i].Place(bitmapA, xA, yA);
-					}
-					else if (!strategies[i].ImplementsAdvanced && strategies[i].TryPlacePiece(boards[i], piece, out var bitmap, out var x, out var y))
+					if (!strategies[i].ImplementsLookahead && strategies[i].TryPlacePiece(boards[i], piece, pieces, i + 1, out var bitmap, out var x, out var y))
 					{
 						placed[i]++;
 						boards[i].Place(bitmap, x, y);

@@ -1,24 +1,23 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
+namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead
 {
 	/// <summary>
 	/// Tries to place the piece the closests to the 0,0 corner as possible.
 	/// When there are multiple placements at the same distance, uses the least amount of holes as a tie breaker, then uses the largest hole as a tie breaker (a bigger largest hole is better)
 	/// </summary>
-	public class ClosestToCornerLeastHolesTieBreakerPlacementStrategy : IPlacementStrategy
+	public class ClosestToCornerLeastHolesTieBreakerPlacementStrategy : NoLookaheadStrategy
 	{
-		public string Name => "ClosestToCornerLeastHolesTieBreaker";
-		public bool ImplementsAdvanced => false;
+		public override string Name => "ClosestToCornerLeastHolesTieBreaker";
 
-		public static ClosestToCornerLeastHolesTieBreakerPlacementStrategy Instance = new ClosestToCornerLeastHolesTieBreakerPlacementStrategy();
+		public static readonly ClosestToCornerLeastHolesTieBreakerPlacementStrategy Instance = new ClosestToCornerLeastHolesTieBreakerPlacementStrategy();
 
 		private ClosestToCornerLeastHolesTieBreakerPlacementStrategy()
 		{
 		}
 
-		public bool TryPlacePiece(BoardState board, PieceDefinition piece, out PieceBitmap resultBitmap, out int resultX, out int resultY)
+		protected override bool TryPlacePiece(BoardState board, PieceDefinition piece, out PieceBitmap resultBitmap, out int resultX, out int resultY)
 		{
 			var holes = new List<int>();
 
@@ -66,11 +65,6 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 			}
 
 			return false;
-		}
-
-		public bool TryPlacePieceAdvanced(BoardState board, PieceDefinition piece, List<int> possibleFuturePieces, int possibleFuturePiecesOffset, out PieceBitmap bitmap, out int x, out int y)
-		{
-			throw new System.NotImplementedException();
 		}
 	}
 }

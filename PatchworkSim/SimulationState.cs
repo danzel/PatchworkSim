@@ -233,7 +233,7 @@ namespace PatchworkSim
 			//1. Choose a Patch
 			Pieces.RemoveAt(pieceIndex);
 			//2. Move the Neutral Token
-			NextPieceIndex = pieceIndex;
+			NextPieceIndex = pieceIndex % Pieces.Count;
 			//3. Pay for the Patch
 			PlayerButtonAmount[ActivePlayer] -= piece.ButtonCost;
 
