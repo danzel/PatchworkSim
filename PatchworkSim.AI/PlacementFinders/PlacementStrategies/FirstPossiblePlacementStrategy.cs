@@ -1,10 +1,13 @@
-﻿namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
+﻿using System.Collections.Generic;
+
+namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 {
 	public class FirstPossiblePlacementStrategy : IPlacementStrategy
 	{
 		public static FirstPossiblePlacementStrategy Instance = new FirstPossiblePlacementStrategy();
 
 		public string Name => "FirstPossible";
+		public bool ImplementsAdvanced => false;
 
 		private FirstPossiblePlacementStrategy()
 		{
@@ -33,6 +36,11 @@
 			resultX = -1;
 			resultY = -1;
 			return false;
+		}
+
+		public bool TryPlacePieceAdvanced(BoardState board, PieceDefinition piece, List<int> possibleFuturePieces, int possibleFuturePiecesOffset, out PieceBitmap bitmap, out int x, out int y)
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }

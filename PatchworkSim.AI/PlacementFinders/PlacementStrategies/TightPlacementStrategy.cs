@@ -1,4 +1,6 @@
-﻿namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
+﻿using System.Collections.Generic;
+
+namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 {
 	/// <summary>
 	/// Strategy that tries to minimise amount of toggles between filled and not filled when looking across and up/down the board.
@@ -9,6 +11,7 @@
 	{
 		private readonly bool _doubler;
 		public string Name => "Tight" + (_doubler ? " x2" : " +1");
+		public bool ImplementsAdvanced => false;
 
 		public static readonly TightPlacementStrategy InstanceDoubler = new TightPlacementStrategy(true);
 		public static readonly TightPlacementStrategy InstanceIncrement = new TightPlacementStrategy(false);
@@ -74,6 +77,11 @@
 			//	Console.WriteLine($"{_doubler} {tiedForBest}");
 
 			return resultBitmap != null;
+		}
+
+		public bool TryPlacePieceAdvanced(BoardState board, PieceDefinition piece, List<int> possibleFuturePieces, int possibleFuturePiecesOffset, out PieceBitmap bitmap, out int x, out int y)
+		{
+			throw new System.NotImplementedException();
 		}
 
 		private void CalculateScore(BoardState board, PieceBitmap bitmap, int placeX, int placeY, out int score)

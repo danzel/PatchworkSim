@@ -30,7 +30,11 @@ namespace PatchworkRunner
 				ClosestToCornerLeastHolesTieBreakerPlacementStrategy.Instance,
 				NextToPieceEdgeLeastHolesTieBreakerPlacementStrategy.Instance,
 				TightPlacementStrategy.InstanceDoubler,
-				TightPlacementStrategy.InstanceIncrement
+				TightPlacementStrategy.InstanceIncrement,
+				ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1,
+				new ExhaustiveMostFuturePlacementsPlacementStrategy(2),
+				new ExhaustiveMostFuturePlacementsPlacementStrategy(3),
+				new ExhaustiveMostFuturePlacementsPlacementStrategy(4),
 			};
 
 
@@ -52,7 +56,13 @@ namespace PatchworkRunner
 				{
 					if (!stillPlacing[i])
 						continue;
-					if (strategies[i].TryPlacePiece(boards[i], piece, out var bitmap, out var x, out var y))
+
+					if (strategies[i].ImplementsAdvanced && strategies[i].TryPlacePieceAdvanced(boards[i], piece, pieces, index + 1, out var bitmapA, out var xA, out var yA))
+					{
+						placed[i]++;
+						boards[i].Place(bitmapA, xA, yA);
+					}
+					else if (!strategies[i].ImplementsAdvanced && strategies[i].TryPlacePiece(boards[i], piece, out var bitmap, out var x, out var y))
 					{
 						placed[i]++;
 						boards[i].Place(bitmap, x, y);

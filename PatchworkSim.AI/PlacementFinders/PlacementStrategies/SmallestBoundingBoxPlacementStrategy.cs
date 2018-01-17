@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 {
@@ -7,6 +8,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 		public static readonly SmallestBoundingBoxPlacementStrategy Instance = new SmallestBoundingBoxPlacementStrategy();
 
 		public string Name => "SmallestBoundingBox";
+		public bool ImplementsAdvanced => false;
 
 		private SmallestBoundingBoxPlacementStrategy()
 		{
@@ -46,6 +48,11 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 			}
 
 			return resultBitmap != null;
+		}
+
+		public bool TryPlacePieceAdvanced(BoardState board, PieceDefinition piece, List<int> possibleFuturePieces, int possibleFuturePiecesOffset, out PieceBitmap bitmap, out int x, out int y)
+		{
+			throw new NotImplementedException();
 		}
 
 		private static int CalcUsedHeight(ref BoardState board)

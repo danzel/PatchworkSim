@@ -10,6 +10,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 	public class ClosestToCornerLeastHolesTieBreakerPlacementStrategy : IPlacementStrategy
 	{
 		public string Name => "ClosestToCornerLeastHolesTieBreaker";
+		public bool ImplementsAdvanced => false;
 
 		public static ClosestToCornerLeastHolesTieBreakerPlacementStrategy Instance = new ClosestToCornerLeastHolesTieBreakerPlacementStrategy();
 
@@ -65,6 +66,11 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 			}
 
 			return false;
+		}
+
+		public bool TryPlacePieceAdvanced(BoardState board, PieceDefinition piece, List<int> possibleFuturePieces, int possibleFuturePiecesOffset, out PieceBitmap bitmap, out int x, out int y)
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }

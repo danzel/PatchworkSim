@@ -1,4 +1,6 @@
-﻿namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
+﻿using System.Collections.Generic;
+
+namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 {
 	/// <summary>
 	/// Starting at 0,0 move out along the walls attempting to place the piece.
@@ -19,6 +21,7 @@
 		}
 
 		public string Name => "SimpleClosestToWallAndCorner";
+		public bool ImplementsAdvanced => false;
 
 		public bool TryPlacePiece(BoardState board, PieceDefinition piece, out PieceBitmap resultBitmap, out int x, out int y)
 		{
@@ -53,6 +56,11 @@
 			x = -1;
 			y = -1;
 			return false;
+		}
+
+		public bool TryPlacePieceAdvanced(BoardState board, PieceDefinition piece, List<int> possibleFuturePieces, int possibleFuturePiecesOffset, out PieceBitmap bitmap, out int x, out int y)
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }
