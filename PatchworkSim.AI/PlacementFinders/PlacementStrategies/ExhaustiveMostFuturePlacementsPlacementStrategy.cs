@@ -29,8 +29,10 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 			resultX = -1;
 			resultY = -1;
 
-			//How many placements the next future piece has for our best found placement
+			//How many placements the next future piece has for our best found placement (more is better)
 			int bestPlacementCount = -1;
+			//Tie break when there is a draw, based on distance to 0,0 (less is better)
+			int bestTieBreaker = -1;
 
 			foreach (var bitmap in piece.PossibleOrientations)
 			{
@@ -44,9 +46,12 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 							for (var i = 0; i < _lookAheadSpread; i++)
 								placementCount += CalculatePlacementCount(board, bitmap, x, y, possibleFuturePieces, (possibleFuturePiecesOffset + i) % possibleFuturePieces.Count, _lookAheadAmount);
 
-							if (placementCount > bestPlacementCount)
+							var tieBreaker = x + y;
+							if (placementCount > bestPlacementCount || (placementCount == bestPlacementCount && tieBreaker < bestTieBreaker))
 							{
 								bestPlacementCount = placementCount;
+								bestTieBreaker = tieBreaker;
+
 								resultBitmap = bitmap;
 								resultX = x;
 								resultY = y;
