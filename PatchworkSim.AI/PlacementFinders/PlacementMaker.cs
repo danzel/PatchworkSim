@@ -12,7 +12,8 @@ namespace PatchworkSim.AI.PlacementFinders
 		public static readonly PlacementMaker NextToPieceEdgeLeastHolesTieBreakerInstance = new PlacementMaker(NextToPieceEdgeLeastHolesTieBreakerPlacementStrategy.Instance);
 		public static readonly PlacementMaker TightDoublerInstance = new PlacementMaker(TightPlacementStrategy.InstanceDoubler);
 		public static readonly PlacementMaker TightIncrementInstance = new PlacementMaker(TightPlacementStrategy.InstanceIncrement);
-		public static readonly PlacementMaker ExhaustiveMostFuturePlacementsInstance = new PlacementMaker(ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1);
+		public static readonly PlacementMaker ExhaustiveMostFuturePlacementsInstance1_1 = new PlacementMaker(ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_1);
+		public static readonly PlacementMaker ExhaustiveMostFuturePlacementsInstance1_6 = new PlacementMaker(ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_6);
 
 		private readonly IPlacementStrategy _strategy;
 

@@ -8,16 +8,19 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 	/// </summary>
 	public class ExhaustiveMostFuturePlacementsPlacementStrategy : IPlacementStrategy
 	{
-		public static readonly ExhaustiveMostFuturePlacementsPlacementStrategy Instance1 = new ExhaustiveMostFuturePlacementsPlacementStrategy(1);
+		public static readonly ExhaustiveMostFuturePlacementsPlacementStrategy Instance1_1 = new ExhaustiveMostFuturePlacementsPlacementStrategy(1, 1);
+		public static readonly ExhaustiveMostFuturePlacementsPlacementStrategy Instance1_6 = new ExhaustiveMostFuturePlacementsPlacementStrategy(1, 6);
 
-		public string Name => $"ExhaustiveMostFuturePlacements({_lookAheadAmount})";
+		public string Name => $"ExhaustiveMostFuturePlacements({_lookAheadAmount}-{_lookAheadSpread})";
 		public bool ImplementsLookahead => true;
 
 		private readonly int _lookAheadAmount;
+		private readonly int _lookAheadSpread;
 
-		public ExhaustiveMostFuturePlacementsPlacementStrategy(int lookAheadAmount)
+		public ExhaustiveMostFuturePlacementsPlacementStrategy(int lookAheadAmount, int lookAheadSpread)
 		{
 			_lookAheadAmount = lookAheadAmount;
+			_lookAheadSpread = lookAheadSpread;
 		}
 
 		public bool TryPlacePiece(BoardState board, PieceDefinition piece, List<int> possibleFuturePieces, int possibleFuturePiecesOffset, out PieceBitmap resultBitmap, out int resultX, out int resultY)
@@ -37,7 +40,9 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 					{
 						if (board.CanPlace(bitmap, x, y))
 						{
-							int placementCount = CalculatePlacementCount(board, bitmap, x, y, possibleFuturePieces, possibleFuturePiecesOffset, _lookAheadAmount);
+							int placementCount = 0;
+							for (var i = 0; i < _lookAheadSpread; i++)
+								placementCount += CalculatePlacementCount(board, bitmap, x, y, possibleFuturePieces, (possibleFuturePiecesOffset + i) % possibleFuturePieces.Count, _lookAheadAmount);
 
 							if (placementCount > bestPlacementCount)
 							{

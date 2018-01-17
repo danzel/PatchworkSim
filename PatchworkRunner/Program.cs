@@ -32,10 +32,8 @@ namespace PatchworkRunner
 				NextToPieceEdgeLeastHolesTieBreakerPlacementStrategy.Instance,
 				TightPlacementStrategy.InstanceDoubler,
 				TightPlacementStrategy.InstanceIncrement,
-				ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1,
-				new ExhaustiveMostFuturePlacementsPlacementStrategy(2),
-				new ExhaustiveMostFuturePlacementsPlacementStrategy(3),
-				new ExhaustiveMostFuturePlacementsPlacementStrategy(4),
+				ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_1,
+				ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_6,
 			};
 
 
