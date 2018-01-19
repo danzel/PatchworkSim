@@ -13,8 +13,8 @@ namespace PatchworkRunner
 	{
 		static void Main(string[] args)
 		{
-			ComparePlacementStrategies();
-			//WatchAGame();
+			//ComparePlacementStrategies();
+			WatchAGame();
 		}
 
 		private static void ComparePlacementStrategies()
@@ -83,7 +83,9 @@ namespace PatchworkRunner
 		private static void WatchAGame()
 		{
 			var state = new SimulationState(SimulationHelpers.GetRandomPieces(1), 0);
-			var runner = new SimulationRunner(state, new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, PlacementMaker.FirstPossibleInstance), new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, PlacementMaker.FirstPossibleInstance));
+			var runner = new SimulationRunner(state, 
+				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(10, 10000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6));
 			var logger = new ConsoleLogger(state);
 			logger.PrintBoardsAfterPlacement = true;
 			state.Logger = logger;
@@ -91,10 +93,10 @@ namespace PatchworkRunner
 			while (!state.GameHasEnded)
 			{
 				runner.PerformNextStep();
-				Console.ReadLine();
+				//Console.ReadLine();
 			}
 
-			Console.WriteLine($"Player {state.WinningPlayer} Won");
+			Console.WriteLine($"Player {state.WinningPlayer} Won [{state.CalculatePlayerEndGameWorth(0)} | {state.CalculatePlayerEndGameWorth(1)}]");
 
 			//logger.PrintBoards();
 
