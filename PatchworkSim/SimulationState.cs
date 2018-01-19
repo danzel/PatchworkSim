@@ -81,8 +81,6 @@ namespace PatchworkSim
 
 		private int NonActivePlayer => ActivePlayer == 0 ? 1 : 0;
 
-		//TODO LATER
-
 		/// <summary>
 		/// After a player has purchased a piece, this will be the piece they need to place.
 		/// If they pass a leather patch then that will be placed here too
@@ -293,6 +291,39 @@ namespace PatchworkSim
 
 			//TODO: 7x7 special tile
 			return PlayerButtonAmount[player] - 2 * emptySpaces;
+		}
+
+		public SimulationState Clone()
+		{
+			var state = new SimulationState(new List<int>(Pieces), NextPieceIndex);
+
+			//Copy over other values
+			state.LeatherPatchesIndex = LeatherPatchesIndex;
+
+			state.Fidelity = Fidelity;
+
+			state.PlayerBoardState[0] = PlayerBoardState[0];
+			state.PlayerBoardState[1] = PlayerBoardState[1];
+
+			state.PlayerBoardUsedLocationsCount[0] = PlayerBoardUsedLocationsCount[0];
+			state.PlayerBoardUsedLocationsCount[1] = PlayerBoardUsedLocationsCount[1];
+
+			state.PlayerButtonIncome[0] = PlayerButtonIncome[0];
+			state.PlayerButtonIncome[1] = PlayerButtonIncome[1];
+
+			state.PlayerButtonAmount[0] = PlayerButtonAmount[0];
+			state.PlayerButtonAmount[1] = PlayerButtonAmount[1];
+
+			state.PlayerPosition[0] = PlayerPosition[0];
+			state.PlayerPosition[1] = PlayerPosition[1];
+
+			state.ActivePlayer = ActivePlayer;
+
+			state.PieceToPlace = PieceToPlace;
+
+			state.PieceToPlacePlayer = PieceToPlacePlayer;
+
+			return state;
 		}
 	}
 }

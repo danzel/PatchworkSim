@@ -43,6 +43,7 @@
     <Compile Include="MoveMakers\AlwaysAdvanceMoveMaker.cs" />
     <Compile Include="MoveMakers\BuyFirstPossibleMoveMaker.cs" />
     <Compile Include="MoveMakers\GreedyCardValueUtilityMoveMaker.cs" />
+    <Compile Include="MoveMakers\QuickRandomSearchMoveMaker.cs" />
     <Compile Include="MoveMakers\RandomMoveMaker.cs" />
     <Compile Include="PlacementFinders\PlacementMaker.cs" />
     <Compile Include="Helpers.cs" />
