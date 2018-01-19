@@ -90,8 +90,8 @@ namespace PatchworkAIComparer
 				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(3), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 
-				new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, PlacementMaker.FirstPossibleInstance),
-				new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, PlacementMaker.SimpleClosestToWallAndCornerInstance),
+				//new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, PlacementMaker.FirstPossibleInstance),
+				//new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, PlacementMaker.SimpleClosestToWallAndCornerInstance),
 
 				//new PlayerDecisionMaker(new RandomMoveMaker(), PlacementMaker.FirstPossibleInstance),
 				//new PlayerDecisionMaker(new RandomMoveMaker(), PlacementMaker.SimpleClosestToWallAndCornerInstance),
@@ -105,6 +105,8 @@ namespace PatchworkAIComparer
 			//TODO: Play each AI against each other AI 100 times and print a table of results
 
 			var totalWins = new int[aiToTest.Length, aiToTest.Length];
+			Console.WriteLine($"Running {aiToTest.Length * (aiToTest.Length - 1)} * {TotalRuns} Games");
+			int gameNumber = 0;
 
 			for (var a = 0; a < aiToTest.Length; a++)
 			{
@@ -115,7 +117,7 @@ namespace PatchworkAIComparer
 
 					var aiA = aiToTest[a];
 					var aiB = aiToTest[b];
-					Console.WriteLine($"Running {aiA.Name} vs {aiB.Name}");
+					Console.WriteLine($"{++gameNumber} {aiA.Name} vs {aiB.Name}");
 
 					for (var run = 0; run < TotalRuns; run++)
 					{
