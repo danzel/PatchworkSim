@@ -3,8 +3,10 @@
 	/// <summary>
 	/// The is a Greedy (no look-ahead) utility AI designed to always pick the move that gives the most payoff based on pure card value
 	/// </summary>
-	public class GreedyCardValueUtilityMoveMaker : IMoveDecisionMaker
+	public class GreedyCardValueUtilityMoveMaker : BaseUtilityMoveMaker
 	{
+		public override string Name => $"GreedyCardValue({_timeCostValue})";
+
 		private readonly int _timeCostValue;
 
 		/// <param name="timeCostValue">The value that each time cost on a card costs us (pass a positive value, it is subtracted away)</param>
@@ -13,33 +15,12 @@
 			_timeCostValue = timeCostValue;
 		}
 
-		public void MakeMove(SimulationState state)
+		protected override double CalculateValueOfAdvancing(SimulationState state)
 		{
-			int bestPiece = -1;
-			int bestPieceValue = 0;
-
-			for (var i = 0; i < 3; i++)
-			{
-				var piece = Helpers.GetNextPiece(state, i);
-				if (Helpers.ActivePlayerCanPurchasePiece(state, piece))
-				{
-					var value = CalculateValue(state, piece);
-
-					if (value > bestPieceValue)
-					{
-						bestPiece = i;
-						bestPieceValue = value;
-					}
-				}
-			}
-
-			if (bestPiece == -1)
-				state.PerformAdvanceMove();
-			else
-				state.PerformPurchasePiece(state.NextPieceIndex + bestPiece);
+			return 0;
 		}
 
-		private int CalculateValue(SimulationState state, PieceDefinition piece)
+		protected override double CalculateValue(SimulationState state, PieceDefinition piece)
 		{
 			var value = piece.TotalUsedLocations * 2 - piece.ButtonCost - piece.TimeCost * _timeCostValue;
 			value += Helpers.ButtonIncomeAmountAfterPosition(state.PlayerPosition[state.ActivePlayer]) * piece.ButtonsIncome;
@@ -47,7 +28,5 @@
 
 			return value;
 		}
-
-		public string Name => $"GreedyCardValue({_timeCostValue})";
 	}
 }
