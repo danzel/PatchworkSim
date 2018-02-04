@@ -79,7 +79,7 @@ namespace PatchworkSim
 		/// </summary>
 		public int ActivePlayer;
 
-		private int NonActivePlayer => ActivePlayer == 0 ? 1 : 0;
+		public int NonActivePlayer => ActivePlayer == 0 ? 1 : 0;
 
 		/// <summary>
 		/// After a player has purchased a piece, this will be the piece they need to place.

@@ -46,6 +46,7 @@
     <Compile Include="MoveMakers\GreedyCardValueUtilityMoveMaker.cs" />
     <Compile Include="MoveMakers\QuickRandomSearchMoveMaker.cs" />
     <Compile Include="MoveMakers\RandomMoveMaker.cs" />
+    <Compile Include="MoveMakers\TuneableUtilityMoveMaker.cs" />
     <Compile Include="PlacementFinders\PlacementMaker.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\NoLookahead\ClosestToCornerLeastHolesTieBreakerPlacementStrategy.cs" />
