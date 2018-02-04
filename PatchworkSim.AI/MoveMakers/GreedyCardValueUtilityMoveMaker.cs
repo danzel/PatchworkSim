@@ -7,7 +7,6 @@
 	{
 		private readonly int _timeCostValue;
 
-		/// </summary>
 		/// <param name="timeCostValue">The value that each time cost on a card costs us (pass a positive value, it is subtracted away)</param>
 		public GreedyCardValueUtilityMoveMaker(int timeCostValue)
 		{

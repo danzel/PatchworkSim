@@ -114,8 +114,8 @@
 
 			//space used * 2 + buttons + income * incomes remaining
 			//TODO? This doesn't really value incomes at the start of the game, we need deep playouts for that
-			var worth0 = state.PlayerBoardUsedLocationsCount[0] * 2 + state.PlayerButtonAmount[0] + state.PlayerButtonIncome[0] * Helpers.ButtonIncomeAmountAfterPosition(state.PlayerPosition[0]);
-			var worth1 = state.PlayerBoardUsedLocationsCount[1] * 2 + state.PlayerButtonAmount[1] + state.PlayerButtonIncome[1] * Helpers.ButtonIncomeAmountAfterPosition(state.PlayerPosition[1]);
+			var worth0 = Helpers.EstimateEndgameValue(state, 0);
+			var worth1 = Helpers.EstimateEndgameValue(state, 1);
 
 			if (worth0 == worth1)
 				return -100; //No one wins (TODO: There is a rule for who wins in a tie)
