@@ -98,7 +98,7 @@ namespace PatchworkAIComparer
 
 				//() => new PlayerDecisionMaker(AlwaysAdvanceMoveMaker.Instance, PlacementMaker.FirstPossibleInstance)
 			};*/
-			
+
 			var aiToTest = new Func<PlayerDecisionMaker>[]
 			{
 				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
@@ -110,8 +110,10 @@ namespace PatchworkAIComparer
 				() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(10, 2000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 				() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(20, 5000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 				() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(30, 10000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+
+				() => new PlayerDecisionMaker(new TuneableUtilityMoveMaker(-0.03892573, 1, -0.593965087, -0.984706754, 0.554044008, -0.052553921, 0.609957017, -0.015045333), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 			};
-			
+
 			const int TotalRuns = 100;
 			const bool enableConsoleLogging = false;
 
