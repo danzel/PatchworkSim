@@ -50,12 +50,12 @@ namespace PatchworkSim.AI.MoveMakers
 			value += piece.TimeCost * TimeCostUtility;
 
 			//TODO: Should we have piece income and total income utilities?
-			value += Helpers.ButtonIncomeAmountAfterPosition(state.PlayerPosition[state.ActivePlayer]) * IncomeUtility;
+			value += Helpers.ButtonIncomeAmountAfterPosition(state.PlayerPosition[state.ActivePlayer]) * piece.ButtonsIncome * IncomeUtility;
 
-			value += Helpers.ButtonIncomeAmountAfterPosition(state.PlayerPosition[state.ActivePlayer]) * Helpers.ButtonIncomeAmountAfterPosition(state.PlayerPosition[state.ActivePlayer]) * IncomeSquaredUtility;
+			value += Helpers.ButtonIncomeAmountAfterPosition(state.PlayerPosition[state.ActivePlayer]) * piece.ButtonsIncome * piece.ButtonsIncome * IncomeSquaredUtility;
 
 			//TODO: Should this be boolean or vary by difference in location?
-			if (state.PlayerPosition[state.NonActivePlayer] > (state.PlayerPosition[state.ActivePlayer] + piece.TimeCost))
+			if (state.PlayerPosition[state.NonActivePlayer] >= (state.PlayerPosition[state.ActivePlayer] + piece.TimeCost))
 				value += GetAnotherTurnUtility;
 
 			//TODO: Should this be boolean or vary by income amount?
