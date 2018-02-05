@@ -136,7 +136,8 @@ namespace PatchworkRunner
 
 			Parallel.For(0, 100, (i) =>
 			{
-				var state = new SimulationState(SimulationHelpers.GetRandomPieces(i / 2), i % 2);
+				var state = new SimulationState(SimulationHelpers.GetRandomPieces(i / 2), 0);
+				state.ActivePlayer = i % 2;
 				state.Fidelity = SimulationFidelity.NoPiecePlacing;
 				//TODO: May need a cheaper placement engine
 				var runner = new SimulationRunner(state,
