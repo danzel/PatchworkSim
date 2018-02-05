@@ -16,7 +16,21 @@ namespace PatchworkSim.AI.MoveMakers
 		public readonly double GetAnotherTurnUtility;
 		public readonly double ReceiveIncomeUtility;
 
-		public override string Name => $"TuneableUtility({AdvancingPerButtonUtility},{UsedLocationUtility},{ButtonCostUtility},{TimeCostUtility},{IncomeUtility},{IncomeSquaredUtility}, {GetAnotherTurnUtility},{ReceiveIncomeUtility})";
+		public override string Name
+		{
+			get
+			{
+				var max =
+					Math.Max(
+						Math.Max(
+							Math.Max(Math.Abs(AdvancingPerButtonUtility), Math.Abs(UsedLocationUtility)),
+							Math.Max(Math.Abs(ButtonCostUtility), Math.Abs(TimeCostUtility))),
+						Math.Max(Math.Max(Math.Abs(IncomeUtility), Math.Abs(IncomeSquaredUtility)),
+							Math.Max(Math.Abs(GetAnotherTurnUtility), Math.Abs(ReceiveIncomeUtility))));
+
+				return $"TuneableUtility({AdvancingPerButtonUtility / max},{UsedLocationUtility / max},{ButtonCostUtility / max},{TimeCostUtility / max},{IncomeUtility / max},{IncomeSquaredUtility / max},{GetAnotherTurnUtility / max},{ReceiveIncomeUtility / max})";
+			}
+		}
 
 		/// <summary>
 		/// Utility values should range from -1 to 1. They will be individually capped at that range after calculating them.
