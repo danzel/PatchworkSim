@@ -18,7 +18,7 @@ namespace PatchworkRunner
 			//ComparePlacementStrategies();
 			//WatchAGame();
 
-			GenerateTuneableUtilityMoveMaker();
+			new GeneticTuneableUtilityEvolver().Run();
 		}
 
 		private static void ComparePlacementStrategies()
@@ -106,76 +106,6 @@ namespace PatchworkRunner
 
 			Console.WriteLine("Press any key to exit");
 			Console.ReadLine();
-		}
-
-		private static void GenerateTuneableUtilityMoveMaker()
-		{
-			var boss = new GreedyCardValueUtilityMoveMaker(2);
-			var rand = new Random();
-
-			//TuneableUtilityMoveMaker best = null; //CreateRandomTuneable(rand);
-			var mostWinsVsBoss = 0;
-
-			int generation = 0;
-			while (true)
-			{
-				generation++;
-
-				var challenger = CreateRandomTuneable(rand);
-
-				int wins = CalculateChallengerWinsFrom100(boss, challenger);
-				if (wins > mostWinsVsBoss)
-				{
-					Console.WriteLine($"Challenger Gen {generation} won {wins} games");
-					Console.WriteLine(challenger.Name);
-					mostWinsVsBoss = wins;
-					//best = challenger;
-
-					//Compare against something else
-					//int winsVsBoss = CalculateChallengerWinsFrom100(boss, challenger);
-					//Console.WriteLine($"Challenger Gen {generation} won {winsVsBoss} games vs Boss");
-				}
-			}
-		}
-
-		private static TuneableUtilityMoveMaker CreateRandomTuneable(Random rand)
-		{
-			return new TuneableUtilityMoveMaker(
-				rand.NextDouble() * 2 - 1,
-				rand.NextDouble() * 2 - 1,
-				rand.NextDouble() * 2 - 1,
-				rand.NextDouble() * 2 - 1,
-				rand.NextDouble() * 2 - 1,
-				rand.NextDouble() * 2 - 1,
-				rand.NextDouble() * 2 - 1,
-				rand.NextDouble() * 2 - 1
-			);
-		}
-
-		/// <summary>
-		/// Returns the amount of wins the challenger got (from 100)
-		/// </summary>
-		private static int CalculateChallengerWinsFrom100(IMoveDecisionMaker best, IMoveDecisionMaker challenger)
-		{
-			int challengerWins = 0;
-
-			Parallel.For(0, 100, (i) =>
-			{
-				var state = new SimulationState(SimulationHelpers.GetRandomPieces(i / 2), i % 2);
-				state.Fidelity = SimulationFidelity.NoPiecePlacing;
-				//TODO: May need a cheaper placement engine
-				var runner = new SimulationRunner(state,
-					new PlayerDecisionMaker(best, null),
-					new PlayerDecisionMaker(challenger, null));
-
-				while (!state.GameHasEnded)
-					runner.PerformNextStep();
-
-				if (state.WinningPlayer == 1)
-					Interlocked.Increment(ref challengerWins);
-			});
-
-			return challengerWins;
 		}
 	}
 }

@@ -43,16 +43,16 @@ namespace PatchworkSim.AI.MoveMakers
 
 		protected override double CalculateValue(SimulationState state, PieceDefinition piece)
 		{
-			var value = Clamp(piece.TotalUsedLocations * UsedLocationUtility);
+			var value = piece.TotalUsedLocations * UsedLocationUtility;
 
-			value += Clamp(piece.ButtonCost * ButtonCostUtility);
+			value += piece.ButtonCost * ButtonCostUtility;
 
-			value += Clamp(piece.TimeCost * TimeCostUtility);
+			value += piece.TimeCost * TimeCostUtility;
 
 			//TODO: Should we have piece income and total income utilities?
-			value += Clamp(Helpers.ButtonIncomeAmountAfterPosition(state.PlayerPosition[state.ActivePlayer]) * IncomeUtility);
+			value += Helpers.ButtonIncomeAmountAfterPosition(state.PlayerPosition[state.ActivePlayer]) * IncomeUtility;
 
-			value += Clamp(Helpers.ButtonIncomeAmountAfterPosition(state.PlayerPosition[state.ActivePlayer]) * Helpers.ButtonIncomeAmountAfterPosition(state.PlayerPosition[state.ActivePlayer]) * IncomeSquaredUtility);
+			value += Helpers.ButtonIncomeAmountAfterPosition(state.PlayerPosition[state.ActivePlayer]) * Helpers.ButtonIncomeAmountAfterPosition(state.PlayerPosition[state.ActivePlayer]) * IncomeSquaredUtility;
 
 			//TODO: Should this be boolean or vary by difference in location?
 			if (state.PlayerPosition[state.NonActivePlayer] > (state.PlayerPosition[state.ActivePlayer] + piece.TimeCost))
@@ -63,11 +63,6 @@ namespace PatchworkSim.AI.MoveMakers
 				value += ReceiveIncomeUtility;
 
 			return value; //TODO Clamp? Divide by total utilities?
-		}
-
-		private double Clamp(double value)
-		{
-			return Math.Min(1, Math.Max(-1, value));
 		}
 	}
 }
