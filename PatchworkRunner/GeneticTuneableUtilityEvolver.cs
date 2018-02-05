@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using PatchworkSim;
@@ -10,17 +11,48 @@ namespace PatchworkRunner
 {
 	class GeneticTuneableUtilityEvolver
 	{
-		private const int PopulationSize = 50;
+		private const int PopulationSize = 30;
 		private readonly Random _random = new Random();
 		private readonly IMoveDecisionMaker _boss = new GreedyCardValueUtilityMoveMaker(2);
 		List<PopulationMember> _population;
-		const int MaxGeneration = 100_000;
+		const int MaxGeneration = 50_000;
 
 		private void GenerateInitialPopulation()
 		{
-			Console.WriteLine("Generating initial population");
 			_population = new List<PopulationMember>();
-			for (var i = 0; i < PopulationSize; i++)
+			/*if (File.Exists("input.csv"))
+			{
+				Console.WriteLine("Loading initial population from input.csv");
+				foreach (var line in File.ReadLines("input.csv"))
+				{
+					var populationMember = new PopulationMember(line.Split(',').Select(double.Parse).ToArray());
+					EvaluateFitness(populationMember);
+					_population.Add(populationMember);
+				}
+			}
+			else
+			{
+				Console.WriteLine("Generating initial population");
+			}*/
+
+			//These is the defaults for GreedyCardValueUtilityMoveMaker
+			/*{
+				var populationMember = new PopulationMember(new double[] { 0, 2, -1, -2, 1, 0, 0, 0 });
+				EvaluateFitness(populationMember);
+				_population.Add(populationMember);
+			}
+			{
+				var populationMember = new PopulationMember(new double[] { 0, 2, -1, -1, 1, 0, 0, 0 });
+				EvaluateFitness(populationMember);
+				_population.Add(populationMember);
+			}
+			{
+				var populationMember = new PopulationMember(new double[] { 0, 2, -1, 0, 1, 0, 0, 0 });
+				EvaluateFitness(populationMember);
+				_population.Add(populationMember);
+			}*/
+
+			for (var i = _population.Count; i < PopulationSize; i++)
 			{
 				var populationMember = new PopulationMember(CreateRandomGene());
 				EvaluateFitness(populationMember);
@@ -38,7 +70,7 @@ namespace PatchworkRunner
 			{
 				_population.Sort();
 
-				if (generation % 10000 == 0)
+				if (generation % 1000 == 0)
 					Console.WriteLine($"Generation {generation}. Fitness Range: {_population[0].Fitness} -- {_population[PopulationSize - 1].Fitness}");
 
 				if (_population[0].Fitness > lastBestFitness)
@@ -68,12 +100,13 @@ namespace PatchworkRunner
 					var target = _population[PopulationSize - 1 - i];
 					var gene = target.Gene;
 
+					var mutationSize = _random.NextDouble() * 0.2;
 					for (var j = 0; j < PopulationMember.GeneSize; j++)
 					{
 						//TODO: Could use random more efficiently
 						gene[j] = (_random.NextDouble() < 0.5 ? parent0 : parent1).Gene[j]; //Crossover
 
-						gene[j] += (_random.NextDouble() * 2 - 1) * 0.2; //Mutation
+						gene[j] += (_random.NextDouble() * 2 - 1) * mutationSize; //Mutation
 					}
 
 					target.CreateMoveMaker();
@@ -84,7 +117,7 @@ namespace PatchworkRunner
 
 				if (generation == MaxGeneration)
 				{
-					File.AppendAllLines("best.txt", new [] { $"{lastBestFitness} {_population[0].MoveMaker.Name}" });
+					File.AppendAllLines("best.txt", new[] { $"{lastBestFitness} {_population[0].MoveMaker.Name}" });
 					generation = 0;
 					lastBestFitness = 0;
 					GenerateInitialPopulation();
@@ -134,7 +167,7 @@ namespace PatchworkRunner
 		{
 			int challengerWins = 0;
 
-			Parallel.For(0, 100, (i) =>
+			Parallel.For(0, 200, (i) =>
 			{
 				var state = new SimulationState(SimulationHelpers.GetRandomPieces(i / 2), 0);
 				state.ActivePlayer = i % 2;
@@ -192,4 +225,3 @@ namespace PatchworkRunner
 		}
 	}
 }
- 
