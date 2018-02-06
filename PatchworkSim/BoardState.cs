@@ -1,4 +1,5 @@
-﻿using System;
+﻿//#define SAFE_MODE
+using System;
 
 namespace PatchworkSim
 {
@@ -20,7 +21,7 @@ namespace PatchworkSim
 			get { return !(_state & XYToPositionMask[x, y]).IsZero; }
 			set
 			{
-#if DEBUG
+#if SAFE_MODE
 				if (!value) throw new Exception("Can only set positions, not unset them");
 #endif
 				_state |= XYToPositionMask[x, y];
@@ -29,7 +30,7 @@ namespace PatchworkSim
 
 		public bool CanPlace(PieceBitmap bitmap, int x, int y)
 		{
-#if DEBUG
+#if SAFE_MODE
 			if (x < 0)
 				throw new Exception("X is outside of range");
 			if (y < 0)
@@ -40,18 +41,26 @@ namespace PatchworkSim
 			if (y + bitmap.Height > Height)
 				throw new Exception("Y is outside of range");
 #endif
-			var shifted = bitmap._bitmap << (x + y * Width);
-			return (shifted & _state).IsZero;
+
+			//var shifted = bitmap.Bitmap << (x + y * Width);
+			var shifted = bitmap.GetShifted(x, y);
+
+			//return (shifted & _state).IsZero;
+			UInt128.And(out shifted, ref shifted, ref _state);
+			return shifted.IsZero;
 		}
 
 		public void Place(PieceBitmap bitmap, int x, int y)
 		{
-#if DEBUG
+#if SAFE_MODE
 			if (!CanPlace(bitmap, x, y))
 				throw new Exception("Cannot place piece here, it overlaps");
 #endif
-			var shifted = bitmap._bitmap << (x + y * Width);
-			_state |= shifted;
+			//var shifted = bitmap.Bitmap << (x + y * Width);
+			var shifted = bitmap.GetShifted(x, y);
+
+			//_state |= shifted;
+			UInt128.Or(out _state, ref _state, ref shifted);
 		}
 
 		public int UsedPositionCount
