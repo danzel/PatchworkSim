@@ -10,58 +10,46 @@ namespace PathworkSim.Test
 		[Fact]
 		public void FirstPossible()
 		{
-			var pieces = SimulationHelpers.GetRandomPieces(1);
-			int placed = 0;
-
-			var board = new BoardState();
-
-			foreach (var piece in pieces)
-			{
-				if (FirstPossiblePlacementStrategy.Instance.TryPlacePiece(board, PieceDefinition.AllPieceDefinitions[piece], null, 0, out var bitmap, out var x, out var y))
-				{
-					placed++;
-					board.Place(bitmap, x, y);
-				}
-				else
-				{
-					break;
-				}
-			}
-
-			//This number totally relies on the order of pieces in the array.
-			//Update it if the ordering changes, the extact amount isn't important
-			Assert.Equal(12, placed);
+			TestStrategy(FirstPossiblePlacementStrategy.Instance, 12);
 		}
 
 		[Fact]
 		public void SimpleClosestToWallAndCorner()
 		{
-			var pieces = SimulationHelpers.GetRandomPieces(1);
-			int placed = 0;
-
-			var board = new BoardState();
-
-			foreach (var piece in pieces)
-			{
-				if (SimpleClosestToWallAndCornerStrategy.Instance.TryPlacePiece(board, PieceDefinition.AllPieceDefinitions[piece], null, 0, out var bitmap, out var x, out var y))
-				{
-					placed++;
-					board.Place(bitmap, x, y);
-				}
-				else
-				{
-					break;
-				}
-			}
-
-			//This number totally relies on the order of pieces in the array.
-			//Update it if the ordering changes, the extact amount isn't important
-			//Hopefully this is at least as many places as FirstPossible
-			Assert.Equal(13, placed);
+			TestStrategy(SimpleClosestToWallAndCornerStrategy.Instance, 13);
 		}
 
 		[Fact]
 		public void SmallestBoundingBox()
+		{
+			TestStrategy(SmallestBoundingBoxPlacementStrategy.Instance, 12);
+		}
+
+		[Fact]
+		public void ClosestToCornerLeastHolesTieBreaker()
+		{
+			TestStrategy(ClosestToCornerLeastHolesTieBreakerPlacementStrategy.Instance, 12);
+		}
+
+		[Fact]
+		public void NextToPieceEdgeLeastHolesTieBreaker()
+		{
+			TestStrategy(NextToPieceEdgeLeastHolesTieBreakerPlacementStrategy.Instance, 15);
+		}
+
+		[Fact]
+		public void TightPlacement()
+		{
+			TestStrategy(TightPlacementStrategy.InstanceIncrement, 15);
+		}
+
+		[Fact]
+		public void ExhaustiveMostFuturePlacements()
+		{
+			TestStrategy(ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_1, 13);
+		}
+
+		private void TestStrategy(IPlacementStrategy strategy, int expectPiecesPlaced)
 		{
 			var pieces = SimulationHelpers.GetRandomPieces(1);
 			int placed = 0;
@@ -70,7 +58,7 @@ namespace PathworkSim.Test
 
 			foreach (var piece in pieces)
 			{
-				if (SmallestBoundingBoxPlacementStrategy.Instance.TryPlacePiece(board, PieceDefinition.AllPieceDefinitions[piece], null, 0, out var bitmap, out var x, out var y))
+				if (strategy.TryPlacePiece(board, PieceDefinition.AllPieceDefinitions[piece], pieces, placed + 1, out var bitmap, out var x, out var y))
 				{
 					placed++;
 					board.Place(bitmap, x, y);
@@ -82,9 +70,8 @@ namespace PathworkSim.Test
 			}
 
 			//This number totally relies on the order of pieces in the array.
-			//Update it if the ordering changes, the extact amount isn't important
-			//Hopefully this is at least as many places as FirstPossible
-			Assert.Equal(12, placed);
+			//Update it if the ordering changes, the exact amount isn't important
+			Assert.Equal(expectPiecesPlaced, placed);
 		}
 	}
 }
