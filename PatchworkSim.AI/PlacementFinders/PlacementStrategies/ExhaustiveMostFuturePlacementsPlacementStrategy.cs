@@ -76,8 +76,9 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 			//Now calculate how many placements the next piece can have
 			var nextPiece = PieceDefinition.AllPieceDefinitions[possibleFuturePieces[possibleFuturePiecesOffset]];
 
-			foreach (var bitmap in nextPiece.PossibleOrientations)
+			for (var index = 0; index < nextPiece.PossibleOrientations.Length; index++)
 			{
+				var bitmap = nextPiece.PossibleOrientations[index];
 				for (int x = 0; x < BoardState.Width - bitmap.Width + 1; x++)
 				{
 					for (int y = 0; y < BoardState.Height - bitmap.Height + 1; y++)
