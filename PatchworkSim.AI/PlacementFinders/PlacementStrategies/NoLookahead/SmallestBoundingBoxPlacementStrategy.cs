@@ -26,7 +26,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead
 			//TODO: If we weren't a singleton we could track our used Width/Height
 			int currentHeight = CalcUsedHeight(ref board);
 			int currentWidth = CalcUsedWidth(ref board);
-			Console.WriteLine($"Current {currentWidth}x{currentHeight}");
+			//Console.WriteLine($"Current {currentWidth}x{currentHeight}");
 
 			for (var x = 0; x < BoardState.Width; x++)
 			{
@@ -36,7 +36,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead
 					{
 						var size = Math.Max(currentWidth, x + bitmap.Width) * Math.Max(currentHeight, y + bitmap.Height);
 
-						if (size < smallestSize && board.CanPlace(bitmap, x, y))
+						if (size < smallestSize && x + bitmap.Width <= BoardState.Width && y + bitmap.Height <= BoardState.Height && board.CanPlace(bitmap, x, y))
 						{
 							smallestSize = size;
 							resultBitmap = bitmap;

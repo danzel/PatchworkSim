@@ -29,16 +29,17 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead
 			resultY = -1;
 
 
+			//TODO: Distance could be < the piece size too
 			for (var distance = 0; distance < BoardState.Width + BoardState.Height; distance++)
 			{
-
+				//TODO: Min(distance, Width - bitmap.MinSideSize) ?
 				for (var x = 0; x <= distance ; x++)
 				{
 					var y = distance - x;
 
 					foreach (var bitmap in piece.PossibleOrientations)
 					{
-						if (board.CanPlace(bitmap, x, y))
+						if (x + bitmap.Width <= BoardState.Width && y + bitmap.Height <= BoardState.Height && board.CanPlace(bitmap, x, y))
 						{
 							var clone = board;
 							clone.Place(bitmap, x, y);

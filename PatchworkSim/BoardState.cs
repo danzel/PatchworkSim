@@ -20,26 +20,36 @@ namespace PatchworkSim
 			get { return !(_state & XYToPositionMask[x, y]).IsZero; }
 			set
 			{
+#if DEBUG
 				if (!value) throw new Exception("Can only set positions, not unset them");
+#endif
 				_state |= XYToPositionMask[x, y];
 			}
 		}
 
 		public bool CanPlace(PieceBitmap bitmap, int x, int y)
 		{
-			if (x + bitmap.Width > Width)
-				return false;
-			if (y + bitmap.Height > Height)
-				return false;
+#if DEBUG
+			if (x < 0)
+				throw new Exception("X is outside of range");
+			if (y < 0)
+				throw new Exception("Y is outside of range");
 
+			if (x + bitmap.Width > Width)
+				throw new Exception("X is outside of range");
+			if (y + bitmap.Height > Height)
+				throw new Exception("Y is outside of range");
+#endif
 			var shifted = bitmap._bitmap << (x + y * Width);
 			return (shifted & _state).IsZero;
 		}
 
 		public void Place(PieceBitmap bitmap, int x, int y)
 		{
+#if DEBUG
 			if (!CanPlace(bitmap, x, y))
 				throw new Exception("Cannot place piece here, it overlaps");
+#endif
 			var shifted = bitmap._bitmap << (x + y * Width);
 			_state |= shifted;
 		}

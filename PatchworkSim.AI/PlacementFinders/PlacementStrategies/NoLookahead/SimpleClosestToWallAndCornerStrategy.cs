@@ -26,12 +26,13 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead
 		{
 			for (var oppositeWallGap = 0; oppositeWallGap < BoardState.Width; oppositeWallGap++)
 			{
+				//TODO: Could use the minimum of the size of the sides of the bitmap in this gap < part to skip some wasteful loops
 				for (var gap = 0; gap < BoardState.Height; gap++)
 				{
 					foreach (var bitmap in piece.PossibleOrientations)
 					{
 						//Try place in x direction
-						if (board.CanPlace(bitmap, gap, oppositeWallGap))
+						if (gap + bitmap.Width <= BoardState.Width && oppositeWallGap + bitmap.Height <= BoardState.Height && board.CanPlace(bitmap, gap, oppositeWallGap))
 						{
 							resultBitmap = bitmap;
 							x = gap;
@@ -40,7 +41,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead
 						}
 
 						//Try place in y direction
-						if (board.CanPlace(bitmap, oppositeWallGap, gap))
+						if (oppositeWallGap + bitmap.Width <= BoardState.Width && gap + bitmap.Height <= BoardState.Height && board.CanPlace(bitmap, oppositeWallGap, gap))
 						{
 							resultBitmap = bitmap;
 							x = oppositeWallGap;
