@@ -40,6 +40,10 @@ namespace PatchworkRunner
 				ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_6,
 			};
 
+			//ExhaustiveMostFuturePlacementsPlacementStrategy
+			//3,1 - 2.4 seconds | 12 Pieces
+			//4,1 - 46 seconds  | 12 Pieces
+			//5,1 - 29 minutes  | 11 Pieces
 
 			var pieces = SimulationHelpers.GetRandomPieces(2);
 
