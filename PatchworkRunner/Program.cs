@@ -61,7 +61,7 @@ namespace PatchworkRunner
 					if (!stillPlacing[i])
 						continue;
 
-					if (!strategies[i].ImplementsLookahead && strategies[i].TryPlacePiece(boards[i], piece, pieces, i + 1, out var bitmap, out var x, out var y))
+					if (strategies[i].TryPlacePiece(boards[i], piece, pieces, index + 1, out var bitmap, out var x, out var y))
 					{
 						placed[i]++;
 						boards[i].Place(bitmap, x, y);
