@@ -44,6 +44,7 @@
     <Compile Include="MoveMakers\BaseUtilityMoveMaker.cs" />
     <Compile Include="MoveMakers\BuyFirstPossibleMoveMaker.cs" />
     <Compile Include="MoveMakers\GreedyCardValueUtilityMoveMaker.cs" />
+    <Compile Include="MoveMakers\MoveOnlyMonteCarloTreeSearchMoveMaker.cs" />
     <Compile Include="MoveMakers\QuickRandomSearchMoveMaker.cs" />
     <Compile Include="MoveMakers\RandomMoveMaker.cs" />
     <Compile Include="MoveMakers\TuneableUtilityMoveMaker.cs" />
