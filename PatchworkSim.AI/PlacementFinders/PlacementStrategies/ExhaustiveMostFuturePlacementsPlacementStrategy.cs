@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 {
@@ -30,7 +31,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 			resultY = -1;
 
 			//How many placements the next future piece has for our best found placement (more is better)
-			int bestPlacementCount = -1;
+			long bestPlacementCount = -1;
 			//Tie break when there is a draw, based on distance to 0,0 (less is better)
 			int bestTieBreaker = -1;
 
@@ -42,7 +43,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 					{
 						if (board.CanPlace(bitmap, x, y))
 						{
-							int placementCount = 0;
+							long placementCount = 0;
 							for (var i = 0; i < _lookAheadSpread; i++)
 								placementCount += CalculatePlacementCount(board, bitmap, x, y, possibleFuturePieces, (possibleFuturePiecesOffset + i) % possibleFuturePieces.Count, _lookAheadAmount);
 
@@ -64,14 +65,25 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 			return resultBitmap != null;
 		}
 
-		private int CalculatePlacementCount(BoardState board, PieceBitmap justPlacedBitmap, int justPlacedX, int justPlacedY, List<int> possibleFuturePieces, int possibleFuturePiecesOffset, int lookAheadAmount)
+		private static readonly long[] powCache = new long[] {
+			(long)Math.Pow(10, 0),
+			(long)Math.Pow(10, 1),
+			(long)Math.Pow(10, 2),
+			(long)Math.Pow(10, 3),
+			(long)Math.Pow(10, 4),
+			(long)Math.Pow(10, 5),
+			(long)Math.Pow(10, 6),
+		};
+
+		private long CalculatePlacementCount(BoardState board, PieceBitmap justPlacedBitmap, int justPlacedX, int justPlacedY, List<int> possibleFuturePieces, int possibleFuturePiecesOffset, int lookAheadAmount)
 		{
+			long placementCount = powCache[_lookAheadAmount - lookAheadAmount];//(int)Math.Pow(10, _lookAheadAmount - lookAheadAmount);
+
 			if (lookAheadAmount == 0)
-				return (_lookAheadAmount - lookAheadAmount);
+				return placementCount;
 
 			board.Place(justPlacedBitmap, justPlacedX, justPlacedY);
 
-			int placementCount = (_lookAheadAmount - lookAheadAmount);
 
 			//Now calculate how many placements the next piece can have
 			var nextPiece = PieceDefinition.AllPieceDefinitions[possibleFuturePieces[possibleFuturePiecesOffset]];
