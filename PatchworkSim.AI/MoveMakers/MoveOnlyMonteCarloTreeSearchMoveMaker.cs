@@ -47,7 +47,7 @@ namespace PatchworkSim.AI.MoveMakers
 				{
 					newLeaf.ReceiveBackpropogation(winningPlayer);
 					newLeaf = newLeaf.Parent;
-				} while (newLeaf.Parent != null);
+				} while (newLeaf != null);
 			}
 
 			//Perform the best move
@@ -175,7 +175,7 @@ namespace PatchworkSim.AI.MoveMakers
 			public void ReceiveBackpropogation(int winningPlayer)
 			{
 				VisitCount++;
-				if (winningPlayer == Parent.State.ActivePlayer)
+				if (Parent != null && winningPlayer == Parent.State.ActivePlayer)
 					Value++;
 			}
 		}
