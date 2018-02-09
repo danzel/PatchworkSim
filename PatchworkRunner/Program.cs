@@ -1,6 +1,7 @@
-﻿using System;
+﻿//#define PERF_PARALLEL
+using System;
+using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using PatchworkSim;
 using PatchworkSim.AI.MoveMakers;
@@ -15,10 +16,40 @@ namespace PatchworkRunner
 	{
 		static void Main(string[] args)
 		{
+			RunMoveMakerForPerformance();
+
 			//ComparePlacementStrategies();
 			//WatchAGame();
 
-			new GeneticTuneableUtilityEvolver().Run();
+			//new GeneticTuneableUtilityEvolver().Run();
+		}
+
+		private static void RunMoveMakerForPerformance()
+		{
+			var sw = Stopwatch.StartNew();
+
+#if PERF_PARALLEL
+			Parallel.For(0, 10, (run) => //6480
+			#else
+			for (var run = 0; run < 10; run++) //18700
+#endif
+			{
+				var a = new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000), PlacementMaker.FirstPossibleInstance);
+				var b = new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(5000), PlacementMaker.FirstPossibleInstance);
+
+				var state = new SimulationState(SimulationHelpers.GetRandomPieces(run / 2), 0);
+				var runner = new SimulationRunner(state, run % 2 == 0 ? a : b, run % 2 == 1 ? a : b);
+				while (!state.GameHasEnded)
+				{
+					runner.PerformNextStep();
+				}
+				Console.WriteLine(state.WinningPlayer);
+			}
+#if PERF_PARALLEL
+			);
+#endif
+			Console.WriteLine(sw.ElapsedMilliseconds);
+			Console.ReadLine();
 		}
 
 		private static void ComparePlacementStrategies()
@@ -92,8 +123,8 @@ namespace PatchworkRunner
 		{
 			var state = new SimulationState(SimulationHelpers.GetRandomPieces(1), 0);
 			var runner = new SimulationRunner(state,
-				new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(10, 10000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6));
+				new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(1000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_1),
+				new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(6, 1000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_1));
 			var logger = new ConsoleLogger(state);
 			logger.PrintBoardsAfterPlacement = true;
 			state.Logger = logger;
