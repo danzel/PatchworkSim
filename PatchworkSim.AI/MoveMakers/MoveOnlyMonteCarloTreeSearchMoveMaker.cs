@@ -223,7 +223,8 @@ namespace PatchworkSim.AI.MoveMakers
 			public void Return(SearchNode value)
 			{
 				value.Children.Clear();
-
+				value.Value = 0;
+				value.VisitCount = 0;
 				value.State = null;
 				value.Parent = null;
 				value.PieceToPurchase = null;
