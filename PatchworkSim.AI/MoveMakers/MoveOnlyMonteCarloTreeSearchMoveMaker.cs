@@ -32,7 +32,7 @@ namespace PatchworkSim.AI.MoveMakers
 		public void MakeMove(SimulationState state)
 		{
 			var root = NodePool.Get();
-			root.State = state;
+			state.CloneTo(root.State);
 
 			for (var i = 0; i < _iterations; i++)
 			{
@@ -137,7 +137,7 @@ namespace PatchworkSim.AI.MoveMakers
 
 		internal class SearchNode
 		{
-			public SimulationState State;
+			public readonly SimulationState State = new SimulationState();
 			public SearchNode Parent;
 			/// <summary>
 			/// The piece that was purchased to arrive at this node, or null for advance
@@ -160,12 +160,12 @@ namespace PatchworkSim.AI.MoveMakers
 
 				//Advance
 				{
-					var stateClone = State.Clone(); //TODO: Keep a SimulationState inside a SearchNode
-					stateClone.Fidelity = SimulationFidelity.NoPiecePlacing; //TODO Could do real placing
-					stateClone.PerformAdvanceMove();
-
 					var node = NodePool.Get();
-					node.State = stateClone;
+
+					State.CloneTo(node.State);
+					node.State.Fidelity = SimulationFidelity.NoPiecePlacing; //TODO Could do real placing
+					node.State.PerformAdvanceMove();
+
 					node.Parent = this;
 					Children.Add(node);
 				}
@@ -175,13 +175,13 @@ namespace PatchworkSim.AI.MoveMakers
 					//This cares if they can actually place the piece only when expanding the root node
 					if (Helpers.ActivePlayerCanPurchasePiece(State, Helpers.GetNextPiece(State, i)))
 					{
-						var stateClone = State.Clone(); //TODO: Keep a SimulationState inside a SearchNode
-						stateClone.Fidelity = SimulationFidelity.NoPiecePlacing; //TODO Could do real placing
-						var pieceIndex = stateClone.NextPieceIndex + i;
-						stateClone.PerformPurchasePiece(pieceIndex);
-
 						var node = NodePool.Get();
-						node.State = stateClone;
+
+						State.CloneTo(node.State);
+						node.State.Fidelity = SimulationFidelity.NoPiecePlacing; //TODO Could do real placing
+						var pieceIndex = node.State.NextPieceIndex + i;
+						node.State.PerformPurchasePiece(pieceIndex);
+
 						node.Parent = this;
 						node.PieceToPurchase = pieceIndex;
 						Children.Add(node);
@@ -223,9 +223,9 @@ namespace PatchworkSim.AI.MoveMakers
 			public void Return(SearchNode value)
 			{
 				value.Children.Clear();
+				value.State.Pieces.Clear();
 				value.Value = 0;
 				value.VisitCount = 0;
-				value.State = null;
 				value.Parent = null;
 				value.PieceToPurchase = null;
 
