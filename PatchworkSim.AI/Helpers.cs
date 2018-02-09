@@ -39,8 +39,8 @@ namespace PatchworkSim.AI
 
 		public static bool ActivePlayerCanPurchasePiece(SimulationState state, PieceDefinition piece)
 		{
-			return piece.TotalUsedLocations < BoardState.Width * BoardState.Height - state.PlayerBoardUsedLocationsCount[state.ActivePlayer] 
-				&& piece.ButtonCost < state.PlayerButtonAmount[state.ActivePlayer] 
+			return piece.TotalUsedLocations <= BoardState.Width * BoardState.Height - state.PlayerBoardUsedLocationsCount[state.ActivePlayer] 
+				&& piece.ButtonCost <= state.PlayerButtonAmount[state.ActivePlayer] 
 				&& (state.Fidelity == SimulationFidelity.NoPiecePlacing || CanPlace(state.PlayerBoardState[state.ActivePlayer], piece));
 		}
 
