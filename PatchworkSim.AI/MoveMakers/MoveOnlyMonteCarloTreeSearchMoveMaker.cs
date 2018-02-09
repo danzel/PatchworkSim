@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace PatchworkSim.AI.MoveMakers
@@ -15,6 +16,8 @@ namespace PatchworkSim.AI.MoveMakers
 		private readonly Random _random = new Random(0);
 		private readonly RandomMoveMaker _randomMoveMaker = new RandomMoveMaker(0);
 
+		private static readonly SearchNodePool NodePool = new SearchNodePool();
+
 		public MoveOnlyMonteCarloTreeSearchMoveMaker(int iterations)
 		{
 			_iterations = iterations;
@@ -24,7 +27,8 @@ namespace PatchworkSim.AI.MoveMakers
 		// https://en.wikipedia.org/wiki/Monte_Carlo_tree_search
 		public void MakeMove(SimulationState state)
 		{
-			var root = new SearchNode(state, null, null);
+			var root = NodePool.Get();
+			root.State = state;
 
 			for (var i = 0; i < _iterations; i++)
 			{
@@ -74,6 +78,8 @@ namespace PatchworkSim.AI.MoveMakers
 				state.PerformPurchasePiece(best.Value);
 			else
 				state.PerformAdvanceMove();
+
+			root.RecursiveReturnToPool();
 		}
 
 		private static readonly double epsilon = 1e-6;
@@ -124,24 +130,19 @@ namespace PatchworkSim.AI.MoveMakers
 			return cloneState.WinningPlayer;
 		}
 
-		class SearchNode
+		internal class SearchNode
 		{
-			public readonly SimulationState State;
-			public readonly SearchNode Parent;
-			public readonly int? PieceToPurchase;
+			public SimulationState State;
+			public SearchNode Parent;
+			/// <summary>
+			/// The piece that was purchased to arrive at this node, or null for advance
+			/// </summary>
+			public int? PieceToPurchase;
 
 			public List<SearchNode> Children;
 
 			public int VisitCount;
 			public int Value;
-
-			/// <param name="pieceToPurchase">The piece that was purchased to arrive at this node, or null for advance</param>
-			public SearchNode(SimulationState state, SearchNode parent, int? pieceToPurchase)
-			{
-				State = state;
-				Parent = parent;
-				PieceToPurchase = pieceToPurchase;
-			}
 
 			public bool IsGameEnd => State.GameHasEnded;
 
@@ -152,7 +153,6 @@ namespace PatchworkSim.AI.MoveMakers
 				if (IsGameEnd)
 					throw new Exception("Cannot expand a GameEnd node");
 
-
 				Children = new List<SearchNode>(4);
 
 				//Advance
@@ -160,7 +160,11 @@ namespace PatchworkSim.AI.MoveMakers
 					var stateClone = State.Clone();
 					stateClone.Fidelity = SimulationFidelity.NoPiecePlacing; //TODO Could do real placing
 					stateClone.PerformAdvanceMove();
-					Children.Add(new SearchNode(stateClone, this, null));
+
+					var node = NodePool.Get();
+					node.State = stateClone;
+					node.Parent = this;
+					Children.Add(node);
 				}
 
 				for (var i = 0; i < 3; i++)
@@ -172,7 +176,12 @@ namespace PatchworkSim.AI.MoveMakers
 						stateClone.Fidelity = SimulationFidelity.NoPiecePlacing; //TODO Could do real placing
 						var pieceIndex = stateClone.NextPieceIndex + i;
 						stateClone.PerformPurchasePiece(pieceIndex);
-						Children.Add(new SearchNode(stateClone, this, pieceIndex));
+
+						var node = NodePool.Get();
+						node.State = stateClone;
+						node.Parent = this;
+						node.PieceToPurchase = pieceIndex;
+						Children.Add(node);
 					}
 				}
 			}
@@ -182,6 +191,59 @@ namespace PatchworkSim.AI.MoveMakers
 				VisitCount++;
 				if (Parent != null && winningPlayer == Parent.State.ActivePlayer)
 					Value++;
+			}
+
+			public void RecursiveReturnToPool()
+			{
+				if (Children != null)
+				{
+					for (var i = 0; i < Children.Count; i++)
+					{
+						var c = Children[i];
+						c.RecursiveReturnToPool();
+					}
+				}
+				NodePool.Return(this);
+			}
+		}
+
+		internal class SearchNodePool
+		{
+			private readonly ConcurrentBag<SearchNode> _nodePool = new ConcurrentBag<SearchNode>();
+			private readonly ConcurrentBag<List<SearchNode>> _listPool = new ConcurrentBag<List<SearchNode>>();
+
+			public SearchNode Get()
+			{
+				if (_nodePool.TryTake(out SearchNode result))
+				{
+					return result;
+				}
+				return new SearchNode();
+			}
+
+			public void Return(SearchNode value)
+			{
+				if (value.Children != null)
+				{
+					value.Children.Clear();
+					_listPool.Add(value.Children);
+					value.Children = null;
+				}
+
+				value.State = null;
+				value.Parent = null;
+				value.PieceToPurchase = null;
+
+				_nodePool.Add(value);
+			}
+
+			public List<SearchNode> GetList()
+			{
+				if (_listPool.TryTake(out var result))
+				{
+					return result;
+				}
+				return new List<SearchNode>(4);
 			}
 		}
 	}
