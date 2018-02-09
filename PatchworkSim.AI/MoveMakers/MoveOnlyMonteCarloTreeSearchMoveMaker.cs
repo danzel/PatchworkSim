@@ -15,6 +15,10 @@ namespace PatchworkSim.AI.MoveMakers
 		private readonly int _iterations;
 		private readonly Random _random = new Random(0);
 		private readonly RandomMoveMaker _randomMoveMaker = new RandomMoveMaker(0);
+		/// <summary>
+		/// Used by SimulateRollout
+		/// </summary>
+		private readonly SimulationState _rolloutState = new SimulationState();
 
 		private static readonly SearchNodePool NodePool = new SearchNodePool();
 
@@ -50,7 +54,7 @@ namespace PatchworkSim.AI.MoveMakers
 					leaf = Select(leaf);
 
 					//Simulation
-					winningPlayer = Simulate(leaf.State);
+					winningPlayer = SimulateRollout(leaf.State);
 				}
 
 				//Backpropagation
@@ -87,7 +91,7 @@ namespace PatchworkSim.AI.MoveMakers
 
 		private SearchNode Select(SearchNode root)
 		{
-			while (root.Children != null)
+			while (root.Children.Count != 0) //Look for a leaf node (one we haven't expanded yet)
 			{
 				SearchNode bestNext = null;
 				double bestValue = Double.MinValue;
@@ -113,21 +117,22 @@ namespace PatchworkSim.AI.MoveMakers
 			return root;
 		}
 
-		private int Simulate(SimulationState baseState)
+		private int SimulateRollout(SimulationState baseState)
 		{
 			if (baseState.GameHasEnded)
 				return baseState.WinningPlayer;
 
-			var cloneState = baseState.Clone();
-			cloneState.Fidelity = SimulationFidelity.NoPiecePlacing;
+			_rolloutState.Pieces.Clear();
+			baseState.CloneTo(_rolloutState);
+			_rolloutState.Fidelity = SimulationFidelity.NoPiecePlacing;
 
 			//Run the game
-			while (!cloneState.GameHasEnded)
+			while (!_rolloutState.GameHasEnded)
 			{
-				_randomMoveMaker.MakeMove(cloneState);
+				_randomMoveMaker.MakeMove(_rolloutState);
 			}
 
-			return cloneState.WinningPlayer;
+			return _rolloutState.WinningPlayer;
 		}
 
 		internal class SearchNode
@@ -139,7 +144,7 @@ namespace PatchworkSim.AI.MoveMakers
 			/// </summary>
 			public int? PieceToPurchase;
 
-			public List<SearchNode> Children;
+			public readonly List<SearchNode> Children = new List<SearchNode>(4);
 
 			public int VisitCount;
 			public int Value;
@@ -148,16 +153,14 @@ namespace PatchworkSim.AI.MoveMakers
 
 			public void Expand()
 			{
-				if (Children != null)
+				if (Children.Count != 0)
 					throw new Exception("Cannot expand an already expanded node");
 				if (IsGameEnd)
 					throw new Exception("Cannot expand a GameEnd node");
 
-				Children = new List<SearchNode>(4);
-
 				//Advance
 				{
-					var stateClone = State.Clone();
+					var stateClone = State.Clone(); //TODO: Keep a SimulationState inside a SearchNode
 					stateClone.Fidelity = SimulationFidelity.NoPiecePlacing; //TODO Could do real placing
 					stateClone.PerformAdvanceMove();
 
@@ -172,7 +175,7 @@ namespace PatchworkSim.AI.MoveMakers
 					//This cares if they can actually place the piece only when expanding the root node
 					if (Helpers.ActivePlayerCanPurchasePiece(State, Helpers.GetNextPiece(State, i)))
 					{
-						var stateClone = State.Clone();
+						var stateClone = State.Clone(); //TODO: Keep a SimulationState inside a SearchNode
 						stateClone.Fidelity = SimulationFidelity.NoPiecePlacing; //TODO Could do real placing
 						var pieceIndex = stateClone.NextPieceIndex + i;
 						stateClone.PerformPurchasePiece(pieceIndex);
@@ -195,13 +198,10 @@ namespace PatchworkSim.AI.MoveMakers
 
 			public void RecursiveReturnToPool()
 			{
-				if (Children != null)
+				for (var i = 0; i < Children.Count; i++)
 				{
-					for (var i = 0; i < Children.Count; i++)
-					{
-						var c = Children[i];
-						c.RecursiveReturnToPool();
-					}
+					var c = Children[i];
+					c.RecursiveReturnToPool();
 				}
 				NodePool.Return(this);
 			}
@@ -210,7 +210,6 @@ namespace PatchworkSim.AI.MoveMakers
 		internal class SearchNodePool
 		{
 			private readonly ConcurrentBag<SearchNode> _nodePool = new ConcurrentBag<SearchNode>();
-			private readonly ConcurrentBag<List<SearchNode>> _listPool = new ConcurrentBag<List<SearchNode>>();
 
 			public SearchNode Get()
 			{
@@ -223,27 +222,13 @@ namespace PatchworkSim.AI.MoveMakers
 
 			public void Return(SearchNode value)
 			{
-				if (value.Children != null)
-				{
-					value.Children.Clear();
-					_listPool.Add(value.Children);
-					value.Children = null;
-				}
+				value.Children.Clear();
 
 				value.State = null;
 				value.Parent = null;
 				value.PieceToPurchase = null;
 
 				_nodePool.Add(value);
-			}
-
-			public List<SearchNode> GetList()
-			{
-				if (_listPool.TryTake(out var result))
-				{
-					return result;
-				}
-				return new List<SearchNode>(4);
 			}
 		}
 	}
