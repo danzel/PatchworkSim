@@ -31,23 +31,30 @@ namespace PatchworkSim.AI.MoveMakers
 				//Selection
 				var leaf = Select(root);
 
+				int winningPlayer;
 				if (leaf.IsGameEnd)
-					continue;
+				{
+					winningPlayer = leaf.State.WinningPlayer;
+				}
+				else
+				{
 
-				//Expansion
-				leaf.Expand();
+					//Expansion
+					leaf.Expand();
 
-				var newLeaf = Select(leaf);
+					//Randomly choose one of the newly expanded nodes
+					leaf = Select(leaf);
 
-				//Simulation
-				var winningPlayer = Simulate(newLeaf.State);
+					//Simulation
+					winningPlayer = Simulate(leaf.State);
+				}
 
 				//Backpropagation
 				do
 				{
-					newLeaf.ReceiveBackpropagation(winningPlayer);
-					newLeaf = newLeaf.Parent;
-				} while (newLeaf != null);
+					leaf.ReceiveBackpropagation(winningPlayer);
+					leaf = leaf.Parent;
+				} while (leaf != null);
 			}
 
 			//Perform the best move
