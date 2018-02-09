@@ -47,22 +47,22 @@ namespace PatchworkSim
 		/// <summary>
 		/// How many positions on each players board have been covered by patches (pieces or leather patches)
 		/// </summary>
-		public int[] PlayerBoardUsedLocationsCount;
+		public FixedArray2Int PlayerBoardUsedLocationsCount;
 
 		/// <summary>
 		/// The amount of buttons a player will earn when passing a button income marker
 		/// </summary>
-		public int[] PlayerButtonIncome;
+		public FixedArray2Int PlayerButtonIncome;
 
 		/// <summary>
 		/// How many buttons each player has, each player starts with 5
 		/// </summary>
-		public int[] PlayerButtonAmount;
+		public FixedArray2Int PlayerButtonAmount;
 
 		/// <summary>
 		/// The index of each player on the board, players start at 0
 		/// </summary>
-		public int[] PlayerPosition;
+		public FixedArray2Int PlayerPosition;
 
 		/// <summary>
 		/// The list of pieces (index in to PieceDefinition.AllPieceDefinitions) in picking order
@@ -127,10 +127,8 @@ namespace PatchworkSim
 			Fidelity = SimulationFidelity.FullSimulation;
 
 			PlayerBoardState = new BoardState[2];
-			PlayerBoardUsedLocationsCount = new[] { 0, 0 };
-			PlayerButtonIncome = new[] { 0, 0 };
-			PlayerButtonAmount = new[] { PlayerStartingButtons, PlayerStartingButtons };
-			PlayerPosition = new[] { 0, 0 };
+			PlayerButtonAmount[0] = PlayerStartingButtons;
+			PlayerButtonAmount[1] = PlayerStartingButtons;
 			ActivePlayer = 0;
 		}
 
