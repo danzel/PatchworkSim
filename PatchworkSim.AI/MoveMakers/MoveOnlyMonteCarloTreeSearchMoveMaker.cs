@@ -45,7 +45,7 @@ namespace PatchworkSim.AI.MoveMakers
 				//Backpropagation
 				do
 				{
-					newLeaf.ReceiveBackpropogation(winningPlayer);
+					newLeaf.ReceiveBackpropagation(winningPlayer);
 					newLeaf = newLeaf.Parent;
 				} while (newLeaf != null);
 			}
@@ -172,7 +172,7 @@ namespace PatchworkSim.AI.MoveMakers
 				}
 			}
 
-			public void ReceiveBackpropogation(int winningPlayer)
+			public void ReceiveBackpropagation(int winningPlayer)
 			{
 				VisitCount++;
 				if (Parent != null && winningPlayer == Parent.State.ActivePlayer)
