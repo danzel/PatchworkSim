@@ -116,6 +116,11 @@ namespace PatchworkSim
 			}
 		}
 
+		public SimulationState()
+			: this(new List<int>(PieceDefinition.AllPieceDefinitions.Length), 0)
+		{
+		}
+
 		/// <param name="pieces">This list is not cloned, we take ownership and modify the given list</param>
 		public SimulationState(List<int> pieces, int nextPieceIndex)
 		{
@@ -293,35 +298,47 @@ namespace PatchworkSim
 
 		public SimulationState Clone()
 		{
-			var state = new SimulationState(new List<int>(Pieces), NextPieceIndex);
-
-			//Copy over other values
-			state.LeatherPatchesIndex = LeatherPatchesIndex;
-
-			state.Fidelity = Fidelity;
-
-			state.PlayerBoardState[0] = PlayerBoardState[0];
-			state.PlayerBoardState[1] = PlayerBoardState[1];
-
-			state.PlayerBoardUsedLocationsCount[0] = PlayerBoardUsedLocationsCount[0];
-			state.PlayerBoardUsedLocationsCount[1] = PlayerBoardUsedLocationsCount[1];
-
-			state.PlayerButtonIncome[0] = PlayerButtonIncome[0];
-			state.PlayerButtonIncome[1] = PlayerButtonIncome[1];
-
-			state.PlayerButtonAmount[0] = PlayerButtonAmount[0];
-			state.PlayerButtonAmount[1] = PlayerButtonAmount[1];
-
-			state.PlayerPosition[0] = PlayerPosition[0];
-			state.PlayerPosition[1] = PlayerPosition[1];
-
-			state.ActivePlayer = ActivePlayer;
-
-			state.PieceToPlace = PieceToPlace;
-
-			state.PieceToPlacePlayer = PieceToPlacePlayer;
+			var state = new SimulationState(new List<int>(Pieces.Count), NextPieceIndex);
+			CloneTo(state);
 
 			return state;
+		}
+
+		public void CloneTo(SimulationState target)
+		{
+			if (Pieces.Count == 0)
+				throw new Exception("We dont have pieces WTF");
+			if (target.Pieces.Count != 0)
+				throw new Exception("Target already has pieces WTF");
+			for (var i = 0; i < Pieces.Count; i++)
+				target.Pieces.Add(Pieces[i]);
+			target.NextPieceIndex = NextPieceIndex;
+
+			//Copy over other values
+			target.LeatherPatchesIndex = LeatherPatchesIndex;
+
+			target.Fidelity = Fidelity;
+
+			target.PlayerBoardState[0] = PlayerBoardState[0];
+			target.PlayerBoardState[1] = PlayerBoardState[1];
+
+			target.PlayerBoardUsedLocationsCount[0] = PlayerBoardUsedLocationsCount[0];
+			target.PlayerBoardUsedLocationsCount[1] = PlayerBoardUsedLocationsCount[1];
+
+			target.PlayerButtonIncome[0] = PlayerButtonIncome[0];
+			target.PlayerButtonIncome[1] = PlayerButtonIncome[1];
+
+			target.PlayerButtonAmount[0] = PlayerButtonAmount[0];
+			target.PlayerButtonAmount[1] = PlayerButtonAmount[1];
+
+			target.PlayerPosition[0] = PlayerPosition[0];
+			target.PlayerPosition[1] = PlayerPosition[1];
+
+			target.ActivePlayer = ActivePlayer;
+
+			target.PieceToPlace = PieceToPlace;
+
+			target.PieceToPlacePlayer = PieceToPlacePlayer;
 		}
 	}
 }
