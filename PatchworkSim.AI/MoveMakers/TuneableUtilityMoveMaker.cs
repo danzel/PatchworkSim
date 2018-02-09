@@ -28,7 +28,7 @@ namespace PatchworkSim.AI.MoveMakers
 						Math.Max(Math.Max(Math.Abs(IncomeUtility), Math.Abs(IncomeSquaredUtility)),
 							Math.Max(Math.Abs(GetAnotherTurnUtility), Math.Abs(ReceiveIncomeUtility))));
 
-				return $"TuneableUtility({AdvancingPerButtonUtility / max},{UsedLocationUtility / max},{ButtonCostUtility / max},{TimeCostUtility / max},{IncomeUtility / max},{IncomeSquaredUtility / max},{GetAnotherTurnUtility / max},{ReceiveIncomeUtility / max})";
+				return $"TuneableUtility({AdvancingPerButtonUtility / max}|{UsedLocationUtility / max}|{ButtonCostUtility / max}|{TimeCostUtility / max}|{IncomeUtility / max}|{IncomeSquaredUtility / max}|{GetAnotherTurnUtility / max}|{ReceiveIncomeUtility / max})";
 			}
 		}
 
