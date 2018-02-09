@@ -115,8 +115,6 @@ namespace PatchworkSim.AI.MoveMakers
 			var cloneState = baseState.Clone();
 			cloneState.Fidelity = SimulationFidelity.NoPiecePlacing;
 
-			cloneState.PerformAdvanceMove();
-
 			//Run the game
 			while (!cloneState.GameHasEnded)
 			{
