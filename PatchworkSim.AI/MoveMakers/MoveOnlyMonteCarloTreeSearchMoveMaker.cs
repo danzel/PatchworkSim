@@ -209,11 +209,13 @@ namespace PatchworkSim.AI.MoveMakers
 
 		internal class SearchNodePool
 		{
-			private readonly ConcurrentBag<SearchNode> _nodePool = new ConcurrentBag<SearchNode>();
+			//Stack seems 2% faster than Bag
+			//Queue seems 5% faster than Bag
+			private readonly ConcurrentQueue<SearchNode> _nodePool = new ConcurrentQueue<SearchNode>();
 
 			public SearchNode Get()
 			{
-				if (_nodePool.TryTake(out SearchNode result))
+				if (_nodePool.TryDequeue(out SearchNode result))
 				{
 					return result;
 				}
@@ -229,7 +231,7 @@ namespace PatchworkSim.AI.MoveMakers
 				value.Parent = null;
 				value.PieceToPurchase = null;
 
-				_nodePool.Add(value);
+				_nodePool.Enqueue(value);
 			}
 		}
 	}
