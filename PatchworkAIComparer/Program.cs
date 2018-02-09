@@ -120,7 +120,7 @@ namespace PatchworkAIComparer
 			//TODO: Play each AI against each other AI 100 times and print a table of results
 
 			var totalWins = new int[aiToTest.Length, aiToTest.Length];
-			Console.WriteLine($"Running {aiToTest.Length * (aiToTest.Length - 1)} * {TotalRuns} Games");
+			Console.WriteLine($"Running {aiToTest.Length * (aiToTest.Length - 1) / 2} * {TotalRuns} Games");
 			int gameNumber = 0;
 
 			for (var a = 0; a < aiToTest.Length; a++)
