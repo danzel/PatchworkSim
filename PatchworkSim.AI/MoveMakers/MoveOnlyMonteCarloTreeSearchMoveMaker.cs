@@ -15,7 +15,7 @@ namespace PatchworkSim.AI.MoveMakers
 
 		private readonly int _iterations;
 		private readonly Random _random = new Random(0);
-		private readonly RandomMoveMaker _randomMoveMaker = new RandomMoveMaker(0);
+		private readonly IMoveDecisionMaker _rolloutMoveMaker;
 		/// <summary>
 		/// Used by SimulateRollout
 		/// </summary>
@@ -23,9 +23,10 @@ namespace PatchworkSim.AI.MoveMakers
 
 		private static readonly SearchNodePool NodePool = new SearchNodePool();
 
-		public MoveOnlyMonteCarloTreeSearchMoveMaker(int iterations)
+		public MoveOnlyMonteCarloTreeSearchMoveMaker(int iterations, IMoveDecisionMaker rolloutMoveMaker = null)
 		{
 			_iterations = iterations;
+			_rolloutMoveMaker = rolloutMoveMaker ?? new RandomMoveMaker(0);
 		}
 
 		// http://mcts.ai/about/index.html
@@ -132,7 +133,7 @@ namespace PatchworkSim.AI.MoveMakers
 			//Run the game
 			while (!_rolloutState.GameHasEnded)
 			{
-				_randomMoveMaker.MakeMove(_rolloutState);
+				_rolloutMoveMaker.MakeMove(_rolloutState);
 			}
 
 			return _rolloutState.WinningPlayer;
