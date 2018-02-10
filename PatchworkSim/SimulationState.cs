@@ -306,10 +306,12 @@ namespace PatchworkSim
 
 		public void CloneTo(SimulationState target)
 		{
+#if DEBUG
 			if (Pieces.Count == 0)
 				throw new Exception("We dont have pieces WTF");
 			if (target.Pieces.Count != 0)
 				throw new Exception("Target already has pieces WTF");
+#endif
 			for (var i = 0; i < Pieces.Count; i++)
 				target.Pieces.Add(Pieces[i]);
 			target.NextPieceIndex = NextPieceIndex;

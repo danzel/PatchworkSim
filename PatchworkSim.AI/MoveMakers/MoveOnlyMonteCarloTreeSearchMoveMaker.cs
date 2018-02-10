@@ -156,11 +156,12 @@ namespace PatchworkSim.AI.MoveMakers
 
 			public void Expand()
 			{
+#if DEBUG
 				if (Children.Count != 0)
 					throw new Exception("Cannot expand an already expanded node");
 				if (IsGameEnd)
 					throw new Exception("Cannot expand a GameEnd node");
-
+#endif
 				//Advance
 				{
 					var node = NodePool.Get();
