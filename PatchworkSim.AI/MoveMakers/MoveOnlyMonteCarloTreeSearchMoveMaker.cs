@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace PatchworkSim.AI.MoveMakers
 {
@@ -83,7 +84,9 @@ namespace PatchworkSim.AI.MoveMakers
 			else
 				state.PerformAdvanceMove();
 
+			//NodePool.BeginReturn();
 			root.RecursiveReturnToPool();
+			//NodePool.EndReturn();
 		}
 
 		private static readonly double epsilon = 1e-6;
@@ -207,18 +210,57 @@ namespace PatchworkSim.AI.MoveMakers
 			}
 		}
 
+
+
 		internal class SearchNodePool
 		{
-			//Stack seems 2% faster than Bag
-			//Queue seems 5% faster than Bag
-			private readonly ConcurrentQueue<SearchNode> _nodePool = new ConcurrentQueue<SearchNode>();
+			class PoolBlock
+			{
+				public readonly Stack<SearchNode> Nodes = new Stack<SearchNode>(1000);
+			}
+
+			private readonly Stack<PoolBlock> _emptyBlocks = new Stack<PoolBlock>(100);
+			private readonly Stack<PoolBlock> _fullBlocks = new Stack<PoolBlock>(100);
+
+			private readonly ThreadLocal<PoolBlock> _activeBlock = new ThreadLocal<PoolBlock>(() => null, false);
 
 			public SearchNode Get()
 			{
-				if (_nodePool.TryDequeue(out SearchNode result))
+				//When reading from the block, read from Index and decrement (then check empty)
+				//When writing to the block, write at Index and increment (then check full)
+
+				//TODO: Should we try grab a full block if we don't have a block?
+
+				//If we have a block, get a node out of it
+				var block = _activeBlock.Value;
+				if (block != null)
 				{
+					var result = block.Nodes.Pop();
+
+					//Check if we've emptied the block
+					if (block.Nodes.Count == 0)
+					{
+						//Return the block
+						lock (_emptyBlocks)
+							_emptyBlocks.Push(block);
+
+						//Try get a new block
+						_activeBlock.Value = null;
+						lock (_fullBlocks)
+						{
+							if (_fullBlocks.Count > 0)
+							{
+								_activeBlock.Value = _fullBlocks.Pop();
+								//Console.WriteLine("Fetching FullBlock");
+							}
+						}
+					}
+
 					return result;
 				}
+
+				//TODO: Should we try get a block if we don't have one?
+
 				return new SearchNode();
 			}
 
@@ -231,7 +273,32 @@ namespace PatchworkSim.AI.MoveMakers
 				value.Parent = null;
 				value.PieceToPurchase = null;
 
-				_nodePool.Enqueue(value);
+				var block = _activeBlock.Value;
+
+				//If our current block is full, get rid of it
+				if (block != null && block.Nodes.Count == 1000)
+				{
+					lock (_fullBlocks)
+						_fullBlocks.Push(block);
+					//Console.WriteLine("Pushing FullBlock");
+					block = null;
+				}
+
+				//Get a block to put it in if needed
+				if (block == null)
+				{
+					lock (_emptyBlocks)
+					{
+						if (_emptyBlocks.Count > 0)
+							block = _activeBlock.Value = _emptyBlocks.Pop();
+					}
+
+					//No spare ones, make a new one
+					if (block == null)
+						block = _activeBlock.Value = new PoolBlock();
+				}
+
+				block.Nodes.Push(value);
 			}
 		}
 	}
