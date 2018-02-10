@@ -29,9 +29,9 @@ namespace PatchworkRunner
 			var sw = Stopwatch.StartNew();
 
 #if PERF_PARALLEL
-			Parallel.For(0, 10, (run) => //6480
+			Parallel.For(0, 10, (run) => //5900
 			#else
-			for (var run = 0; run < 10; run++) //18700
+			for (var run = 0; run < 10; run++) //18200
 #endif
 			{
 				var a = new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000), PlacementMaker.FirstPossibleInstance);

@@ -210,56 +210,14 @@ namespace PatchworkSim.AI.MoveMakers
 			}
 		}
 
-
-
 		internal class SearchNodePool
 		{
-			class PoolBlock
-			{
-				public readonly Stack<SearchNode> Nodes = new Stack<SearchNode>(1000);
-			}
-
-			private readonly Stack<PoolBlock> _emptyBlocks = new Stack<PoolBlock>(100);
-			private readonly Stack<PoolBlock> _fullBlocks = new Stack<PoolBlock>(100);
-
-			private readonly ThreadLocal<PoolBlock> _activeBlock = new ThreadLocal<PoolBlock>(() => null, false);
+			private readonly ThreadLocal<Stack<SearchNode>> _searchNodePool = new ThreadLocal<Stack<SearchNode>>(() => new Stack<SearchNode>(), false);
 
 			public SearchNode Get()
 			{
-				//When reading from the block, read from Index and decrement (then check empty)
-				//When writing to the block, write at Index and increment (then check full)
-
-				//TODO: Should we try grab a full block if we don't have a block?
-
-				//If we have a block, get a node out of it
-				var block = _activeBlock.Value;
-				if (block != null)
-				{
-					var result = block.Nodes.Pop();
-
-					//Check if we've emptied the block
-					if (block.Nodes.Count == 0)
-					{
-						//Return the block
-						lock (_emptyBlocks)
-							_emptyBlocks.Push(block);
-
-						//Try get a new block
-						_activeBlock.Value = null;
-						lock (_fullBlocks)
-						{
-							if (_fullBlocks.Count > 0)
-							{
-								_activeBlock.Value = _fullBlocks.Pop();
-								//Console.WriteLine("Fetching FullBlock");
-							}
-						}
-					}
-
-					return result;
-				}
-
-				//TODO: Should we try get a block if we don't have one?
+				if (_searchNodePool.Value.Count > 0)
+					return _searchNodePool.Value.Pop();
 
 				return new SearchNode();
 			}
@@ -273,32 +231,7 @@ namespace PatchworkSim.AI.MoveMakers
 				value.Parent = null;
 				value.PieceToPurchase = null;
 
-				var block = _activeBlock.Value;
-
-				//If our current block is full, get rid of it
-				if (block != null && block.Nodes.Count == 1000)
-				{
-					lock (_fullBlocks)
-						_fullBlocks.Push(block);
-					//Console.WriteLine("Pushing FullBlock");
-					block = null;
-				}
-
-				//Get a block to put it in if needed
-				if (block == null)
-				{
-					lock (_emptyBlocks)
-					{
-						if (_emptyBlocks.Count > 0)
-							block = _activeBlock.Value = _emptyBlocks.Pop();
-					}
-
-					//No spare ones, make a new one
-					if (block == null)
-						block = _activeBlock.Value = new PoolBlock();
-				}
-
-				block.Nodes.Push(value);
+				_searchNodePool.Value.Push(value);
 			}
 		}
 	}
