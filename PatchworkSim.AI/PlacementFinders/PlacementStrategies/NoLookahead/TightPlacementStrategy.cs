@@ -41,7 +41,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead
 					{
 						if (board.CanPlace(bitmap,x , y))
 						{
-							CalculateScore(board, bitmap, x, y, out var score);
+							CalculateScore(board, bitmap, x, y, _doubler, out var score);
 							if (score < bestScore)
 							{
 								bestScore = score;
@@ -79,11 +79,16 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead
 			return resultBitmap != null;
 		}
 
-		private void CalculateScore(BoardState board, PieceBitmap bitmap, int placeX, int placeY, out int score)
+		private static void CalculateScore(BoardState board, PieceBitmap bitmap, int placeX, int placeY, bool doubler, out int score)
+		{
+			board.Place(bitmap, placeX, placeY);
+
+			CalculateScore(board, doubler, out score);
+		}
+
+		public static void CalculateScore(BoardState board, bool doubler, out int score)
 		{
 			score = 0;
-
-			board.Place(bitmap, placeX, placeY);
 
 			//Scan down
 			for (var x = 0; x < BoardState.Width; x++)
@@ -97,7 +102,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead
 
 					if (thisOne != last)
 					{
-						if (_doubler)
+						if (doubler)
 							thisScore *= 2;
 						else
 							thisScore++;
@@ -122,7 +127,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead
 
 					if (thisOne != last)
 					{
-						if (_doubler)
+						if (doubler)
 							thisScore *= 2;
 						else
 							thisScore++;

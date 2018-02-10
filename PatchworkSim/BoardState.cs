@@ -1,5 +1,6 @@
 ﻿//#define SAFE_MODE
 using System;
+using System.Diagnostics.Contracts;
 
 namespace PatchworkSim
 {
@@ -28,6 +29,7 @@ namespace PatchworkSim
 			}
 		}
 
+		[Pure]
 		public bool CanPlace(PieceBitmap bitmap, int x, int y)
 		{
 #if SAFE_MODE

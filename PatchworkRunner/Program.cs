@@ -16,9 +16,9 @@ namespace PatchworkRunner
 	{
 		static void Main(string[] args)
 		{
-			RunMoveMakerForPerformance();
+			//RunMoveMakerForPerformance();
 
-			//ComparePlacementStrategies();
+			ComparePlacementStrategies();
 			//WatchAGame();
 
 			//new GeneticTuneableUtilityEvolver().Run();
@@ -63,12 +63,21 @@ namespace PatchworkRunner
 				//FirstPossiblePlacementStrategy.Instance,
 				//SimpleClosestToWallAndCornerStrategy.Instance,
 				//SmallestBoundingBoxPlacementStrategy.Instance
-				ClosestToCornerLeastHolesTieBreakerPlacementStrategy.Instance,
-				NextToPieceEdgeLeastHolesTieBreakerPlacementStrategy.Instance,
-				TightPlacementStrategy.InstanceDoubler,
-				TightPlacementStrategy.InstanceIncrement,
+				//ClosestToCornerLeastHolesTieBreakerPlacementStrategy.Instance,
+				//NextToPieceEdgeLeastHolesTieBreakerPlacementStrategy.Instance,
+				//TightPlacementStrategy.InstanceDoubler,
+				//TightPlacementStrategy.InstanceIncrement,
 				ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_1,
-				ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_6,
+				//ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_6,
+				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 1000, 4),
+				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 1000, 8),
+				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 10000, 4),
+				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 10000, 8),
+
+				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 1000, 4),
+				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 1000, 8),
+				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 10000, 4),
+				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 10000, 8),
 			};
 
 			//ExhaustiveMostFuturePlacementsPlacementStrategy
