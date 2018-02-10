@@ -11,7 +11,7 @@ namespace PatchworkSim.AI.MoveMakers
 	/// </summary>
 	public class MoveOnlyMonteCarloTreeSearchMoveMaker : IMoveDecisionMaker
 	{
-		public string Name => $"MonteCarloTreeSearchMoveMaker({_iterations})";
+		public string Name => $"MO-MCTS({_iterations}+{_rolloutMoveMaker.Name})";
 
 		private readonly int _iterations;
 		private readonly Random _random = new Random(0);
