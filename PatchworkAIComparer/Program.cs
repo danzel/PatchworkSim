@@ -17,9 +17,9 @@ namespace PatchworkAIComparer
 	{
 		static void Main(string[] args)
 		{
-			TestFullAi();
+			//TestFullAi();
 
-			//TestPlacementOnly();
+			TestPlacementOnly();
 		}
 
 		static void TestFullAi()
@@ -221,6 +221,17 @@ namespace PatchworkAIComparer
 				TightPlacementStrategy.InstanceIncrement,
 				ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_1,
 				ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_6,
+
+				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 1000, 4),
+				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 1000, 8),
+				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 10000, 4),
+				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 10000, 8),
+
+				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 1000, 4),
+				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 1000, 8),
+				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 10000, 4),
+				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 10000, 8),
+
 			};
 
 			foreach (var strategy in strategies)
@@ -242,13 +253,13 @@ namespace PatchworkAIComparer
 						pieces.RemoveAt(index);
 						index = index % pieces.Count;
 
-						if (strategy.TryPlacePiece(board, PieceDefinition.AllPieceDefinitions[piece], pieces, 0, out var bitmap, out var x, out var y))
+						if (strategy.TryPlacePiece(board, PieceDefinition.AllPieceDefinitions[piece], pieces, index, out var bitmap, out var x, out var y))
 						{
 							placed++;
 							board.Place(bitmap, x, y);
 
 							//Advance to a random one in the next 6 pieces (TODO: Would be good to bias this towards 1-3 as these are more likely)
-							index = (index + rand.Next(0, 6)) % pieces.Count;
+							//index = (index + rand.Next(0, 6)) % pieces.Count;
 						}
 						else
 						{
