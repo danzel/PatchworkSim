@@ -13,6 +13,8 @@
 		private readonly int _playouts;
 		private readonly RandomMoveMaker _randomMoveMaker;
 
+		private readonly SimulationState _simulationState = new SimulationState();
+
 		/// <param name="depth">How many turns are evaluated before stopping (Should be an even number)</param>
 		/// <param name="playouts">How many playouts of the game are performed for each move evaluation</param>
 		public QuickRandomSearchMoveMaker(int depth, int playouts, int randomSeed = 0)
@@ -59,18 +61,20 @@
 
 			for (var i = 0; i < playoutsPerMove; i++)
 			{
-				var cloneState = baseState.Clone();
-				cloneState.Fidelity = SimulationFidelity.NoPiecePlacing;
+				_simulationState.Pieces.Clear();
+				baseState.CloneTo(_simulationState);
 
-				cloneState.PerformAdvanceMove();
+				_simulationState.Fidelity = SimulationFidelity.NoPiecePlacing;
+
+				_simulationState.PerformAdvanceMove();
 				
 				//Run the game
-				for (var move = 1; move < _depth && !cloneState.GameHasEnded; move++)
+				for (var move = 1; move < _depth && !_simulationState.GameHasEnded; move++)
 				{
-					_randomMoveMaker.MakeMove(cloneState);
+					_randomMoveMaker.MakeMove(_simulationState);
 				}
 
-				var winner = EvaluateWinningPlayer(cloneState);
+				var winner = EvaluateWinningPlayer(_simulationState);
 				if (winner == baseState.ActivePlayer)
 					wins++;
 			}
@@ -88,18 +92,19 @@
 
 			for (var i = 0; i < playoutsPerMove; i++)
 			{
-				var cloneState = baseState.Clone();
-				cloneState.Fidelity = SimulationFidelity.NoPiecePlacing;
+				_simulationState.Pieces.Clear();
+				baseState.CloneTo(_simulationState);
+				_simulationState.Fidelity = SimulationFidelity.NoPiecePlacing;
 
-				cloneState.PerformPurchasePiece(cloneState.NextPieceIndex + pieceIndex);
+				_simulationState.PerformPurchasePiece(_simulationState.NextPieceIndex + pieceIndex);
 				
 				//Run the game
-				for (var move = 1; move < _depth && !cloneState.GameHasEnded; move++)
+				for (var move = 1; move < _depth && !_simulationState.GameHasEnded; move++)
 				{
-					_randomMoveMaker.MakeMove(cloneState);
+					_randomMoveMaker.MakeMove(_simulationState);
 				}
 
-				var winner = EvaluateWinningPlayer(cloneState);
+				var winner = EvaluateWinningPlayer(_simulationState);
 				if (winner == baseState.ActivePlayer)
 					wins++;
 			}
