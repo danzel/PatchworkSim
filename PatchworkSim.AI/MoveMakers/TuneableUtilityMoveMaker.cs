@@ -7,6 +7,8 @@ namespace PatchworkSim.AI.MoveMakers
 	/// </summary>
 	public class TuneableUtilityMoveMaker : BaseUtilityMoveMaker
 	{
+		public static readonly TuneableUtilityMoveMaker Tuning1 = new TuneableUtilityMoveMaker(-0.03892573, 1, -0.593965087, -0.984706754, 0.554044008, -0.052553921, 0.609957017, -0.015045333, "Tuning1");
+
 		public readonly double AdvancingPerButtonUtility;
 		public readonly double UsedLocationUtility;
 		public readonly double ButtonCostUtility;
@@ -15,11 +17,15 @@ namespace PatchworkSim.AI.MoveMakers
 		public readonly double IncomeSquaredUtility;
 		public readonly double GetAnotherTurnUtility;
 		public readonly double ReceiveIncomeUtility;
+		private readonly string _name;
 
 		public override string Name
 		{
 			get
 			{
+				if (_name != null)
+					return _name;
+
 				var max =
 					Math.Max(
 						Math.Max(
@@ -35,7 +41,7 @@ namespace PatchworkSim.AI.MoveMakers
 		/// <summary>
 		/// Utility values should range from -1 to 1. They will be individually capped at that range after calculating them.
 		/// </summary>
-		public TuneableUtilityMoveMaker(double advancingPerButtonUtility, double usedLocationUtility, double buttonCostUtility, double timeCostUtility, double incomeUtility, double incomeSquaredUtility, double getAnotherTurnUtility, double receiveIncomeUtility)
+		public TuneableUtilityMoveMaker(double advancingPerButtonUtility, double usedLocationUtility, double buttonCostUtility, double timeCostUtility, double incomeUtility, double incomeSquaredUtility, double getAnotherTurnUtility, double receiveIncomeUtility, string name = null)
 		{
 			AdvancingPerButtonUtility = advancingPerButtonUtility;
 			UsedLocationUtility = usedLocationUtility;
@@ -45,6 +51,8 @@ namespace PatchworkSim.AI.MoveMakers
 			IncomeSquaredUtility = incomeSquaredUtility;
 			GetAnotherTurnUtility = getAnotherTurnUtility;
 			ReceiveIncomeUtility = receiveIncomeUtility;
+
+			_name = name;
 		}
 
 
