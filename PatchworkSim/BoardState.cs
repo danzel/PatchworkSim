@@ -83,7 +83,7 @@ namespace PatchworkSim
 			}
 		}
 
-		private static readonly UInt128[,] XYToPositionMask;
+		private static readonly UInt128[,] XYToPositionMask; //TODO: This could be a single dimensional array which might be faster
 
 		static BoardState()
 		{

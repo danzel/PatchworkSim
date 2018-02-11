@@ -177,7 +177,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 
 			public double Utility;
 			public double ChildrenUtilitySum;
-			public List<SearchNode> Children = null;
+			public List<SearchNode> Children;
 
 			public SearchNode(BoardState board, PieceBitmap bitmap, int x, int y, int depth)
 			{

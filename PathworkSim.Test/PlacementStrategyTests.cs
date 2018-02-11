@@ -44,6 +44,12 @@ namespace PathworkSim.Test
 		}
 
 		[Fact]
+		public void WeightedTreeSearchTight()
+		{
+			TestStrategy(new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 100, 4), 14);
+		}
+
+		[Fact]
 		public void ExhaustiveMostFuturePlacements()
 		{
 			TestStrategy(ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_1, 13);
