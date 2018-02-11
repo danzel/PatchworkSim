@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
 
 namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
@@ -19,6 +20,8 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 
 		private readonly Random _random = new Random(0);
 
+		private static readonly SearchNodePool NodePool = new SearchNodePool();
+
 		public WeightedTreeSearchPlacementStrategy(WTSUtilityFunction utilityFunction, int iterations, int maxBranching)
 		{
 			_utilityFunction = utilityFunction;
@@ -31,7 +34,12 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 			//TODO: When board is empty we should remove rotations/mirrors of the placements (not worth it on future ones)
 			//TODO: How should we select which piece we are likely to place after the first one? For now we will always assume we get the next one in the list
 
-			var root = new SearchNode(board, null, -1, -1, -1);
+			var root = NodePool.Get(_maxBranching);
+			root.Board = board;
+			root.Bitmap = null;
+			root.X = -1;
+			root.Y = -1;
+			root.Depth = -1;
 
 			Expand(root, piece);
 
@@ -79,6 +87,9 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 				bitmap = bestChild.Bitmap;
 				x = bestChild.X;
 				y = bestChild.Y;
+
+				root.RecursiveReturnToPool();
+				//NodePool.Dump();
 				return true;
 			}
 			else
@@ -86,13 +97,16 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 				bitmap = null;
 				x = 0;
 				y = 0;
+
+				root.RecursiveReturnToPool();
+				//NodePool.Dump();
 				return false;
 			}
 		}
 
 		private SearchNode Select(SearchNode currentRoot)
 		{
-			while (currentRoot.Children != null) //Look for a leaf node (one we haven't expanded yet)
+			while (currentRoot.HasBeenExpanded) //Look for a leaf node (one we haven't expanded yet)
 			{
 				//Hit a leaf that has no future possible placements
 				if (currentRoot.Children.Count == 0)
@@ -123,9 +137,10 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 			return currentRoot;
 		}
 
+		private readonly List<SearchNode> _tempChildren = new List<SearchNode>(BoardState.Width * BoardState.Height);
 		private void Expand(SearchNode node, PieceDefinition piece)
 		{
-			var children = new List<SearchNode>();
+			node.HasBeenExpanded = true;
 
 			//Exhaustively place it and make new child nodes
 			for (var index = 0; index < piece.PossibleOrientations.Length; index++)
@@ -139,10 +154,16 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 						{
 							var copy = node.Board;
 							copy.Place(bitmap, x, y);
-							var child = new SearchNode(copy, bitmap, x, y, node.Depth + 1);
+							var child = NodePool.Get(_maxBranching);
+							child.Board = copy;
+							child.Bitmap = bitmap;
+							child.X = x;
+							child.Y = y;
+							child.Depth = node.Depth + 1;
+
 							//evaluate child nodes
 							child.Utility = _utilityFunction.Evaluate(copy);
-							children.Add(child);
+							_tempChildren.Add(child);
 						}
 					}
 				}
@@ -150,42 +171,51 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 
 			//TODO: If this is the first piece, remove mirrors/rotations from the children
 
+			//TODO: Could have smaller children lists in the nodes if we sorted and pruned here in our own list, then copied the elements over
+
 			//Sort child nodes
-			children.Sort();
+			_tempChildren.Sort();
 
 			//Remove excess child nodes
-			if (children.Count > _maxBranching)
-				children.RemoveRange(_maxBranching, children.Count - _maxBranching);
-
-			//Set children
-			node.Children = children;
-
-			for (var i = 0; i < children.Count; i++)
+			if (_tempChildren.Count > _maxBranching)
 			{
-				var c = children[i];
+				for (var i = _maxBranching; i < _tempChildren.Count; i++)
+				{
+					NodePool.Return(_tempChildren[i]);
+				}
+				//node.Children.RemoveRange(_maxBranching, node.Children.Count - _maxBranching);
+			}
+
+			//Move them to the node
+			for (var i = 0; i < Math.Min(_maxBranching, _tempChildren.Count); i++)
+				node.Children.Add(_tempChildren[i]);
+
+			node.ChildrenUtilitySum = 0;
+			for (var i = 0; i < node.Children.Count; i++)
+			{
+				var c = node.Children[i];
 				node.ChildrenUtilitySum += c.Utility;
 			}
+
+			_tempChildren.Clear();
 		}
 
 
 		class SearchNode : IComparable<SearchNode>
 		{
-			public readonly BoardState Board;
-			public readonly PieceBitmap Bitmap;
-			public readonly int X, Y;
-			public readonly int Depth;
+			public BoardState Board;
+			public PieceBitmap Bitmap;
+			public int X, Y;
+			public int Depth;
 
 			public double Utility;
 			public double ChildrenUtilitySum;
-			public List<SearchNode> Children;
+			public bool HasBeenExpanded = false;
+			public readonly List<SearchNode> Children;
 
-			public SearchNode(BoardState board, PieceBitmap bitmap, int x, int y, int depth)
+			public SearchNode(int maxChildCount)
 			{
-				Board = board;
-				Bitmap = bitmap;
-				X = x;
-				Y = y;
-				Depth = depth;
+				Children = new List<SearchNode>(4);
 			}
 
 			public int CompareTo(SearchNode other)
@@ -196,17 +226,61 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 			public int CalculateMaxChildDepth()
 			{
 				var deepest = Depth;
-				if (Children != null)
+				for (var i = 0; i < Children.Count; i++)
 				{
-					for (var i = 0; i < Children.Count; i++)
-					{
-						var c = Children[i];
-						deepest = Math.Max(deepest, c.CalculateMaxChildDepth());
-					}
+					var c = Children[i];
+					deepest = Math.Max(deepest, c.CalculateMaxChildDepth());
 				}
 
 				return deepest;
 			}
+
+			public void RecursiveReturnToPool()
+			{
+				for (var i = 0; i < Children.Count; i++)
+				{
+					var c = Children[i];
+					c.RecursiveReturnToPool();
+				}
+				NodePool.Return(this);
+			}
+		}
+
+		class SearchNodePool
+		{
+			private readonly ThreadLocal<Stack<SearchNode>> _searchNodePool = new ThreadLocal<Stack<SearchNode>>(() => new Stack<SearchNode>(), false);
+
+			//public int Allocations = 0;
+			//public int Returns = 0;
+			//public int FetchedFromPool = 0;
+
+			internal SearchNode Get(int maxChildCount)
+			{
+				if (_searchNodePool.Value.Count > 0)
+				{
+					//FetchedFromPool++;
+					return _searchNodePool.Value.Pop();
+				}
+
+				//Allocations++;
+				return new SearchNode(maxChildCount);
+			}
+
+			internal void Return(SearchNode value)
+			{
+				//Returns++;
+				value.Children.Clear();
+				value.HasBeenExpanded = false;
+
+				_searchNodePool.Value.Push(value);
+			}
+			/*
+			public void Dump()
+			{
+				Console.WriteLine($"Allocations {Allocations}");
+				Console.WriteLine($"Returns {Returns}");
+				Console.WriteLine($"FetchedFromPool {FetchedFromPool}");
+			}*/
 		}
 
 
