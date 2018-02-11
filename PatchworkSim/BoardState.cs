@@ -19,13 +19,13 @@ namespace PatchworkSim
 
 		public bool this[int x, int y]
 		{
-			get { return !(_state & XYToPositionMask[x, y]).IsZero; }
+			get { return !(_state & XYToPositionMask[x + Width * y]).IsZero; }
 			set
 			{
 #if SAFE_MODE
 				if (!value) throw new Exception("Can only set positions, not unset them");
 #endif
-				_state |= XYToPositionMask[x, y];
+				_state |= XYToPositionMask[x + Width * y];
 			}
 		}
 
@@ -74,7 +74,7 @@ namespace PatchworkSim
 				{
 					for (var y = 0; y < Height; y++)
 					{
-						if (!(XYToPositionMask[x, y] & _state).IsZero)
+						if (!(XYToPositionMask[x + Width * y] & _state).IsZero)
 							sum++;
 					}
 				}
@@ -83,14 +83,14 @@ namespace PatchworkSim
 			}
 		}
 
-		private static readonly UInt128[,] XYToPositionMask; //TODO: This could be a single dimensional array which might be faster
+		private static readonly UInt128[] XYToPositionMask;
 
 		static BoardState()
 		{
-			XYToPositionMask = new UInt128[Width, Height];
+			XYToPositionMask = new UInt128[Width * Height];
 			for (var x = 0; x < Width; x++)
 				for (var y = 0; y < Height; y++)
-					XYToPositionMask[x, y] = UInt128.One << (x + y * Width);
+					XYToPositionMask[x + Width * y] = UInt128.One << (x + y * Width);
 		}
 	}
 }
