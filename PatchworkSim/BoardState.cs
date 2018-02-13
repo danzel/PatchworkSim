@@ -83,6 +83,8 @@ namespace PatchworkSim
 			}
 		}
 
+		public bool IsEmpty => _state.IsZero;
+
 		private static readonly UInt128[] XYToPositionMask;
 
 		static BoardState()

@@ -41,7 +41,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 			root.Y = -1;
 			root.Depth = -1;
 
-			Expand(root, piece);
+			Expand(root, piece, board.IsEmpty);
 
 			//Perform a MCTS style thingy, but weighting going down a branch by the utility function
 			int stuckCount = 0;
@@ -55,7 +55,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 					continue;
 				}
 
-				Expand(leaf, PieceDefinition.AllPieceDefinitions[possibleFuturePieces[(possibleFuturePiecesOffset + leaf.Depth) % possibleFuturePieces.Count]]);
+				Expand(leaf, PieceDefinition.AllPieceDefinitions[possibleFuturePieces[(possibleFuturePiecesOffset + leaf.Depth) % possibleFuturePieces.Count]], false);
 			}
 
 			if (root.Children.Count > 0)
@@ -137,7 +137,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 			return currentRoot;
 		}
 
-		private void Expand(SearchNode node, PieceDefinition piece)
+		private void Expand(SearchNode node, PieceDefinition piece, bool isFirstPiece)
 		{
 			node.HasBeenExpanded = true;
 			var children = node.Children;
@@ -146,9 +146,20 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 			for (var index = 0; index < piece.PossibleOrientations.Length; index++)
 			{
 				var bitmap = piece.PossibleOrientations[index];
-				for (int x = 0; x < BoardState.Width - bitmap.Width + 1; x++)
+				var searchWidth = BoardState.Width - bitmap.Width + 1;
+				var searchHeight = BoardState.Height - bitmap.Height + 1;
+
+				//If this is the first piece, remove mirrors/rotations from the children
+				if (isFirstPiece)
 				{
-					for (int y = 0; y < BoardState.Height - bitmap.Height + 1; y++)
+					//TODO: This doesn't stop diagonal mirrors
+					searchWidth = (BoardState.Width - bitmap.Width) / 2 + 1;
+					searchHeight = (BoardState.Height - bitmap.Height) / 2 + 1;
+				}
+
+				for (int x = 0; x < searchWidth; x++)
+				{
+					for (int y = 0; y < searchHeight; y++)
 					{
 						if (node.Board.CanPlace(bitmap, x, y))
 						{
@@ -203,8 +214,6 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 					}
 				}
 			}
-
-			//TODO: If this is the first piece, remove mirrors/rotations from the children
 
 			node.ChildrenUtilitySum = 0;
 			for (var i = 0; i < node.Children.Count; i++)
