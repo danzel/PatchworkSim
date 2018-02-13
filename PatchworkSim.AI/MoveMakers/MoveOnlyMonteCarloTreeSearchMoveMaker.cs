@@ -16,12 +16,13 @@ namespace PatchworkSim.AI.MoveMakers
 		private readonly int _iterations;
 		private readonly Random _random = new Random(0);
 		private readonly IMoveDecisionMaker _rolloutMoveMaker;
+
 		/// <summary>
 		/// Used by SimulateRollout
 		/// </summary>
 		private readonly SimulationState _rolloutState = new SimulationState();
 
-		private static readonly SearchNodePool NodePool = new SearchNodePool();
+		private static readonly ThreadLocal<SearchNodePool> NodePool = new ThreadLocal<SearchNodePool>(() => new SearchNodePool(), false);
 
 		public MoveOnlyMonteCarloTreeSearchMoveMaker(int iterations, IMoveDecisionMaker rolloutMoveMaker = null)
 		{
@@ -33,7 +34,7 @@ namespace PatchworkSim.AI.MoveMakers
 		// https://en.wikipedia.org/wiki/Monte_Carlo_tree_search
 		public void MakeMove(SimulationState state)
 		{
-			var root = NodePool.Get();
+			var root = NodePool.Value.Get();
 			state.CloneTo(root.State);
 
 			for (var i = 0; i < _iterations; i++)
@@ -48,7 +49,6 @@ namespace PatchworkSim.AI.MoveMakers
 				}
 				else
 				{
-
 					//Expansion
 					leaf.Expand();
 
@@ -85,9 +85,7 @@ namespace PatchworkSim.AI.MoveMakers
 			else
 				state.PerformAdvanceMove();
 
-			//NodePool.BeginReturn();
-			root.RecursiveReturnToPool();
-			//NodePool.EndReturn();
+			NodePool.Value.ReturnAll();
 		}
 
 		private static readonly double epsilon = 1e-6;
@@ -143,6 +141,7 @@ namespace PatchworkSim.AI.MoveMakers
 		{
 			public readonly SimulationState State = new SimulationState();
 			public SearchNode Parent;
+
 			/// <summary>
 			/// The piece that was purchased to arrive at this node, or null for advance
 			/// </summary>
@@ -165,7 +164,7 @@ namespace PatchworkSim.AI.MoveMakers
 #endif
 				//Advance
 				{
-					var node = NodePool.Get();
+					var node = NodePool.Value.Get();
 
 					State.CloneTo(node.State);
 					node.State.Fidelity = SimulationFidelity.NoPiecePlacing; //TODO Could do real placing
@@ -180,7 +179,7 @@ namespace PatchworkSim.AI.MoveMakers
 					//This cares if they can actually place the piece only when expanding the root node
 					if (Helpers.ActivePlayerCanPurchasePiece(State, Helpers.GetNextPiece(State, i)))
 					{
-						var node = NodePool.Get();
+						var node = NodePool.Value.Get();
 
 						State.CloneTo(node.State);
 						node.State.Fidelity = SimulationFidelity.NoPiecePlacing; //TODO Could do real placing
@@ -200,40 +199,43 @@ namespace PatchworkSim.AI.MoveMakers
 				if (Parent != null && winningPlayer == Parent.State.ActivePlayer)
 					Value++;
 			}
-
-			public void RecursiveReturnToPool()
-			{
-				for (var i = 0; i < Children.Count; i++)
-				{
-					var c = Children[i];
-					c.RecursiveReturnToPool();
-				}
-				NodePool.Return(this);
-			}
 		}
 
 		internal class SearchNodePool
 		{
-			private readonly ThreadLocal<Stack<SearchNode>> _searchNodePool = new ThreadLocal<Stack<SearchNode>>(() => new Stack<SearchNode>(), false);
+			private readonly List<SearchNode> _searchNodePool = new List<SearchNode>();
+			private int _getIndex;
 
 			public SearchNode Get()
 			{
-				if (_searchNodePool.Value.Count > 0)
-					return _searchNodePool.Value.Pop();
+				if (_getIndex < _searchNodePool.Count)
+				{
+					var index = _getIndex;
+					_getIndex++;
+					//FetchedFromPool++;
+					return _searchNodePool[index];
+				}
 
-				return new SearchNode();
+				var res = new SearchNode();
+				_searchNodePool.Add(res);
+				_getIndex++;
+				return res;
 			}
 
-			public void Return(SearchNode value)
+			public void ReturnAll()
 			{
-				value.Children.Clear();
-				value.State.Pieces.Clear();
-				value.Value = 0;
-				value.VisitCount = 0;
-				value.Parent = null;
-				value.PieceToPurchase = null;
+				for (var i = 0; i < _getIndex; i++)
+				{
+					var value = _searchNodePool[i];
+					value.Children.Clear();
+					value.State.Pieces.Clear();
+					value.Value = 0;
+					value.VisitCount = 0;
+					value.Parent = null;
+					value.PieceToPurchase = null;
+				}
 
-				_searchNodePool.Value.Push(value);
+				_getIndex = 0;
 			}
 		}
 	}
