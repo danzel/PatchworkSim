@@ -229,7 +229,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 
 			public SearchNode(int maxChildCount)
 			{
-				Children = new List<SearchNode>(4);
+				Children = new List<SearchNode>(maxChildCount);
 			}
 
 			public int CompareTo(SearchNode other)
