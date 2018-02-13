@@ -137,10 +137,10 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 			return currentRoot;
 		}
 
-		private readonly List<SearchNode> _tempChildren = new List<SearchNode>(BoardState.Width * BoardState.Height);
 		private void Expand(SearchNode node, PieceDefinition piece)
 		{
 			node.HasBeenExpanded = true;
+			var children = node.Children;
 
 			//Exhaustively place it and make new child nodes
 			for (var index = 0; index < piece.PossibleOrientations.Length; index++)
@@ -152,18 +152,53 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 					{
 						if (node.Board.CanPlace(bitmap, x, y))
 						{
+							//evaluate child nodes
 							var copy = node.Board;
 							copy.Place(bitmap, x, y);
-							var child = NodePool.Get(_maxBranching);
-							child.Board = copy;
-							child.Bitmap = bitmap;
-							child.X = x;
-							child.Y = y;
-							child.Depth = node.Depth + 1;
+							var utility = _utilityFunction.Evaluate(copy);
 
-							//evaluate child nodes
-							child.Utility = _utilityFunction.Evaluate(copy);
-							_tempChildren.Add(child);
+							//Insertion sort us in to the children list
+							SearchNode child = null;
+							for (var i = 0; i < children.Count; i++)
+							{
+								//We should be here
+								if (utility > children[i].Utility)
+								{
+									if (children.Count == _maxBranching)
+									{
+										//Children is already full, grab the last one and reuse it
+										child = children[_maxBranching - 1];
+										children.RemoveAt(_maxBranching - 1);
+										children.Insert(i, child);
+									}
+									else
+									{
+										//Not full yet, just insert us here
+										child = NodePool.Get(_maxBranching);
+										children.Insert(i, child);
+									}
+									break;
+								}
+							}
+
+							//Didn't find a place to put us, but children isn't full yet
+							if (child == null && children.Count < _maxBranching)
+							{
+								//Insert us last
+								child = NodePool.Get(_maxBranching);
+								children.Add(child);
+							}
+
+							//Populate the child
+							if (child != null)
+							{
+								child.Board = copy;
+								child.Bitmap = bitmap;
+								child.X = x;
+								child.Y = y;
+								child.Depth = node.Depth + 1;
+								child.Utility = utility;
+							}
 						}
 					}
 				}
@@ -171,33 +206,12 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 
 			//TODO: If this is the first piece, remove mirrors/rotations from the children
 
-			//TODO: Could have smaller children lists in the nodes if we sorted and pruned here in our own list, then copied the elements over
-
-			//Sort child nodes
-			_tempChildren.Sort();
-
-			//Remove excess child nodes
-			if (_tempChildren.Count > _maxBranching)
-			{
-				for (var i = _maxBranching; i < _tempChildren.Count; i++)
-				{
-					NodePool.Return(_tempChildren[i]);
-				}
-				//node.Children.RemoveRange(_maxBranching, node.Children.Count - _maxBranching);
-			}
-
-			//Move them to the node
-			for (var i = 0; i < Math.Min(_maxBranching, _tempChildren.Count); i++)
-				node.Children.Add(_tempChildren[i]);
-
 			node.ChildrenUtilitySum = 0;
 			for (var i = 0; i < node.Children.Count; i++)
 			{
 				var c = node.Children[i];
 				node.ChildrenUtilitySum += c.Utility;
 			}
-
-			_tempChildren.Clear();
 		}
 
 
@@ -274,6 +288,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 
 				_searchNodePool.Value.Push(value);
 			}
+
 			/*
 			public void Dump()
 			{
