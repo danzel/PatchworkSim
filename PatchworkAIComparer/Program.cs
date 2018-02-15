@@ -17,9 +17,9 @@ namespace PatchworkAIComparer
 	{
 		static void Main(string[] args)
 		{
-			//TestFullAi();
+			TestFullAi();
 
-			TestPlacementOnly();
+			//TestPlacementOnly();
 		}
 
 		static void TestFullAi()
@@ -101,25 +101,33 @@ namespace PatchworkAIComparer
 
 			var aiToTest = new Func<PlayerDecisionMaker>[]
 			{
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(3), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(3), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				//
+				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(1000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(5000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 
-				() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(1000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(5000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-
-				() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(1000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(5000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(1000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(5000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_1),
 				() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				() =>
+				{
+					var p = new PreplacerStrategy(new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 10000, 2));
+					var m = new MoveOnlyMonteCarloTreeSearchWithPreplacerMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1, p);
+					return new PlayerDecisionMaker(m, new PlacementMaker(p));
+				}
+				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), new PlacementMaker(new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 10000, 2)))
 
-				() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(6, 1000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(10, 2000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(20, 5000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(30, 10000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				
-				() => new PlayerDecisionMaker(TuneableUtilityMoveMaker.Tuning1, PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				//() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(6, 1000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				//() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(10, 2000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				//() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(20, 5000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				//() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(30, 10000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				//
+				//() => new PlayerDecisionMaker(TuneableUtilityMoveMaker.Tuning1, PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 			};
 
 			const int TotalRuns = 100;
@@ -162,13 +170,14 @@ namespace PatchworkAIComparer
 
 							var aWin = run % 2 == state.WinningPlayer;
 
-							//lock (totalWins)
+							lock (totalWins)
 							{
 								if (aWin)
 									totalWins[a, b]++;
 								else
 									totalWins[b, a]++;
 							}
+							Console.WriteLine(aWin);
 						}
 					);
 					Console.WriteLine(totalWins[a, b]);
@@ -213,66 +222,75 @@ namespace PatchworkAIComparer
 
 			var strategies = new IPlacementStrategy[]
 			{
-				FirstPossiblePlacementStrategy.Instance,
-				SimpleClosestToWallAndCornerStrategy.Instance,
-				ClosestToCornerLeastHolesTieBreakerPlacementStrategy.Instance,
-				NextToPieceEdgeLeastHolesTieBreakerPlacementStrategy.Instance,
-				TightPlacementStrategy.InstanceDoubler,
-				TightPlacementStrategy.InstanceIncrement,
-				ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_1,
-				ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_6,
+				//FirstPossiblePlacementStrategy.Instance,
+				//SimpleClosestToWallAndCornerStrategy.Instance,
+				//ClosestToCornerLeastHolesTieBreakerPlacementStrategy.Instance,
+				//NextToPieceEdgeLeastHolesTieBreakerPlacementStrategy.Instance,
+				//TightPlacementStrategy.InstanceDoubler,
+				//TightPlacementStrategy.InstanceIncrement,
+				//ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_1,
+				//ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_6,
 
+				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 1000, 2),
+				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 1000, 3),
 				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 1000, 4),
 				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 1000, 8),
+				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 10000, 2),
+				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 10000, 3),
 				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 10000, 4),
 				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 10000, 8),
 
+				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 1000, 2),
+				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 1000, 3),
 				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 1000, 4),
 				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 1000, 8),
+				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 10000, 2),
+				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 10000, 3),
 				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 10000, 4),
 				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 10000, 8),
 
 			};
 
-			foreach (var strategy in strategies)
-			{
-				var rand = new Random(0);
-				int totalPlaced = 0;
-
-				for (var i = 0; i < 100; i++)
+			//foreach (var strategy in strategies)
+			Parallel.ForEach(strategies, (strategy) =>
 				{
-					var pieces = SimulationHelpers.GetRandomPieces(i);
-					int index = 0;
-					int placed = 0;
+					//var rand = new Random(0);
+					int totalPlaced = 0;
 
-					var board = new BoardState();
-
-					while (true)
+					for (var i = 0; i < 100; i++)
 					{
-						var piece = pieces[index];
-						pieces.RemoveAt(index);
-						index = index % pieces.Count;
+						var pieces = SimulationHelpers.GetRandomPieces(i);
+						int index = 0;
+						int placed = 0;
 
-						if (strategy.TryPlacePiece(board, PieceDefinition.AllPieceDefinitions[piece], pieces, index, out var bitmap, out var x, out var y))
-						{
-							placed++;
-							board.Place(bitmap, x, y);
+						var board = new BoardState();
 
-							//Advance to a random one in the next 6 pieces (TODO: Would be good to bias this towards 1-3 as these are more likely)
-							//index = (index + rand.Next(0, 6)) % pieces.Count;
-						}
-						else
+						while (true)
 						{
-							break;
+							var piece = pieces[index];
+							pieces.RemoveAt(index);
+							index = index % pieces.Count;
+
+							if (strategy.TryPlacePiece(board, PieceDefinition.AllPieceDefinitions[piece], pieces, index, out var bitmap, out var x, out var y))
+							{
+								placed++;
+								board.Place(bitmap, x, y);
+
+								//Advance to a random one in the next 6 pieces (TODO: Would be good to bias this towards 1-3 as these are more likely)
+								//index = (index + rand.Next(0, 6)) % pieces.Count;
+							}
+							else
+							{
+								break;
+							}
 						}
+
+						totalPlaced += placed;
 					}
 
-					totalPlaced += placed;
+					Console.WriteLine($"{strategy.Name}    {totalPlaced}");
 				}
-
-				Console.WriteLine($"{strategy.Name}    {totalPlaced}");
-			}
-
+			);
 			Console.WriteLine($"Time taken {stopwatch.ElapsedMilliseconds}");
 
 			Console.ReadLine();

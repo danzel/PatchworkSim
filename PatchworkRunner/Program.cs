@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using PatchworkSim;
 using PatchworkSim.AI.MoveMakers;
@@ -18,8 +19,10 @@ namespace PatchworkRunner
 		{
 			//RunMoveMakerForPerformance();
 
-			ComparePlacementStrategies();
-			//WatchAGame();
+			//RunPlacementForPerformance();
+
+			//ComparePlacementStrategies();
+			WatchAGame();
 
 			//new GeneticTuneableUtilityEvolver().Run();
 		}
@@ -49,6 +52,47 @@ namespace PatchworkRunner
 			);
 #endif
 			Console.WriteLine(sw.ElapsedMilliseconds);
+			Console.ReadLine();
+		}
+
+		private static void RunPlacementForPerformance()
+		{
+			var sw = Stopwatch.StartNew();
+			int totalPlaced = 0;
+			
+#if PERF_PARALLEL
+			Parallel.For(0, 16, (run) => //5900
+#else
+			for (var run = 0; run < 10; run++) //18200
+#endif
+			{
+				var strategy = new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 10000, 4);
+				//var strategy = TightPlacementStrategy.InstanceIncrement;
+
+				var board = new BoardState();
+
+				var pieces = SimulationHelpers.GetRandomPieces(run);
+				int myPlaced = 0;
+				for (var i = 0; i < pieces.Count; i++)
+				{
+					if (strategy.TryPlacePiece(board, PieceDefinition.AllPieceDefinitions[pieces[i]], pieces, i + 1, out var bitmap, out var x, out var y))
+					{
+						board.Place(bitmap, x, y);
+						myPlaced++;
+					}
+					else
+					{
+						break;
+					}
+				}
+				Console.WriteLine(myPlaced);
+				Interlocked.Add(ref totalPlaced, myPlaced);
+			}
+#if PERF_PARALLEL
+			);
+#endif
+			Console.WriteLine($"TotalPlaced: {totalPlaced}");
+			Console.WriteLine($"Millisecods: {sw.ElapsedMilliseconds}");
 			Console.ReadLine();
 		}
 
@@ -130,10 +174,14 @@ namespace PatchworkRunner
 
 		private static void WatchAGame()
 		{
+			var p = new PreplacerStrategy(new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 10000, 2));
+			var m = new MoveOnlyMonteCarloTreeSearchWithPreplacerMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1, p);
+			var pdm = new PlayerDecisionMaker(m, new PlacementMaker(p));
+
 			var state = new SimulationState(SimulationHelpers.GetRandomPieces(1), 0);
 			var runner = new SimulationRunner(state,
-				new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(1000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_1),
-				new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(6, 1000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_1));
+				new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(1000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				pdm);//new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(6, 1000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_1));
 			var logger = new ConsoleLogger(state);
 			logger.PrintBoardsAfterPlacement = true;
 			state.Logger = logger;
