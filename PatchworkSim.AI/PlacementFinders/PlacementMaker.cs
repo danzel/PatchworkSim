@@ -17,7 +17,7 @@ namespace PatchworkSim.AI.PlacementFinders
 
 		private readonly IPlacementStrategy _strategy;
 
-		private PlacementMaker(IPlacementStrategy strategy)
+		public PlacementMaker(IPlacementStrategy strategy)
 		{
 			_strategy = strategy;
 		}
