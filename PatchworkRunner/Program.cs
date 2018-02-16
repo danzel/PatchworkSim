@@ -182,10 +182,11 @@ namespace PatchworkRunner
 			var m = new MoveOnlyMonteCarloTreeSearchWithPreplacerMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1, p);
 			var pdm = new PlayerDecisionMaker(m, new PlacementMaker(p));
 
-			var state = new SimulationState(SimulationHelpers.GetRandomPieces(3), 0);
+			var state = new SimulationState(SimulationHelpers.GetRandomPieces(25), 0);
 			var runner = new SimulationRunner(state,
-				new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				pdm);
+				
+				new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+			pdm);
 			var logger = new ConsoleLogger(state);
 			logger.PrintBoardsAfterPlacement = true;
 			state.Logger = logger;
@@ -210,7 +211,8 @@ namespace PatchworkRunner
 
 			PlayerDecisionMaker AiB()
 			{
-				var p = new PreplacerStrategy(new WeightedTreeSearchPreplacer(new WeightedTreeSearchPreplacer.TightPlacementWTSUF(true, 1), 10000, 2));
+				var p = new PreplacerStrategy(new ExhaustiveMostFuturePlacementsPreplacer(3));
+				//var p = new PreplacerStrategy(new WeightedTreeSearchPreplacer(new WeightedTreeSearchPreplacer.TightPlacementWTSUF(true, 1), 10000, 2));
 				var m = new MoveOnlyMonteCarloTreeSearchWithPreplacerMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1, p);
 				return new PlayerDecisionMaker(m, new PlacementMaker(p));
 			}

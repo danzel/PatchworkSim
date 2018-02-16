@@ -115,12 +115,19 @@ namespace PatchworkAIComparer
 				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(5000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_1),
 				() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				() =>
+				/*() =>
 				{
 					var p = new PreplacerStrategy(new WeightedTreeSearchPreplacer(new WeightedTreeSearchPreplacer.TightPlacementWTSUF(true, 1), 10000, 2));
 					var m = new MoveOnlyMonteCarloTreeSearchWithPreplacerMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1, p);
 					return new PlayerDecisionMaker(m, new PlacementMaker(p));
+				}*/
+				() =>
+				{
+					var p = new PreplacerStrategy(new ExhaustiveMostFuturePlacementsPreplacer(3));
+					var m = new MoveOnlyMonteCarloTreeSearchWithPreplacerMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1, p);
+					return new PlayerDecisionMaker(m, new PlacementMaker(p));
 				}
+
 				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), new PlacementMaker(new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 10000, 2)))
 
 				//() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(6, 1000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
