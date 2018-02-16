@@ -9,6 +9,7 @@ using PatchworkSim.AI.MoveMakers;
 using PatchworkSim.AI.PlacementFinders;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
+using PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers;
 using PatchworkSim.Loggers;
 
 namespace PatchworkAIComparer
@@ -116,7 +117,7 @@ namespace PatchworkAIComparer
 				() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 				() =>
 				{
-					var p = new PreplacerStrategy(new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 10000, 2));
+					var p = new PreplacerStrategy(new WeightedTreeSearchPreplacer(new WeightedTreeSearchPreplacer.TightPlacementWTSUF(true, 1), 10000, 2));
 					var m = new MoveOnlyMonteCarloTreeSearchWithPreplacerMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1, p);
 					return new PlayerDecisionMaker(m, new PlacementMaker(p));
 				}

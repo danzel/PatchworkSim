@@ -63,6 +63,9 @@
     <Compile Include="PlacementFinders\PlacementStrategies\NoLookahead\SmallestBoundingBoxPlacementStrategy.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\NoLookahead\TightPlacementStrategy.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\PreplacerStrategy.cs" />
+    <Compile Include="PlacementFinders\PlacementStrategies\Preplacers\IPreplacer.cs" />
+    <Compile Include="PlacementFinders\PlacementStrategies\Preplacers\Preplacement.cs" />
+    <Compile Include="PlacementFinders\PlacementStrategies\Preplacers\WeightedTreeSearchPreplacer.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\WeightedTreeSearchPlacementStrategy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
