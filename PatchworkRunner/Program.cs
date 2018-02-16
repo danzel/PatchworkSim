@@ -178,15 +178,16 @@ namespace PatchworkRunner
 
 		private static void WatchAGame()
 		{
-			var p = new PreplacerStrategy(new WeightedTreeSearchPreplacer(new WeightedTreeSearchPreplacer.TightPlacementWTSUF(true, 1), 10000, 2));
+			var p = new PreplacerStrategy(new ExhaustiveMostFuturePlacementsPreplacer(3));
+			//var p = new PreplacerStrategy(new WeightedTreeSearchPreplacer(new WeightedTreeSearchPreplacer.TightPlacementWTSUF(true, 1), 10000, 2));
 			var m = new MoveOnlyMonteCarloTreeSearchWithPreplacerMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1, p);
 			var pdm = new PlayerDecisionMaker(m, new PlacementMaker(p));
 
-			var state = new SimulationState(SimulationHelpers.GetRandomPieces(25), 0);
-			var runner = new SimulationRunner(state,
-				
-				new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-			pdm);
+			var state = new SimulationState(SimulationHelpers.GetRandomPieces(4), 0);
+			var runner = new SimulationRunner(state
+				, pdm
+				, new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6)
+			);
 			var logger = new ConsoleLogger(state);
 			logger.PrintBoardsAfterPlacement = true;
 			state.Logger = logger;
@@ -221,6 +222,9 @@ namespace PatchworkRunner
 
 			//TODO: Play each AI against each other AI 100 times and print a table of results
 
+			long aTicks = 0;
+			long bTicks = 0;
+
 			for (var run = 0; run < TotalRuns / 2; run++)
 			{
 				Console.WriteLine($"Run {run}");
@@ -245,6 +249,9 @@ namespace PatchworkRunner
 						else
 							Interlocked.Increment(ref bWins);
 
+						Interlocked.Add(ref aTicks, runner.Stopwatches[starter == 0 ? 0 : 1].ElapsedTicks);
+						Interlocked.Add(ref bTicks, runner.Stopwatches[starter == 0 ? 1 : 0].ElapsedTicks);
+
 						Console.WriteLine($"Starter {starter}, winner {(state.WinningPlayer + starter) % 2}");
 					}
 				);
@@ -258,6 +265,8 @@ namespace PatchworkRunner
 					Console.WriteLine("Draw");
 				}
 			}
+
+			Console.WriteLine($"Total Time {aTicks * 1000 / Stopwatch.Frequency} / {bTicks * 1000 / Stopwatch.Frequency}");
 
 			Console.ReadLine();
 		}
