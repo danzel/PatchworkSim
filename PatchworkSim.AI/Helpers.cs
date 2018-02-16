@@ -22,9 +22,9 @@ namespace PatchworkSim.AI
 		{
 			foreach (var bitmap in piece.PossibleOrientations)
 			{
-				for (var y = BoardState.Height - bitmap.Height - 1; y >= 0; y--)
+				for (var y = BoardState.Height - bitmap.Height; y >= 0; y--)
 				{
-					for (var x = BoardState.Width - bitmap.Width - 1; x >= 0 ; x--)
+					for (var x = BoardState.Width - bitmap.Width; x >= 0 ; x--)
 					{
 						if (board.CanPlace(bitmap, x, y))
 						{
