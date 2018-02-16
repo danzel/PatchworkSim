@@ -245,27 +245,8 @@ namespace PatchworkAIComparer
 				//NextToPieceEdgeLeastHolesTieBreakerPlacementStrategy.Instance,
 				//TightPlacementStrategy.InstanceDoubler,
 				//TightPlacementStrategy.InstanceIncrement,
-				//ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_1,
-				//ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_6,
-
-				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(true, 1), 1000, 2),
-				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(true, 1), 1000, 3),
-				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(true, 1), 1000, 4),
-				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(true, 1), 1000, 8),
-				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(true, 1), 10000, 2),
-				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(true, 1), 10000, 3),
-				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(true, 1), 10000, 4),
-				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(true, 1), 10000, 8),
-
-				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(false, 1), 1000, 2),
-				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(false, 1), 1000, 3),
-				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(false, 1), 1000, 4),
-				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(false, 1), 1000, 8),
-				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(false, 1), 10000, 2),
-				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(false, 1), 10000, 3),
-				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(false, 1), 10000, 4),
-				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(false, 1), 10000, 8),
-
+				ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_1,
+				ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_6,
 			};
 
 			//foreach (var strategy in strategies)

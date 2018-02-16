@@ -69,7 +69,6 @@
     <Compile Include="PlacementFinders\PlacementStrategies\Preplacers\IPreplacer.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\Preplacers\Preplacement.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\Preplacers\WeightedTreeSearchPreplacer.cs" />
-    <Compile Include="PlacementFinders\PlacementStrategies\WeightedTreeSearchPlacementStrategy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

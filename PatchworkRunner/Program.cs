@@ -71,7 +71,7 @@ namespace PatchworkRunner
 			for (var run = 0; run < 10; run++) //18200
 #endif
 			{
-				var strategy = new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(true, 1), 10000, 4);
+				var strategy = ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_6;
 				//var strategy = TightPlacementStrategy.InstanceIncrement;
 
 				var board = new BoardState();
@@ -117,16 +117,7 @@ namespace PatchworkRunner
 				//TightPlacementStrategy.InstanceDoubler,
 				//TightPlacementStrategy.InstanceIncrement,
 				ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_1,
-				//ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_6,
-				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(true, 1), 1000, 4),
-				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(true, 1), 1000, 8),
-				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(true, 1), 10000, 4),
-				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(true, 1), 10000, 8),
-
-				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(false, 1), 1000, 4),
-				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(false, 1), 1000, 8),
-				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(false, 1), 10000, 4),
-				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(false, 1), 10000, 8),
+				ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_6,
 			};
 
 			//ExhaustiveMostFuturePlacementsPlacementStrategy
