@@ -1,4 +1,5 @@
 ﻿//#define PERF_PARALLEL
+
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -9,6 +10,7 @@ using PatchworkSim.AI.MoveMakers;
 using PatchworkSim.AI.PlacementFinders;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
+using PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers;
 using PatchworkSim.Loggers;
 
 namespace PatchworkRunner
@@ -22,9 +24,11 @@ namespace PatchworkRunner
 			//RunPlacementForPerformance();
 
 			//ComparePlacementStrategies();
-			WatchAGame();
+			//WatchAGame();
 
 			//new GeneticTuneableUtilityEvolver().Run();
+
+			CompareTwoAi();
 		}
 
 		private static void RunMoveMakerForPerformance()
@@ -59,7 +63,7 @@ namespace PatchworkRunner
 		{
 			var sw = Stopwatch.StartNew();
 			int totalPlaced = 0;
-			
+
 #if PERF_PARALLEL
 			Parallel.For(0, 16, (run) => //5900
 #else
@@ -174,14 +178,14 @@ namespace PatchworkRunner
 
 		private static void WatchAGame()
 		{
-			var p = new PreplacerStrategy(new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 10000, 2));
+			var p = new PreplacerStrategy(new WeightedTreeSearchPreplacer(new WeightedTreeSearchPreplacer.TightPlacementWTSUF(true, 1), 10000, 2));
 			var m = new MoveOnlyMonteCarloTreeSearchWithPreplacerMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1, p);
 			var pdm = new PlayerDecisionMaker(m, new PlacementMaker(p));
 
-			var state = new SimulationState(SimulationHelpers.GetRandomPieces(1), 0);
+			var state = new SimulationState(SimulationHelpers.GetRandomPieces(3), 0);
 			var runner = new SimulationRunner(state,
-				new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(1000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				pdm);//new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(6, 1000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_1));
+				new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				pdm);
 			var logger = new ConsoleLogger(state);
 			logger.PrintBoardsAfterPlacement = true;
 			state.Logger = logger;
@@ -197,6 +201,62 @@ namespace PatchworkRunner
 			//logger.PrintBoards();
 
 			Console.WriteLine("Press any key to exit");
+			Console.ReadLine();
+		}
+
+		private static void CompareTwoAi()
+		{
+			PlayerDecisionMaker AiA() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
+
+			PlayerDecisionMaker AiB()
+			{
+				var p = new PreplacerStrategy(new WeightedTreeSearchPreplacer(new WeightedTreeSearchPreplacer.TightPlacementWTSUF(true, 1), 10000, 2));
+				var m = new MoveOnlyMonteCarloTreeSearchWithPreplacerMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1, p);
+				return new PlayerDecisionMaker(m, new PlacementMaker(p));
+			}
+
+			const int TotalRuns = 100;
+
+			//TODO: Play each AI against each other AI 100 times and print a table of results
+
+			for (var run = 0; run < TotalRuns / 2; run++)
+			{
+				Console.WriteLine($"Run {run}");
+				int aWins = 0;
+				int bWins = 0;
+
+				Parallel.For(0, 2, starter =>
+						//for (var starter = 0; starter < 2; starter++)
+					{
+						var state = new SimulationState(SimulationHelpers.GetRandomPieces(run), 0);
+
+						//Let each Ai have half of the goes first and half second
+						var runner = new SimulationRunner(state, starter == 0 ? AiA() : AiB(), starter == 1 ? AiA() : AiB());
+
+						while (!state.GameHasEnded)
+							runner.PerformNextStep();
+
+						var aWin = starter % 2 == state.WinningPlayer;
+
+						if (aWin)
+							Interlocked.Increment(ref aWins);
+						else
+							Interlocked.Increment(ref bWins);
+
+						Console.WriteLine($"Starter {starter}, winner {(state.WinningPlayer + starter) % 2}");
+					}
+				);
+
+				if (aWins != bWins)
+				{
+					Console.WriteLine($"^^^ Not Equal ^^^ A Winner: {aWins > bWins}");
+				}
+				else
+				{
+					Console.WriteLine("Draw");
+				}
+			}
+
 			Console.ReadLine();
 		}
 	}
