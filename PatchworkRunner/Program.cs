@@ -9,6 +9,7 @@ using PatchworkSim;
 using PatchworkSim.AI.MoveMakers;
 using PatchworkSim.AI.PlacementFinders;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies;
+using PatchworkSim.AI.PlacementFinders.PlacementStrategies.BoardEvaluators;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers;
 using PatchworkSim.Loggers;
@@ -70,7 +71,7 @@ namespace PatchworkRunner
 			for (var run = 0; run < 10; run++) //18200
 #endif
 			{
-				var strategy = new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 10000, 4);
+				var strategy = new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(true, 1), 10000, 4);
 				//var strategy = TightPlacementStrategy.InstanceIncrement;
 
 				var board = new BoardState();
@@ -117,15 +118,15 @@ namespace PatchworkRunner
 				//TightPlacementStrategy.InstanceIncrement,
 				ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_1,
 				//ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_6,
-				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 1000, 4),
-				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 1000, 8),
-				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 10000, 4),
-				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 10000, 8),
+				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(true, 1), 1000, 4),
+				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(true, 1), 1000, 8),
+				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(true, 1), 10000, 4),
+				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(true, 1), 10000, 8),
 
-				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 1000, 4),
-				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 1000, 8),
-				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 10000, 4),
-				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 10000, 8),
+				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(false, 1), 1000, 4),
+				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(false, 1), 1000, 8),
+				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(false, 1), 10000, 4),
+				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(false, 1), 10000, 8),
 			};
 
 			//ExhaustiveMostFuturePlacementsPlacementStrategy

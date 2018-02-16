@@ -1,5 +1,6 @@
 ﻿using PatchworkSim;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies;
+using PatchworkSim.AI.PlacementFinders.PlacementStrategies.BoardEvaluators;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
 using Xunit;
 
@@ -46,7 +47,7 @@ namespace PathworkSim.Test
 		[Fact]
 		public void WeightedTreeSearchTight()
 		{
-			TestStrategy(new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 100, 4), 14);
+			TestStrategy(new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(false, 1), 100, 4), 14);
 		}
 
 		[Fact]

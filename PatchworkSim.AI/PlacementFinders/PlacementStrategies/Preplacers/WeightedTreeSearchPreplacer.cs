@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
+using PatchworkSim.AI.PlacementFinders.PlacementStrategies.BoardEvaluators;
 
 namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers
 {
 	public class WeightedTreeSearchPreplacer : IPreplacer
 	{
-		public string Name => $"WeightedTreeSearch({_iterations}@{_maxBranching}+{_utilityFunction.Name})";
+		public string Name => $"WeightedTreeSearch({_iterations}@{_maxBranching}+{_boardEvaluator.Name})";
 
-		private readonly WTSUtilityFunction _utilityFunction;
+		private readonly IBoardEvaluator _boardEvaluator;
 		private readonly int _iterations;
 		private readonly int _maxBranching;
 
@@ -20,9 +17,9 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers
 
 		private static readonly ThreadLocal<SearchNodePool> NodePool = new ThreadLocal<SearchNodePool>(() => new SearchNodePool(), false);
 
-		public WeightedTreeSearchPreplacer(WTSUtilityFunction utilityFunction, int iterations, int maxBranching)
+		public WeightedTreeSearchPreplacer(IBoardEvaluator boardEvaluator, int iterations, int maxBranching)
 		{
-			_utilityFunction = utilityFunction;
+			_boardEvaluator = boardEvaluator;
 			_iterations = iterations;
 			_maxBranching = maxBranching;
 		}
@@ -154,7 +151,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers
 							//evaluate child nodes
 							var copy = node.Board;
 							copy.Place(bitmap, x, y);
-							var utility = _utilityFunction.Evaluate(copy);
+							var utility = _boardEvaluator.Evaluate(copy);
 
 							//Insertion sort us in to the children list
 							SearchNode child = null;
@@ -293,47 +290,6 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers
 				Console.WriteLine($"Returns {Returns}");
 				Console.WriteLine($"FetchedFromPool {FetchedFromPool}");
 			}*/
-		}
-
-
-		public interface WTSUtilityFunction
-		{
-			string Name { get; }
-
-			/// <summary>
-			/// Evaluate the given board state and return a value from 0-1, where 0 is bad and 1 is good
-			/// </summary>
-			double Evaluate(BoardState board);
-		}
-
-		public class TightPlacementWTSUF : WTSUtilityFunction
-		{
-			public string Name => $"Tight({_doubler}@{_focusPower})";
-
-			private readonly bool _doubler;
-			private readonly double _focusPower;
-
-			public TightPlacementWTSUF(bool doubler, double focusPower)
-			{
-				_doubler = doubler;
-				_focusPower = focusPower;
-			}
-
-			public double Evaluate(BoardState board)
-			{
-				TightPlacementStrategy.CalculateScore(board, _doubler, out var score);
-
-				double result;
-				if (_doubler)
-					result = 1 - score / (Math.Pow(2, 8) * (BoardState.Width + BoardState.Height));
-				else
-					result = 1 - score / (double)(BoardState.Width * BoardState.Height * 2);
-
-				if (result > 1 || result < 0)
-					throw new Exception();
-
-				return Math.Pow(result, _focusPower);
-			}
 		}
 	}
 }

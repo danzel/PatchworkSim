@@ -8,6 +8,7 @@ using PatchworkSim;
 using PatchworkSim.AI.MoveMakers;
 using PatchworkSim.AI.PlacementFinders;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies;
+using PatchworkSim.AI.PlacementFinders.PlacementStrategies.BoardEvaluators;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers;
 using PatchworkSim.Loggers;
@@ -102,10 +103,18 @@ namespace PatchworkAIComparer
 
 			var aiToTest = new Func<PlayerDecisionMaker>[]
 			{
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(3), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				
+				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-1), PlacementMaker.TightDoublerInstance),
+				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), PlacementMaker.TightDoublerInstance),
+				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), PlacementMaker.TightDoublerInstance),
+				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.TightDoublerInstance),
+				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(3), PlacementMaker.TightDoublerInstance),
+
+				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(3), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 				//
 				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(1000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(5000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
@@ -115,25 +124,25 @@ namespace PatchworkAIComparer
 				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(5000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_1),
 				() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				/*() =>
+				() =>
 				{
-					var p = new PreplacerStrategy(new WeightedTreeSearchPreplacer(new WeightedTreeSearchPreplacer.TightPlacementWTSUF(true, 1), 10000, 2));
+					var p = new PreplacerStrategy(new WeightedTreeSearchPreplacer(new TightBoardEvaluator(true, 1), 10000, 2));
 					var m = new MoveOnlyMonteCarloTreeSearchWithPreplacerMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1, p);
 					return new PlayerDecisionMaker(m, new PlacementMaker(p));
-				}*/
+				},
 				() =>
 				{
 					var p = new PreplacerStrategy(new ExhaustiveMostFuturePlacementsPreplacer(3));
 					var m = new MoveOnlyMonteCarloTreeSearchWithPreplacerMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1, p);
 					return new PlayerDecisionMaker(m, new PlacementMaker(p));
-				}
+				},
 
 				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), new PlacementMaker(new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 10000, 2)))
 
-				//() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(6, 1000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				//() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(10, 2000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				//() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(20, 5000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				//() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(30, 10000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(6, 1000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(10, 2000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(20, 5000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(30, 10000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 				//
 				//() => new PlayerDecisionMaker(TuneableUtilityMoveMaker.Tuning1, PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 			};
@@ -185,7 +194,7 @@ namespace PatchworkAIComparer
 								else
 									totalWins[b, a]++;
 							}
-							Console.WriteLine(aWin);
+							//Console.WriteLine(aWin);
 						}
 					);
 					Console.WriteLine(totalWins[a, b]);
@@ -239,23 +248,23 @@ namespace PatchworkAIComparer
 				//ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_1,
 				//ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_6,
 
-				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 1000, 2),
-				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 1000, 3),
-				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 1000, 4),
-				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 1000, 8),
-				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 10000, 2),
-				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 10000, 3),
-				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 10000, 4),
-				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 10000, 8),
+				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(true, 1), 1000, 2),
+				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(true, 1), 1000, 3),
+				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(true, 1), 1000, 4),
+				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(true, 1), 1000, 8),
+				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(true, 1), 10000, 2),
+				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(true, 1), 10000, 3),
+				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(true, 1), 10000, 4),
+				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(true, 1), 10000, 8),
 
-				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 1000, 2),
-				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 1000, 3),
-				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 1000, 4),
-				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 1000, 8),
-				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 10000, 2),
-				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 10000, 3),
-				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 10000, 4),
-				new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(false, 1), 10000, 8),
+				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(false, 1), 1000, 2),
+				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(false, 1), 1000, 3),
+				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(false, 1), 1000, 4),
+				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(false, 1), 1000, 8),
+				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(false, 1), 10000, 2),
+				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(false, 1), 10000, 3),
+				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(false, 1), 10000, 4),
+				new WeightedTreeSearchPlacementStrategy(new TightBoardEvaluator(false, 1), 10000, 8),
 
 			};
 
