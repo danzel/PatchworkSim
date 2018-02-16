@@ -8,6 +8,7 @@ namespace PatchworkSim.Loggers
 
 		private readonly SimulationState _sim;
 	    private BoardState[] _previousBoards = new BoardState[2];
+	    private int _turn;
 
 	    public ConsoleLogger(SimulationState sim)
 	    {
@@ -20,12 +21,14 @@ namespace PatchworkSim.Loggers
 
 	    public void PlayerAdvanced(int player)
 	    {
-		    Console.WriteLine($"Player {player} advanced to {_sim.PlayerPosition[player]}");
+		    _turn++;
+			Console.WriteLine($"{_turn}) Player {player} advanced to {_sim.PlayerPosition[player]}");
 	    }
 
 	    public void PlayerPurchasedPiece(int player, PieceDefinition piece)
 	    {
-		    Console.WriteLine($"Player {player} purchased {piece.Name}");
+		    _turn++;
+			Console.WriteLine($"{_turn}) Player {player} purchased {piece.Name}");
 	    }
 
 	    public void PlayerPlacedPiece(int player, PieceDefinition piece, int x, int y, PieceBitmap bitmap)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace PatchworkSim.AI.MoveMakers
@@ -141,6 +142,11 @@ namespace PatchworkSim.AI.MoveMakers
 			return _rolloutState.WinningPlayer;
 		}
 
+		protected void DumpChildren(SearchNode root)
+		{
+			Console.WriteLine(string.Join(", ", root.Children.Select(s => s.GetDebugText(root.State))));
+		}
+
 		public class SearchNode
 		{
 			public readonly SimulationState State = new SimulationState();
@@ -202,6 +208,18 @@ namespace PatchworkSim.AI.MoveMakers
 				VisitCount++;
 				if (Parent != null && winningPlayer == Parent.State.ActivePlayer)
 					Value++;
+			}
+
+			public string GetDebugText(SimulationState parentState)
+			{
+				if (PieceToPurchase.HasValue)
+				{
+					return $"Purchase ({PieceDefinition.AllPieceDefinitions[parentState.Pieces[PieceToPurchase.Value % parentState.Pieces.Count]].Name}) {Value}/{VisitCount}";
+				}
+				else
+				{
+					return $"Advance {Value}/{VisitCount}";
+				}
 			}
 		}
 

@@ -17,6 +17,7 @@
 			var root = PerformMCTS(state);
 
 			var bestChild = FindBestChild(root);
+			//DumpChildren(root);
 
 			if (bestChild.PieceToPurchase.HasValue)
 				state.PerformPurchasePiece(bestChild.PieceToPurchase.Value);
