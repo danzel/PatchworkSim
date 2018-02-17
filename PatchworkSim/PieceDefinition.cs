@@ -212,9 +212,9 @@ namespace PatchworkSim
 			new PieceDefinition("+ (double width variant)", 5, 3, 1,
 				new[]
 				{
-					" ### ",
-					"#####",
-					" ### "
+					" ## ",
+					"####",
+					" ## "
 				}),
 
 
