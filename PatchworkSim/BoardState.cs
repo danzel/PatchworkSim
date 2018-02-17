@@ -1,6 +1,7 @@
 ﻿#define SAFE_MODE
 using System;
 using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace PatchworkSim
 {
@@ -19,6 +20,7 @@ namespace PatchworkSim
 
 		public bool this[int x, int y]
 		{
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			get { return !(_state & XYToPositionMask[x + Width * y]).IsZero; }
 			set
 			{
