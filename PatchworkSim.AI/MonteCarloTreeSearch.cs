@@ -52,7 +52,7 @@ namespace PatchworkSim.AI
 				else
 				{
 					//Expansion
-					leaf.Expand();
+					Expand(leaf);
 
 					//Randomly choose one of the newly expanded nodes
 					leaf = Select(leaf);
@@ -80,6 +80,12 @@ namespace PatchworkSim.AI
 			_rolloutState.Pieces.Clear();
 			baseState.CloneTo(_rolloutState);
 			_rolloutState.Fidelity = SimulationFidelity.NoPiecePlacing;
+			if (_rolloutState.PieceToPlace != null)
+			{
+				//Place it somewhere
+				Helpers.GetFirstPlacement(_rolloutState.PlayerBoardState[_rolloutState.PieceToPlacePlayer], _rolloutState.PieceToPlace, out var bitmap, out var x, out var y);
+				_rolloutState.PerformPlacePiece(bitmap, x, y);
+			}
 
 			//Run the game
 			while (!_rolloutState.GameHasEnded)
@@ -90,7 +96,7 @@ namespace PatchworkSim.AI
 			return _rolloutState.WinningPlayer;
 		}
 
-		public T Select(T root)
+		private T Select(T root)
 		{
 			while (root.Children.Count != 0) //Look for a leaf node (one we haven't expanded yet)
 			{
@@ -113,6 +119,11 @@ namespace PatchworkSim.AI
 			}
 
 			return root;
+		}
+
+		protected virtual void Expand(T root)
+		{
+			root.Expand();
 		}
 
 		/// <summary>
@@ -176,5 +187,14 @@ namespace PatchworkSim.AI
 		}
 
 		public abstract void Expand();
+
+		public virtual void Reset()
+		{
+			Children.Clear();
+			State.Pieces.Clear();
+			Value = 0;
+			VisitCount = 0;
+			Parent = null;
+		}
 	}
 }

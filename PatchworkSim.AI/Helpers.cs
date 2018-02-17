@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 namespace PatchworkSim.AI
 {
@@ -37,6 +38,30 @@ namespace PatchworkSim.AI
 
 			return false;
 		}
+
+		/// <summary>
+		/// Finds a placement (Not guaranteed to be any good) for the given piece on the given board
+		/// </summary>
+		public static void GetFirstPlacement(BoardState board, PieceDefinition piece, out PieceBitmap bitmap, out int x, out int y)
+		{
+			for (var index = 0; index < piece.PossibleOrientations.Length; index++)
+			{
+				bitmap = piece.PossibleOrientations[index];
+				for (y = BoardState.Height - bitmap.Height; y >= 0; y--)
+				{
+					for (x = BoardState.Width - bitmap.Width; x >= 0; x--)
+					{
+						if (board.CanPlace(bitmap, x, y))
+						{
+							return;
+						}
+					}
+				}
+			}
+
+			throw new Exception("GetFirstPlacement couldn't find a placement");
+		}
+
 
 		public static bool ActivePlayerCanPurchasePiece(SimulationState state, PieceDefinition piece)
 		{

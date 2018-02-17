@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Threading;
 
 namespace PatchworkSim.AI.MoveMakers
 {
@@ -50,13 +49,14 @@ namespace PatchworkSim.AI.MoveMakers
 					var node = MonteCarloTreeSearch<SearchNode>.NodePool.Value.Get();
 
 					State.CloneTo(node.State);
-					node.State.Fidelity = SimulationFidelity.NoPiecePlacing; //TODO Could do real placing
+					node.State.Fidelity = SimulationFidelity.NoPiecePlacing;
 					node.State.PerformAdvanceMove();
 
 					node.Parent = this;
 					Children.Add(node);
 				}
 
+				//Purchase
 				for (var i = 0; i < 3; i++)
 				{
 					//This cares if they can actually place the piece only when expanding the root node
@@ -65,7 +65,7 @@ namespace PatchworkSim.AI.MoveMakers
 						var node = MonteCarloTreeSearch<SearchNode>.NodePool.Value.Get();
 
 						State.CloneTo(node.State);
-						node.State.Fidelity = SimulationFidelity.NoPiecePlacing; //TODO Could do real placing
+						node.State.Fidelity = SimulationFidelity.NoPiecePlacing;
 						var pieceIndex = node.State.NextPieceIndex + i;
 						node.State.PerformPurchasePiece(pieceIndex);
 
@@ -88,13 +88,10 @@ namespace PatchworkSim.AI.MoveMakers
 				}
 			}
 
-			public void Reset()
+			public override void Reset()
 			{
-				Children.Clear();
-				State.Pieces.Clear();
-				Value = 0;
-				VisitCount = 0;
-				Parent = null;
+				base.Reset();
+
 				PieceToPurchase = null;
 			}
 		}

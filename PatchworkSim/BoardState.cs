@@ -1,4 +1,4 @@
-﻿//#define SAFE_MODE
+﻿#define SAFE_MODE
 using System;
 using System.Diagnostics.Contracts;
 
@@ -22,7 +22,7 @@ namespace PatchworkSim
 			get { return !(_state & XYToPositionMask[x + Width * y]).IsZero; }
 			set
 			{
-#if SAFE_MODE
+#if SAFE_MODE || DEBUG
 				if (!value) throw new Exception("Can only set positions, not unset them");
 #endif
 				_state |= XYToPositionMask[x + Width * y];
@@ -32,7 +32,7 @@ namespace PatchworkSim
 		[Pure]
 		public bool CanPlace(PieceBitmap bitmap, int x, int y)
 		{
-#if SAFE_MODE
+#if SAFE_MODE || DEBUG
 			if (x < 0)
 				throw new Exception("X is outside of range");
 			if (y < 0)
@@ -54,7 +54,7 @@ namespace PatchworkSim
 
 		public void Place(PieceBitmap bitmap, int x, int y)
 		{
-#if SAFE_MODE
+#if SAFE_MODE || DEBUG
 			if (!CanPlace(bitmap, x, y))
 				throw new Exception("Cannot place piece here, it overlaps");
 #endif
