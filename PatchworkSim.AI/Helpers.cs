@@ -20,11 +20,12 @@ namespace PatchworkSim.AI
 		/// </summary>
 		public static bool CanPlace(BoardState board, PieceDefinition piece)
 		{
-			foreach (var bitmap in piece.PossibleOrientations)
+			for (var index = 0; index < piece.PossibleOrientations.Length; index++)
 			{
+				var bitmap = piece.PossibleOrientations[index];
 				for (var y = BoardState.Height - bitmap.Height; y >= 0; y--)
 				{
-					for (var x = BoardState.Width - bitmap.Width; x >= 0 ; x--)
+					for (var x = BoardState.Width - bitmap.Width; x >= 0; x--)
 					{
 						if (board.CanPlace(bitmap, x, y))
 						{
