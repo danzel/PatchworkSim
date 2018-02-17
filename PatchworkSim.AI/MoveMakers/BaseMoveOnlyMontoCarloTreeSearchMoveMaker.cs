@@ -4,94 +4,21 @@ using System.Threading;
 
 namespace PatchworkSim.AI.MoveMakers
 {
+	/// <summary>
+	/// A MCTS based move maker that runs the simulation in NoPiecePlacing.
+	/// </summary>
 	public abstract class BaseMoveOnlyMonteCarloTreeSearchMoveMaker : IMoveDecisionMaker
 	{
 		public abstract string Name { get; }
 
-		protected readonly int Iterations;
-		protected readonly IMoveDecisionMaker RolloutMoveMaker;
-
 		protected readonly MonteCarloTreeSearch<SearchNode> Mcts;
-
-
-		/// <summary>
-		/// Used by SimulateRollout
-		/// </summary>
-		private readonly SimulationState _rolloutState = new SimulationState();
-
-		protected static readonly ThreadLocal<SingleThreadedPool<SearchNode>> NodePool = new ThreadLocal<SingleThreadedPool<SearchNode>>(() => new SingleThreadedPool<SearchNode>(), false);
 
 		protected BaseMoveOnlyMonteCarloTreeSearchMoveMaker(int iterations, IMoveDecisionMaker rolloutMoveMaker = null)
 		{
-			Iterations = iterations;
-			RolloutMoveMaker = rolloutMoveMaker ?? new RandomMoveMaker(0);
-
-			Mcts = new MonteCarloTreeSearch<SearchNode>();
+			Mcts = new MonteCarloTreeSearch<SearchNode>(iterations, rolloutMoveMaker);
 		}
 
 		public abstract void MakeMove(SimulationState state);
-
-		// http://mcts.ai/about/index.html
-		// https://en.wikipedia.org/wiki/Monte_Carlo_tree_search
-		/// <summary>
-		/// Performs a MCTS search starting at the given state.
-		/// Returns the root of the search tree, you must call NodePool.Value.ReturnAll() afterwards.
-		/// </summary>
-		protected SearchNode PerformMCTS(SimulationState state)
-		{
-			var root = NodePool.Value.Get();
-			state.CloneTo(root.State);
-
-			for (var i = 0; i < Iterations; i++)
-			{
-				//Selection
-				var leaf = Mcts.Select(root);
-
-				int winningPlayer;
-				if (leaf.IsGameEnd)
-				{
-					winningPlayer = leaf.State.WinningPlayer;
-				}
-				else
-				{
-					//Expansion
-					leaf.Expand();
-
-					//Randomly choose one of the newly expanded nodes
-					leaf = Mcts.Select(leaf);
-
-					//Simulation
-					winningPlayer = SimulateRollout(leaf.State);
-				}
-
-				//Backpropagation
-				do
-				{
-					leaf.ReceiveBackpropagation(winningPlayer);
-					leaf = leaf.Parent;
-				} while (leaf != null);
-			}
-
-			return root;
-		}
-
-		private int SimulateRollout(SimulationState baseState)
-		{
-			if (baseState.GameHasEnded)
-				return baseState.WinningPlayer;
-
-			_rolloutState.Pieces.Clear();
-			baseState.CloneTo(_rolloutState);
-			_rolloutState.Fidelity = SimulationFidelity.NoPiecePlacing;
-
-			//Run the game
-			while (!_rolloutState.GameHasEnded)
-			{
-				RolloutMoveMaker.MakeMove(_rolloutState);
-			}
-
-			return _rolloutState.WinningPlayer;
-		}
 
 		protected void DumpChildren(SearchNode root)
 		{
@@ -100,15 +27,11 @@ namespace PatchworkSim.AI.MoveMakers
 
 		public class SearchNode : MCTSNode<SearchNode>, IPoolableItem
 		{
-			public readonly SimulationState State = new SimulationState();
-			public SearchNode Parent;
-
 			/// <summary>
 			/// The piece that was purchased to arrive at this node, or null for advance
 			/// </summary>
 			public int? PieceToPurchase;
 
-			public bool IsGameEnd => State.GameHasEnded;
 
 			public SearchNode() : base(4)
 			{
@@ -124,7 +47,7 @@ namespace PatchworkSim.AI.MoveMakers
 #endif
 				//Advance
 				{
-					var node = NodePool.Value.Get();
+					var node = MonteCarloTreeSearch<SearchNode>.NodePool.Value.Get();
 
 					State.CloneTo(node.State);
 					node.State.Fidelity = SimulationFidelity.NoPiecePlacing; //TODO Could do real placing
@@ -139,7 +62,7 @@ namespace PatchworkSim.AI.MoveMakers
 					//This cares if they can actually place the piece only when expanding the root node
 					if (Helpers.ActivePlayerCanPurchasePiece(State, Helpers.GetNextPiece(State, i)))
 					{
-						var node = NodePool.Value.Get();
+						var node = MonteCarloTreeSearch<SearchNode>.NodePool.Value.Get();
 
 						State.CloneTo(node.State);
 						node.State.Fidelity = SimulationFidelity.NoPiecePlacing; //TODO Could do real placing
@@ -151,13 +74,6 @@ namespace PatchworkSim.AI.MoveMakers
 						Children.Add(node);
 					}
 				}
-			}
-
-			public void ReceiveBackpropagation(int winningPlayer)
-			{
-				VisitCount++;
-				if (Parent != null && winningPlayer == Parent.State.ActivePlayer)
-					Value++;
 			}
 
 			public string GetDebugText(SimulationState parentState)

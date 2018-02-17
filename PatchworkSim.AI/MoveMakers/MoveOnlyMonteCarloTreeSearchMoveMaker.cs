@@ -6,7 +6,7 @@
 	/// </summary>
 	public class MoveOnlyMonteCarloTreeSearchMoveMaker : BaseMoveOnlyMonteCarloTreeSearchMoveMaker
 	{
-		public override string Name => $"MO-MCTS({Iterations}+{RolloutMoveMaker.Name})";
+		public override string Name => $"MO-MCTS({Mcts.Iterations}+{Mcts.RolloutMoveMaker.Name})";
 
 		public MoveOnlyMonteCarloTreeSearchMoveMaker(int iterations, IMoveDecisionMaker rolloutMoveMaker = null) : base(iterations, rolloutMoveMaker)
 		{
@@ -14,7 +14,7 @@
 
 		public override void MakeMove(SimulationState state)
 		{
-			var root = PerformMCTS(state);
+			var root = Mcts.PerformMCTS(state);
 
 			var bestChild = Mcts.FindBestChild(root);
 			//DumpChildren(root);
@@ -24,7 +24,7 @@
 			else
 				state.PerformAdvanceMove();
 
-			NodePool.Value.ReturnAll();
+			MonteCarloTreeSearch<SearchNode>.NodePool.Value.ReturnAll();
 		}
 	}
 }

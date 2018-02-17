@@ -5,7 +5,7 @@ namespace PatchworkSim.AI.MoveMakers
 {
 	public class MoveOnlyMonteCarloTreeSearchWithPreplacerMoveMaker : BaseMoveOnlyMonteCarloTreeSearchMoveMaker
 	{
-		public override string Name => $"MO-MCTS-P({Iterations}+{RolloutMoveMaker.Name})";
+		public override string Name => $"MO-MCTS-P({Mcts.Iterations}+{Mcts.RolloutMoveMaker.Name})";
 
 		private readonly PreplacerStrategy _preplacer;
 		private readonly List<PieceDefinition> _lookahead = new List<PieceDefinition>(PieceDefinition.AllPieceDefinitions.Length + SimulationState.LeatherPatches.Length);
@@ -18,7 +18,7 @@ namespace PatchworkSim.AI.MoveMakers
 
 		public override void MakeMove(SimulationState state)
 		{
-			var root = PerformMCTS(state);
+			var root = Mcts.PerformMCTS(state);
 			//DumpChildren(root);
 
 			_lookahead.Clear();
@@ -72,7 +72,7 @@ namespace PatchworkSim.AI.MoveMakers
 			else
 				state.PerformAdvanceMove();
 
-			NodePool.Value.ReturnAll();
+			MonteCarloTreeSearch<SearchNode>.NodePool.Value.ReturnAll();
 		}
 	}
 }
