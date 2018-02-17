@@ -83,6 +83,11 @@ namespace PatchworkSim
 			}
 		}
 
+		/// <summary>
+		/// True if this board has a 7x7 area covered (for getting the special 7x7 reward)
+		/// </summary>
+		public bool Has7x7Coverage => SevenXSevenTileChecker.Has7x7(_state);
+
 		public bool IsEmpty => _state.IsZero;
 
 		private static readonly UInt128[] XYToPositionMask;

@@ -58,6 +58,7 @@
     <Compile Include="AIHelpersTests.cs" />
     <Compile Include="PieceDefinitionTests.cs" />
     <Compile Include="PlacementStrategyTests.cs" />
+    <Compile Include="SevenXSevenTest.cs" />
     <Compile Include="SimulationHelpersTests.cs" />
     <Compile Include="SimulationRunnerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -72,6 +73,10 @@
     <ProjectReference Include="..\PatchworkSim.AI\PatchworkSim.AI.csproj">
       <Project>{b7f26adb-568c-4588-9637-07f184257871}</Project>
       <Name>PatchworkSim.AI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PatchworkSim.Loggers\PatchworkSim.Loggers.csproj">
+      <Project>{0F57A015-358F-4ADD-AF9D-DD77939BDD25}</Project>
+      <Name>PatchworkSim.Loggers</Name>
     </ProjectReference>
     <ProjectReference Include="..\PatchworkSim\PatchworkSim.csproj">
       <Project>{B01F91FF-1112-430E-BA7B-BA7477034DE4}</Project>

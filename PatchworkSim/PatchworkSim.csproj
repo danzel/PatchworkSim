@@ -53,6 +53,7 @@
     <Compile Include="PieceDefinition.cs" />
     <Compile Include="PlayerDecisionMaker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SevenXSevenTileChecker.cs" />
     <Compile Include="SimulationFidelity.cs" />
     <Compile Include="SimulationHelpers.cs" />
     <Compile Include="SimulationRunner.cs" />

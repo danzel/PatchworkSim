@@ -65,6 +65,11 @@ namespace PatchworkSim
 		public FixedArray2Int PlayerPosition;
 
 		/// <summary>
+		/// The index of the player that has received the 7x7 bonus
+		/// </summary>
+		public int? SevenXSevenBonusPlayer;
+
+		/// <summary>
 		/// The list of pieces (index in to PieceDefinition.AllPieceDefinitions) in picking order
 		/// </summary>
 		public List<int> Pieces;
@@ -274,6 +279,13 @@ namespace PatchworkSim
 
 			PlayerBoardState[PieceToPlacePlayer].Place(bitmap, x, y);
 
+			//Check if they got 7x7 tile
+			if (!SevenXSevenBonusPlayer.HasValue && PlayerBoardState[PieceToPlacePlayer].Has7x7Coverage)
+			{
+				SevenXSevenBonusPlayer = PieceToPlacePlayer;
+			}
+
+
 			var piece = PieceToPlace;
 			var player = PieceToPlacePlayer;
 
@@ -292,8 +304,10 @@ namespace PatchworkSim
 		{
 			int emptySpaces = BoardState.Width * BoardState.Height - PlayerBoardUsedLocationsCount[player];
 
-			//TODO: 7x7 special tile
-			return PlayerButtonAmount[player] - 2 * emptySpaces;
+			var amount = PlayerButtonAmount[player] - 2 * emptySpaces;
+			if (SevenXSevenBonusPlayer == player)
+				amount += 7;
+			return amount;
 		}
 
 		public SimulationState Clone()
@@ -335,6 +349,8 @@ namespace PatchworkSim
 
 			target.PlayerPosition[0] = PlayerPosition[0];
 			target.PlayerPosition[1] = PlayerPosition[1];
+
+			target.SevenXSevenBonusPlayer = SevenXSevenBonusPlayer;
 
 			target.ActivePlayer = ActivePlayer;
 
