@@ -3,9 +3,9 @@ using PatchworkSim.AI.PlacementFinders.PlacementStrategies;
 
 namespace PatchworkSim.AI.MoveMakers
 {
-	public class MoveOnlyMonteCarloTreeSearchWithPreplacerMoveMaker : BaseMonteCarloTreeSearchMoveMaker
+	public class MoveOnlyMonteCarloTreeSearchWithPreplacerMoveMaker : BaseMoveOnlyMonteCarloTreeSearchMoveMaker
 	{
-		public override string Name => $"MO-MCTS-P({_iterations}+{_rolloutMoveMaker.Name})";
+		public override string Name => $"MO-MCTS-P({Iterations}+{RolloutMoveMaker.Name})";
 
 		private readonly PreplacerStrategy _preplacer;
 		private readonly List<PieceDefinition> _lookahead = new List<PieceDefinition>(PieceDefinition.AllPieceDefinitions.Length + SimulationState.LeatherPatches.Length);
@@ -29,7 +29,7 @@ namespace PatchworkSim.AI.MoveMakers
 			//Go through what we currently think are our best moves and record the pieces we'll get
 			while (root.Children.Count > 0)
 			{
-				var bestChild = FindBestChild(root);
+				var bestChild = Mcts.FindBestChild(root);
 
 				if (bestRootChild == null)
 					bestRootChild = bestChild;

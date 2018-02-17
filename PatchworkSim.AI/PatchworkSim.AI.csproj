@@ -40,8 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MonteCarloTreeSearch.cs" />
     <Compile Include="MoveMakers\AlwaysAdvanceMoveMaker.cs" />
-    <Compile Include="MoveMakers\BaseMontoCarloTreeSearchMoveMaker.cs" />
+    <Compile Include="MoveMakers\BaseMoveOnlyMontoCarloTreeSearchMoveMaker.cs" />
     <Compile Include="MoveMakers\BaseUtilityMoveMaker.cs" />
     <Compile Include="MoveMakers\BuyFirstPossibleMoveMaker.cs" />
     <Compile Include="MoveMakers\GreedyCardValueUtilityMoveMaker.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="PlacementFinders\PlacementStrategies\Preplacers\Preplacement.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\Preplacers\WeightedTreeSearchPreplacer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SingleThreadedPool.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PatchworkSim\PatchworkSim.csproj">

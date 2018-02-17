@@ -1,28 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
 namespace PatchworkSim.AI.MoveMakers
 {
-	public abstract class BaseMonteCarloTreeSearchMoveMaker : IMoveDecisionMaker
+	public abstract class BaseMoveOnlyMonteCarloTreeSearchMoveMaker : IMoveDecisionMaker
 	{
 		public abstract string Name { get; }
-		protected readonly int _iterations;
-		private readonly Random _random = new Random(0);
-		protected readonly IMoveDecisionMaker _rolloutMoveMaker;
+
+		protected readonly int Iterations;
+		protected readonly IMoveDecisionMaker RolloutMoveMaker;
+
+		protected readonly MonteCarloTreeSearch<SearchNode> Mcts;
+
 
 		/// <summary>
 		/// Used by SimulateRollout
 		/// </summary>
 		private readonly SimulationState _rolloutState = new SimulationState();
 
-		protected static readonly ThreadLocal<SearchNodePool> NodePool = new ThreadLocal<SearchNodePool>(() => new SearchNodePool(), false);
+		protected static readonly ThreadLocal<SingleThreadedPool<SearchNode>> NodePool = new ThreadLocal<SingleThreadedPool<SearchNode>>(() => new SingleThreadedPool<SearchNode>(), false);
 
-		protected BaseMonteCarloTreeSearchMoveMaker(int iterations, IMoveDecisionMaker rolloutMoveMaker = null)
+		protected BaseMoveOnlyMonteCarloTreeSearchMoveMaker(int iterations, IMoveDecisionMaker rolloutMoveMaker = null)
 		{
-			_iterations = iterations;
-			_rolloutMoveMaker = rolloutMoveMaker ?? new RandomMoveMaker(0);
+			Iterations = iterations;
+			RolloutMoveMaker = rolloutMoveMaker ?? new RandomMoveMaker(0);
+
+			Mcts = new MonteCarloTreeSearch<SearchNode>();
 		}
 
 		public abstract void MakeMove(SimulationState state);
@@ -38,10 +42,10 @@ namespace PatchworkSim.AI.MoveMakers
 			var root = NodePool.Value.Get();
 			state.CloneTo(root.State);
 
-			for (var i = 0; i < _iterations; i++)
+			for (var i = 0; i < Iterations; i++)
 			{
 				//Selection
-				var leaf = Select(root);
+				var leaf = Mcts.Select(root);
 
 				int winningPlayer;
 				if (leaf.IsGameEnd)
@@ -54,7 +58,7 @@ namespace PatchworkSim.AI.MoveMakers
 					leaf.Expand();
 
 					//Randomly choose one of the newly expanded nodes
-					leaf = Select(leaf);
+					leaf = Mcts.Select(leaf);
 
 					//Simulation
 					winningPlayer = SimulateRollout(leaf.State);
@@ -66,59 +70,6 @@ namespace PatchworkSim.AI.MoveMakers
 					leaf.ReceiveBackpropagation(winningPlayer);
 					leaf = leaf.Parent;
 				} while (leaf != null);
-			}
-
-			return root;
-		}
-
-		/// <summary>
-		/// Finds the best child based on their CisitCount
-		/// </summary>
-		/// <returns></returns>
-		protected SearchNode FindBestChild(SearchNode root)
-		{
-			//Perform the best move
-			var best = root.Children[0];
-			int bestVisitCount = root.Children[0].VisitCount;
-			for (var index = 1; index < root.Children.Count; index++)
-			{
-				var child = root.Children[index];
-				if (child.VisitCount > bestVisitCount) //TODO: Handle draws
-				{
-					best = child;
-					bestVisitCount = child.VisitCount;
-				}
-			}
-
-			return best;
-		}
-
-		private static readonly double epsilon = 1e-6;
-		private static readonly double explorationParameter = Math.Sqrt(2);
-
-		private SearchNode Select(SearchNode root)
-		{
-			while (root.Children.Count != 0) //Look for a leaf node (one we haven't expanded yet)
-			{
-				SearchNode bestNext = null;
-				double bestValue = Double.MinValue;
-
-				for (var i = 0; i < root.Children.Count; i++)
-				{
-					var c = root.Children[i];
-					//https://en.wikipedia.org/wiki/Monte_Carlo_tree_search#Exploration_and_exploitation
-					double uctValue = c.Value / (c.VisitCount + epsilon) +
-									  explorationParameter * Math.Sqrt(Math.Log(root.VisitCount + 1) / (c.VisitCount + epsilon)) +
-									  _random.NextDouble() * epsilon;
-					// small random number to break ties randomly in unexpanded nodes
-					if (uctValue > bestValue)
-					{
-						bestNext = c;
-						bestValue = uctValue;
-					}
-				}
-
-				root = bestNext;
 			}
 
 			return root;
@@ -136,7 +87,7 @@ namespace PatchworkSim.AI.MoveMakers
 			//Run the game
 			while (!_rolloutState.GameHasEnded)
 			{
-				_rolloutMoveMaker.MakeMove(_rolloutState);
+				RolloutMoveMaker.MakeMove(_rolloutState);
 			}
 
 			return _rolloutState.WinningPlayer;
@@ -147,7 +98,7 @@ namespace PatchworkSim.AI.MoveMakers
 			Console.WriteLine(string.Join(", ", root.Children.Select(s => s.GetDebugText(root.State))));
 		}
 
-		public class SearchNode
+		public class SearchNode : MCTSNode<SearchNode>, IPoolableItem
 		{
 			public readonly SimulationState State = new SimulationState();
 			public SearchNode Parent;
@@ -157,14 +108,13 @@ namespace PatchworkSim.AI.MoveMakers
 			/// </summary>
 			public int? PieceToPurchase;
 
-			public readonly List<SearchNode> Children = new List<SearchNode>(4);
-
-			public int VisitCount;
-			public int Value;
-
 			public bool IsGameEnd => State.GameHasEnded;
 
-			public void Expand()
+			public SearchNode() : base(4)
+			{
+			}
+
+			public override void Expand()
 			{
 #if DEBUG
 				if (Children.Count != 0)
@@ -221,43 +171,15 @@ namespace PatchworkSim.AI.MoveMakers
 					return $"Advance {Value}/{VisitCount}";
 				}
 			}
-		}
 
-		public class SearchNodePool
-		{
-			private readonly List<SearchNode> _searchNodePool = new List<SearchNode>();
-			private int _getIndex;
-
-			public SearchNode Get()
+			public void Reset()
 			{
-				if (_getIndex < _searchNodePool.Count)
-				{
-					var index = _getIndex;
-					_getIndex++;
-					//FetchedFromPool++;
-					return _searchNodePool[index];
-				}
-
-				var res = new SearchNode();
-				_searchNodePool.Add(res);
-				_getIndex++;
-				return res;
-			}
-
-			public void ReturnAll()
-			{
-				for (var i = 0; i < _getIndex; i++)
-				{
-					var value = _searchNodePool[i];
-					value.Children.Clear();
-					value.State.Pieces.Clear();
-					value.Value = 0;
-					value.VisitCount = 0;
-					value.Parent = null;
-					value.PieceToPurchase = null;
-				}
-
-				_getIndex = 0;
+				Children.Clear();
+				State.Pieces.Clear();
+				Value = 0;
+				VisitCount = 0;
+				Parent = null;
+				PieceToPurchase = null;
 			}
 		}
 	}

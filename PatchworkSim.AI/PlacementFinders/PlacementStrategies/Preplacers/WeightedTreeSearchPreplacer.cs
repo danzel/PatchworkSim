@@ -13,9 +13,11 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers
 		private readonly int _iterations;
 		private readonly int _maxBranching;
 
+		private const int SearchNodeListSize = 8; //Should match or be bigger than _maxBranching
+
 		private readonly Random _random = new Random(0);
 
-		private static readonly ThreadLocal<SearchNodePool> NodePool = new ThreadLocal<SearchNodePool>(() => new SearchNodePool(), false);
+		private static readonly ThreadLocal<SingleThreadedPool<SearchNode>> NodePool = new ThreadLocal<SingleThreadedPool<SearchNode>>(() => new SingleThreadedPool<SearchNode>(), false);
 
 		public WeightedTreeSearchPreplacer(IBoardEvaluator boardEvaluator, int iterations, int maxBranching)
 		{
@@ -28,7 +30,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers
 		{
 			//TODO: When board is empty we should remove rotations/mirrors of the placements (not worth it on future ones)
 
-			var root = NodePool.Value.Get(_maxBranching);
+			var root = NodePool.Value.Get();
 			root.Board = board;
 			root.Bitmap = null;
 			root.X = -1;
@@ -170,7 +172,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers
 									else
 									{
 										//Not full yet, just insert us here
-										child = NodePool.Value.Get(_maxBranching);
+										child = NodePool.Value.Get();
 										children.Insert(i, child);
 									}
 									break;
@@ -181,7 +183,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers
 							if (child == null && children.Count < _maxBranching)
 							{
 								//Insert us last
-								child = NodePool.Value.Get(_maxBranching);
+								child = NodePool.Value.Get();
 								children.Add(child);
 							}
 
@@ -209,7 +211,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers
 		}
 
 
-		class SearchNode : IComparable<SearchNode>
+		class SearchNode : IComparable<SearchNode>, IPoolableItem
 		{
 			public BoardState Board;
 			public PieceBitmap Bitmap;
@@ -221,9 +223,9 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers
 			public bool HasBeenExpanded = false;
 			public readonly List<SearchNode> Children;
 
-			public SearchNode(int maxChildCount)
+			public SearchNode()
 			{
-				Children = new List<SearchNode>(maxChildCount);
+				Children = new List<SearchNode>(SearchNodeListSize);
 			}
 
 			public int CompareTo(SearchNode other)
@@ -242,54 +244,12 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers
 
 				return deepest;
 			}
-		}
 
-		class SearchNodePool
-		{
-			private readonly List<SearchNode> _searchNodePool = new List<SearchNode>();
-			private int _getIndex;
-
-			//public int Allocations = 0;
-			//public int Returns = 0;
-			//public int FetchedFromPool = 0;
-
-			internal SearchNode Get(int maxChildCount)
+			public void Reset()
 			{
-				if (_getIndex < _searchNodePool.Count)
-				{
-					var index = _getIndex;
-					_getIndex++;
-					//FetchedFromPool++;
-					return _searchNodePool[index];
-				}
-
-				//Allocations++;
-				var res = new SearchNode(maxChildCount);
-				_searchNodePool.Add(res);
-				_getIndex++;
-				return res;
+				Children.Clear();
+				HasBeenExpanded = false;
 			}
-
-			internal void ReturnAll()
-			{
-				for (var i = 0; i < _getIndex; i++)
-				{
-					//Returns++;
-					var child = _searchNodePool[i];
-					child.Children.Clear();
-					child.HasBeenExpanded = false;
-				}
-
-				_getIndex = 0;
-			}
-
-			/*
-			public void Dump()
-			{
-				Console.WriteLine($"Allocations {Allocations}");
-				Console.WriteLine($"Returns {Returns}");
-				Console.WriteLine($"FetchedFromPool {FetchedFromPool}");
-			}*/
 		}
 	}
 }
