@@ -217,8 +217,8 @@ namespace PatchworkRunner
 		{
 			//PlayerDecisionMaker AiA() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
 
-			PlayerDecisionMaker AiA() => new PlayerDecisionMaker(new DepthLimitedNoMoveMinimaxMoveMaker(6), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
-			PlayerDecisionMaker AiB() => new PlayerDecisionMaker(new DepthLimitedNoMoveMinimaxMoveMaker(8), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
+			PlayerDecisionMaker AiA() => new PlayerDecisionMaker(new MoveOnlyMinimaxMoveMaker(6), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
+			PlayerDecisionMaker AiB() => new PlayerDecisionMaker(new MoveOnlyMinimaxMoveMaker(8), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
 
 			/*PlayerDecisionMaker AiB()
 			{

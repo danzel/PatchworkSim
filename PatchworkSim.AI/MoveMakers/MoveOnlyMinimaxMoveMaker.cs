@@ -2,13 +2,13 @@
 
 namespace PatchworkSim.AI.MoveMakers
 {
-	public class DepthLimitedNoMoveMinimaxMoveMaker : BaseUtilityMoveMaker
+	public class MoveOnlyMinimaxMoveMaker : BaseUtilityMoveMaker
 	{
 		public override string Name => $"Minimax({_maxSearchDepth})";
 
 		private readonly int _maxSearchDepth;
 
-		public DepthLimitedNoMoveMinimaxMoveMaker(int maxSearchDepth)
+		public MoveOnlyMinimaxMoveMaker(int maxSearchDepth)
 		{
 			_maxSearchDepth = maxSearchDepth;
 		}

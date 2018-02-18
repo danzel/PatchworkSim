@@ -141,8 +141,8 @@ namespace PatchworkAIComparer
 				() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(20, 5000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 				() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(30, 10000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 
-				() => new PlayerDecisionMaker(new DepthLimitedNoMoveMinimaxMoveMaker(6), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				() => new PlayerDecisionMaker(new DepthLimitedNoMoveMinimaxMoveMaker(8), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				() => new PlayerDecisionMaker(new MoveOnlyMinimaxMoveMaker(6), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				() => new PlayerDecisionMaker(new MoveOnlyMinimaxMoveMaker(8), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 
 				() =>
 				{
