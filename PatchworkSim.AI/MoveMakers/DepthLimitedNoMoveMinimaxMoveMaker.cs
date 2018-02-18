@@ -38,7 +38,11 @@ namespace PatchworkSim.AI.MoveMakers
 		//https://en.wikipedia.org/wiki/Minimax#Pseudocode
 		private double Minimax(SimulationState parentState, int maximizingPlayer, int depth)
 		{
-			if (depth == 0 || parentState.GameHasEnded)
+			//We deviate from strict depth limited minimax here.
+			//We want to ensure that both players get turns, otherwise when we get one more turn than our opponent we will think that is better.
+			//So to ensure fairness, we don't terminate a search until it is the maximizing players turn again, this ensures the opponent has had time to respond to our move
+			// TODO: This isn't totally perfect, if the last move we made gave us an extra move, we've got a turn advantage, but this doesn't happen much I think?
+			if ((depth <= 0 && parentState.ActivePlayer == maximizingPlayer) || parentState.GameHasEnded)
 				return Evaluate(parentState, maximizingPlayer);
 
 			var shouldMaximize = maximizingPlayer == parentState.ActivePlayer;
