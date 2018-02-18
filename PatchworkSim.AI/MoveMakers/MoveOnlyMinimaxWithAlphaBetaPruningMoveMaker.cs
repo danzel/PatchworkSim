@@ -57,31 +57,8 @@ namespace PatchworkSim.AI.MoveMakers
 			var shouldMaximize = maximizingPlayer == parentState.ActivePlayer;
 			double bestValue = shouldMaximize ? double.MinValue : double.MaxValue;
 
+			//TODO: Can run faster if we try the best moves first
 			//foreach child
-			//Advance
-			{
-				var state = _pool.Value.Get();
-				state.Pieces.Clear();
-				parentState.CloneTo(state);
-				state.PerformAdvanceMove();
-				var v = AlphaBeta(state, depth - 1, alpha, beta, maximizingPlayer);
-				_pool.Value.Return(state);
-				if (shouldMaximize)
-				{
-					bestValue = Math.Max(bestValue, v);
-					alpha = Math.Max(alpha, bestValue);
-					if (beta <= alpha)
-						return bestValue;
-				}
-				else
-				{
-					bestValue = Math.Min(bestValue, v);
-					beta = Math.Min(beta, bestValue);
-					if (beta <= alpha)
-						return bestValue;
-				}
-			}
-
 			//Try buy all possible pieces
 			for (var i = 0; i < 3; i++)
 			{
@@ -108,6 +85,30 @@ namespace PatchworkSim.AI.MoveMakers
 						if (beta <= alpha)
 							break;
 					}
+				}
+			}
+
+			//Advance
+			{
+				var state = _pool.Value.Get();
+				state.Pieces.Clear();
+				parentState.CloneTo(state);
+				state.PerformAdvanceMove();
+				var v = AlphaBeta(state, depth - 1, alpha, beta, maximizingPlayer);
+				_pool.Value.Return(state);
+				if (shouldMaximize)
+				{
+					bestValue = Math.Max(bestValue, v);
+					alpha = Math.Max(alpha, bestValue);
+					if (beta <= alpha)
+						return bestValue;
+				}
+				else
+				{
+					bestValue = Math.Min(bestValue, v);
+					beta = Math.Min(beta, bestValue);
+					if (beta <= alpha)
+						return bestValue;
 				}
 			}
 
