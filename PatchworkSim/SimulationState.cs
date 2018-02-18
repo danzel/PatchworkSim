@@ -338,17 +338,13 @@ namespace PatchworkSim
 			target.PlayerBoardState[0] = PlayerBoardState[0];
 			target.PlayerBoardState[1] = PlayerBoardState[1];
 
-			target.PlayerBoardUsedLocationsCount[0] = PlayerBoardUsedLocationsCount[0];
-			target.PlayerBoardUsedLocationsCount[1] = PlayerBoardUsedLocationsCount[1];
+			target.PlayerBoardUsedLocationsCount = PlayerBoardUsedLocationsCount;
 
-			target.PlayerButtonIncome[0] = PlayerButtonIncome[0];
-			target.PlayerButtonIncome[1] = PlayerButtonIncome[1];
+			target.PlayerButtonIncome = PlayerButtonIncome;
 
-			target.PlayerButtonAmount[0] = PlayerButtonAmount[0];
-			target.PlayerButtonAmount[1] = PlayerButtonAmount[1];
+			target.PlayerButtonAmount = PlayerButtonAmount;
 
-			target.PlayerPosition[0] = PlayerPosition[0];
-			target.PlayerPosition[1] = PlayerPosition[1];
+			target.PlayerPosition = PlayerPosition;
 
 			target.SevenXSevenBonusPlayer = SevenXSevenBonusPlayer;
 
