@@ -129,6 +129,8 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers
 			node.HasBeenExpanded = true;
 			var children = node.Children;
 
+			_boardEvaluator.BeginEvaluation(node.Board);
+
 			//Exhaustively place it and make new child nodes
 			for (var index = 0; index < piece.PossibleOrientations.Length; index++)
 			{
@@ -152,11 +154,9 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers
 						{
 							//evaluate child nodes
 							var copy = node.Board;
-							//TODO: utilityBefore could be cached per row and column
-							var utilityBefore = _boardEvaluator.Evaluate(copy, x, x + bitmap.Width, y, y + bitmap.Height);
 
 							copy.Place(bitmap, x, y);
-							var utility = _boardEvaluator.Evaluate(copy, x, x + bitmap.Width, y, y + bitmap.Height) - utilityBefore;
+							var utility = _boardEvaluator.Evaluate(copy, x, x + bitmap.Width, y, y + bitmap.Height);
 
 							//Insertion sort us in to the children list
 							SearchNode child = null;
