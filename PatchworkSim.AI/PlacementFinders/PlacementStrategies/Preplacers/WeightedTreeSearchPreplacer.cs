@@ -99,7 +99,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers
 				if (currentRoot.Children.Count == 0)
 					return null;
 
-				var selectedUtility = _random.NextDouble() * currentRoot.ChildrenUtilitySum;
+				var selectedUtility = _random.Next(0, currentRoot.ChildrenUtilitySum);
 
 				bool foundOne = false;
 				for (var i = 0; i < currentRoot.Children.Count; i++)
@@ -206,10 +206,22 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers
 			}
 
 			node.ChildrenUtilitySum = 0;
-			for (var i = 0; i < node.Children.Count; i++)
+			if (node.Children.Count > 0)
 			{
-				var c = node.Children[i];
-				node.ChildrenUtilitySum += c.Utility;
+				//Utility can be negative, but we want to use it for random numbers, so fix it up
+				var minUtility = node.Children[node.Children.Count - 1].Utility;
+				int fixupAmount = 0;
+				if (minUtility <= 0)
+				{
+					fixupAmount = 1 - minUtility;
+				}
+
+				for (var i = 0; i < node.Children.Count; i++)
+				{
+					var c = node.Children[i];
+					c.Utility += fixupAmount;
+					node.ChildrenUtilitySum += c.Utility;
+				}
 			}
 		}
 
@@ -221,8 +233,8 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers
 			public int X, Y;
 			public int Depth;
 
-			public double Utility;
-			public double ChildrenUtilitySum;
+			public int Utility;
+			public int ChildrenUtilitySum;
 			public bool HasBeenExpanded = false;
 			public readonly List<SearchNode> Children;
 
