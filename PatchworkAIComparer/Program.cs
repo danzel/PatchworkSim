@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using PatchworkSim;
 using PatchworkSim.AI.MoveMakers;
@@ -103,26 +104,22 @@ namespace PatchworkAIComparer
 
 			var aiToTest = new Func<PlayerDecisionMaker>[]
 			{
-				
 				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-1), PlacementMaker.TightDoublerInstance),
 				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), PlacementMaker.TightDoublerInstance),
 				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), PlacementMaker.TightDoublerInstance),
 				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.TightDoublerInstance),
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(3), PlacementMaker.TightDoublerInstance),
 
 				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(3), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 				//
 				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(1000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(5000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 
-				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(1000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(1000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(5000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_1),
 				() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 				() =>
 				{
@@ -143,6 +140,21 @@ namespace PatchworkAIComparer
 				() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(10, 2000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 				() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(20, 5000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 				() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(30, 10000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+
+				() => new PlayerDecisionMaker(new DepthLimitedNoMoveMinimaxMoveMaker(6), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				() => new PlayerDecisionMaker(new DepthLimitedNoMoveMinimaxMoveMaker(8), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+
+				() =>
+				{
+					var mcts = new MonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1, new TightBoardEvaluator(true), 2);
+					return new PlayerDecisionMaker(mcts, new PlacementMaker(mcts.PlacementStrategy));
+				},
+
+				() =>
+				{
+					var mcts = new MonteCarloTreeSearchMoveMaker(20000, TuneableUtilityMoveMaker.Tuning1, new TightBoardEvaluator(true), 2);
+					return new PlayerDecisionMaker(mcts, new PlacementMaker(mcts.PlacementStrategy));
+				},
 				//
 				//() => new PlayerDecisionMaker(TuneableUtilityMoveMaker.Tuning1, PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 			};
@@ -153,6 +165,7 @@ namespace PatchworkAIComparer
 			//TODO: Play each AI against each other AI 100 times and print a table of results
 
 			var totalWins = new int[aiToTest.Length, aiToTest.Length];
+			var totalTimeTaken = new long[aiToTest.Length];
 			Console.WriteLine($"Running {aiToTest.Length * (aiToTest.Length - 1) / 2} * {TotalRuns} Games");
 			int gameNumber = 0;
 
@@ -163,11 +176,13 @@ namespace PatchworkAIComparer
 					if (a == b)
 						continue;
 
+					long aiATime = 0;
+					long aiBTime = 0;
 					var aiA = aiToTest[a];
 					var aiB = aiToTest[b];
 					Console.WriteLine($"{++gameNumber} {aiA().Name} vs {aiB().Name}");
 
-					Parallel.For(0, TotalRuns, (run) =>
+					Parallel.For(0, TotalRuns, new ParallelOptions { MaxDegreeOfParallelism = 6 }, (run) =>
 							//for (var run = 0; run < TotalRuns; run++)
 						{
 							var state = new SimulationState(SimulationHelpers.GetRandomPieces(run / 2), 0);
@@ -194,10 +209,16 @@ namespace PatchworkAIComparer
 								else
 									totalWins[b, a]++;
 							}
+
+							Interlocked.Add(ref aiATime, runner.Stopwatches[run % 2].ElapsedMilliseconds);
+							Interlocked.Add(ref aiBTime, runner.Stopwatches[(run + 1) % 2].ElapsedMilliseconds);
 							//Console.WriteLine(aWin);
 						}
 					);
 					Console.WriteLine(totalWins[a, b]);
+
+					totalTimeTaken[a] += aiATime;
+					totalTimeTaken[b] += aiBTime;
 				}
 			}
 
@@ -226,6 +247,10 @@ namespace PatchworkAIComparer
 
 				res.Add(line);
 			}
+
+			res.Add("");
+			for (var a = 0; a < aiToTest.Length; a++)
+				res.Add(aiToTest[a]().Name + "," + totalTimeTaken[a]);
 
 			Console.WriteLine("Saving results as " + filename);
 			File.WriteAllLines(filename, res);
