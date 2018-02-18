@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace PatchworkSim.AI.MoveMakers
 {
@@ -8,31 +9,37 @@ namespace PatchworkSim.AI.MoveMakers
 
 		private readonly int _maxSearchDepth;
 
+		private readonly ThreadLocal<SingleThreadedStackPool<SimulationState>> _pool = new ThreadLocal<SingleThreadedStackPool<SimulationState>>(() => new SingleThreadedStackPool<SimulationState>(), false);
+
 		public MoveOnlyMinimaxWithAlphaBetaPruningMoveMaker(int maxSearchDepth)
 		{
 			_maxSearchDepth = maxSearchDepth;
 		}
 
-		protected override double CalculateValueOfAdvancing(SimulationState state)
+		protected override double CalculateValueOfAdvancing(SimulationState baseState)
 		{
-			var maximizingPlayer = state.ActivePlayer;
-
-			state = state.Clone();
+			var state = _pool.Value.Get();
+			state.Pieces.Clear();
+			baseState.CloneTo(state);
 			state.Fidelity = SimulationFidelity.NoPiecePlacing;
 			state.PerformAdvanceMove();
 
-			return AlphaBeta(state, _maxSearchDepth, double.MinValue, Double.MaxValue, maximizingPlayer);
+			var res = AlphaBeta(state, _maxSearchDepth, double.MinValue, double.MaxValue, baseState.ActivePlayer);
+			_pool.Value.Return(state);
+			return res;
 		}
 
-		protected override double CalculateValue(SimulationState state, int pieceIndex, PieceDefinition piece)
+		protected override double CalculateValue(SimulationState baseState, int pieceIndex, PieceDefinition piece)
 		{
-			var maximizingPlayer = state.ActivePlayer;
-
-			state = state.Clone();
+			var state = _pool.Value.Get();
+			state.Pieces.Clear();
+			baseState.CloneTo(state);
 			state.Fidelity = SimulationFidelity.NoPiecePlacing;
 			state.PerformPurchasePiece(pieceIndex);
 
-			return AlphaBeta(state, _maxSearchDepth, double.MinValue, double.MaxValue, maximizingPlayer);
+			var res =  AlphaBeta(state, _maxSearchDepth, double.MinValue, double.MaxValue, baseState.ActivePlayer);
+			_pool.Value.Return(state);
+			return res;
 		}
 
 		//https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning#Pseudocode
@@ -53,9 +60,12 @@ namespace PatchworkSim.AI.MoveMakers
 			//foreach child
 			//Advance
 			{
-				var state = parentState.Clone();
+				var state = _pool.Value.Get();
+				state.Pieces.Clear();
+				parentState.CloneTo(state);
 				state.PerformAdvanceMove();
 				var v = AlphaBeta(state, depth - 1, alpha, beta, maximizingPlayer);
+				_pool.Value.Return(state);
 				if (shouldMaximize)
 				{
 					bestValue = Math.Max(bestValue, v);
@@ -78,9 +88,12 @@ namespace PatchworkSim.AI.MoveMakers
 				var piece = Helpers.GetNextPiece(parentState, i);
 				if (Helpers.ActivePlayerCanPurchasePiece(parentState, piece))
 				{
-					var state = parentState.Clone();
+					var state = _pool.Value.Get();
+					state.Pieces.Clear();
+					parentState.CloneTo(state);
 					state.PerformPurchasePiece(state.NextPieceIndex + i);
 					var v = AlphaBeta(state, depth -1, alpha, beta, maximizingPlayer);
+					_pool.Value.Return(state);
 					if (shouldMaximize)
 					{
 						bestValue = Math.Max(bestValue, v);
