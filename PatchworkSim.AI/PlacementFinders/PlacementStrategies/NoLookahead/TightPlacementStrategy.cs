@@ -83,15 +83,15 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead
 		{
 			board.Place(bitmap, placeX, placeY);
 
-			CalculateScore(board, doubler, out score);
+			score = CalculateScore(board, doubler, 0, BoardState.Width, 0, BoardState.Height);
 		}
 
-		public static void CalculateScore(BoardState board, bool doubler, out int score)
+		public static int CalculateScore(BoardState board, bool doubler, int minX, int maxX, int minY, int maxY)
 		{
-			score = 0;
+			int score = 0;
 
 			//Scan down
-			for (var x = 0; x < BoardState.Width; x++)
+			for (var x = minX; x < maxX; x++)
 			{
 				int thisScore = 1;
 				var last = board[x, 0];
@@ -116,7 +116,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead
 
 
 			//Scan across
-			for (var y = 0; y < BoardState.Height; y++)
+			for (var y = minY; y < maxY; y++)
 			{
 				int thisScore = 1;
 				var last = board[0, y];
@@ -138,6 +138,8 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead
 
 				score += thisScore;
 			}
+
+			return score;
 		}
 	}
 }

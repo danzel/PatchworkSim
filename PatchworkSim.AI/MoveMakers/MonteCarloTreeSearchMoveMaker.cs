@@ -79,6 +79,7 @@ namespace PatchworkSim.AI.MoveMakers
 
 			private readonly List<double> _expandPlacingUtility = new List<double>(4);
 
+
 			private void ExpandByPlacing(SearchNode root)
 			{
 				// This code mostly taken from WeightedTreeSearchPreplacer
@@ -114,8 +115,11 @@ namespace PatchworkSim.AI.MoveMakers
 							{
 								//evaluate child nodes
 								var copy = board;
+								//TODO: utilityBefore could be cached per row and column
+								var utilityBefore = BoardEvaluator.Evaluate(copy, x, x + bitmap.Width, y, y + bitmap.Height);
+
 								copy.Place(bitmap, x, y);
-								var utility = BoardEvaluator.Evaluate(copy);
+								var utility = BoardEvaluator.Evaluate(copy, x, x + bitmap.Width, y, y + bitmap.Height) - utilityBefore;
 
 								//Insertion sort us in to the children list
 								SearchNode child = null;

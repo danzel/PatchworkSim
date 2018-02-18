@@ -1,5 +1,4 @@
-﻿using System;
-using PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
+﻿using PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
 
 namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.BoardEvaluators
 {
@@ -17,23 +16,10 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.BoardEvaluators
 			_doubler = doubler;
 		}
 
-		private static readonly double MaxDoublerScore = Math.Pow(2, 8) * (BoardState.Width + BoardState.Height);
-		private const double MaxIncrementScore = BoardState.Width * BoardState.Height * 2;
-
-		public double Evaluate(BoardState board)
+		public int Evaluate(BoardState board, int minX, int maxX, int minY, int maxY)
 		{
-			TightPlacementStrategy.CalculateScore(board, _doubler, out var score);
-
-			double result;
-			if (_doubler)
-				result = 1 - score / MaxDoublerScore;
-			else
-				result = 1 - score / MaxIncrementScore;
-
-			if (result > 1 || result < 0)
-				throw new Exception();
-
-			return result;
+			//Tight returns a larger score to mean worse, so reverse it
+			return -TightPlacementStrategy.CalculateScore(board, _doubler, minX, maxX, minY, maxY);
 		}
 	}
 }

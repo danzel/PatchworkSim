@@ -5,8 +5,8 @@
 		string Name { get; }
 
 		/// <summary>
-		/// Evaluate the given board state and return a value from 0-1, where 0 is bad and 1 is good
+		/// Evaluate the given board state and return a value. Larger values are better than smaller ones
 		/// </summary>
-		double Evaluate(BoardState board);
+		int Evaluate(BoardState board, int minX, int maxX, int minY, int maxY);
 	}
 }
