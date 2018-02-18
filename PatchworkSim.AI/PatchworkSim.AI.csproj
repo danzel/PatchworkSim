@@ -45,6 +45,7 @@
     <Compile Include="MoveMakers\BaseMoveOnlyMontoCarloTreeSearchMoveMaker.cs" />
     <Compile Include="MoveMakers\BaseUtilityMoveMaker.cs" />
     <Compile Include="MoveMakers\BuyFirstPossibleMoveMaker.cs" />
+    <Compile Include="MoveMakers\MoveOnlyMinimaxWithAlphaBetaPruningMoveMaker.cs" />
     <Compile Include="MoveMakers\MoveOnlyMinimaxMoveMaker.cs" />
     <Compile Include="MoveMakers\GreedyCardValueUtilityMoveMaker.cs" />
     <Compile Include="MoveMakers\MonteCarloTreeSearchMoveMaker.cs" />
