@@ -8,16 +8,17 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.BoardEvaluators
 	/// </summary>
 	public class TightBoardEvaluator : IBoardEvaluator
 	{
-		public string Name => $"Tight({_doubler}@{_focusPower})";
+		public string Name => $"Tight({_doubler})";
 
 		private readonly bool _doubler;
-		private readonly double _focusPower;
 
-		public TightBoardEvaluator(bool doubler, double focusPower)
+		public TightBoardEvaluator(bool doubler)
 		{
 			_doubler = doubler;
-			_focusPower = focusPower;
 		}
+
+		private static readonly double MaxDoublerScore = Math.Pow(2, 8) * (BoardState.Width + BoardState.Height);
+		private const double MaxIncrementScore = BoardState.Width * BoardState.Height * 2;
 
 		public double Evaluate(BoardState board)
 		{
@@ -25,14 +26,14 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.BoardEvaluators
 
 			double result;
 			if (_doubler)
-				result = 1 - score / (Math.Pow(2, 8) * (BoardState.Width + BoardState.Height));
+				result = 1 - score / MaxDoublerScore;
 			else
-				result = 1 - score / (double)(BoardState.Width * BoardState.Height * 2);
+				result = 1 - score / MaxIncrementScore;
 
 			if (result > 1 || result < 0)
 				throw new Exception();
 
-			return Math.Pow(result, _focusPower);
+			return result;
 		}
 	}
 }

@@ -126,7 +126,7 @@ namespace PatchworkAIComparer
 				() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 				() =>
 				{
-					var p = new PreplacerStrategy(new WeightedTreeSearchPreplacer(new TightBoardEvaluator(true, 1), 10000, 2));
+					var p = new PreplacerStrategy(new WeightedTreeSearchPreplacer(new TightBoardEvaluator(true), 10000, 2));
 					var m = new MoveOnlyMonteCarloTreeSearchWithPreplacerMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1, p);
 					return new PlayerDecisionMaker(m, new PlacementMaker(p));
 				},
