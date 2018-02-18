@@ -14,7 +14,7 @@
 				var piece = Helpers.GetNextPiece(state, i);
 				if (Helpers.ActivePlayerCanPurchasePiece(state, piece))
 				{
-					var value = CalculateValue(state, piece);
+					var value = CalculateValue(state, state.NextPieceIndex + i, piece);
 
 					if (value > bestPieceValue)
 					{
@@ -32,6 +32,6 @@
 
 		protected abstract double CalculateValueOfAdvancing(SimulationState state);
 
-		protected abstract double CalculateValue(SimulationState state, PieceDefinition piece);
+		protected abstract double CalculateValue(SimulationState state, int pieceIndex, PieceDefinition piece);
 	}
 }

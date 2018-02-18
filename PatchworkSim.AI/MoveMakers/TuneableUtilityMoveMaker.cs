@@ -63,7 +63,7 @@ namespace PatchworkSim.AI.MoveMakers
 			return AdvancingPerButtonUtility * distance; //TODO Clamp? Divide by total utilities?
 		}
 
-		protected override double CalculateValue(SimulationState state, PieceDefinition piece)
+		protected override double CalculateValue(SimulationState state, int pieceIndex, PieceDefinition piece)
 		{
 			var value = piece.TotalUsedLocations * UsedLocationUtility;
 

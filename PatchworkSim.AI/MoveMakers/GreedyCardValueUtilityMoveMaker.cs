@@ -20,7 +20,7 @@
 			return 0;
 		}
 
-		protected override double CalculateValue(SimulationState state, PieceDefinition piece)
+		protected override double CalculateValue(SimulationState state, int pieceIndex, PieceDefinition piece)
 		{
 			var value = piece.TotalUsedLocations * 2 - piece.ButtonCost - piece.TimeCost * _timeCostValue;
 			value += Helpers.ButtonIncomeAmountAfterPosition(state.PlayerPosition[state.ActivePlayer]) * piece.ButtonsIncome;
