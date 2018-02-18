@@ -5,7 +5,12 @@
 		string Name { get; }
 
 		/// <summary>
-		/// Evaluate the given board state and return a value. Larger values are better than smaller ones
+		/// Begin evaluation starting from the given board state.
+		/// </summary>
+		void BeginEvaluation(BoardState currentBoard);
+
+		/// <summary>
+		/// Evaluate the given board state (compared to the one provided in BeginEvaluation) and return a value. Larger values imply a better resulting board state
 		/// </summary>
 		int Evaluate(BoardState board, int minX, int maxX, int minY, int maxY);
 	}
