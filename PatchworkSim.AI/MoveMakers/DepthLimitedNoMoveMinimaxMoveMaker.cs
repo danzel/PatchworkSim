@@ -39,9 +39,11 @@ namespace PatchworkSim.AI.MoveMakers
 		private double Minimax(SimulationState parentState, int maximizingPlayer, int depth)
 		{
 			//We deviate from strict depth limited minimax here.
-			//We want to ensure that both players get turns, otherwise when we get one more turn than our opponent we will think that is better.
+			//We want to ensure that both players get the same amount(ish) of turns, otherwise when we get one more turn than our opponent we will think that is better.
 			//So to ensure fairness, we don't terminate a search until it is the maximizing players turn again, this ensures the opponent has had time to respond to our move
-			// TODO: This isn't totally perfect, if the last move we made gave us an extra move, we've got a turn advantage, but this doesn't happen much I think?
+			//TODO: This isn't totally perfect, if the last move we made gave us an extra move, we've got a turn advantage and it is our turn, so we'll terminate
+			//TODO: I roughly tested making this continue until the last player was the non-maximizing player also, this made the search 2.5x as long and it seemed slightly weaker
+			//TODO: Adding the ActivePlayer check vs not having it improves strength a lot, but makes the search runtime 2x
 			if ((depth <= 0 && parentState.ActivePlayer == maximizingPlayer) || parentState.GameHasEnded)
 				return Evaluate(parentState, maximizingPlayer);
 
