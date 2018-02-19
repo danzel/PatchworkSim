@@ -72,16 +72,16 @@ namespace PatchworkSim.AI.MoveMakers
 			value += piece.TimeCost * TimeCostUtility;
 
 			//TODO: Should we have piece income and total income utilities?
-			value += Helpers.ButtonIncomeAmountAfterPosition(state.PlayerPosition[state.ActivePlayer]) * piece.ButtonsIncome * IncomeUtility;
+			value += SimulationHelpers.ButtonIncomeAmountAfterPosition(state.PlayerPosition[state.ActivePlayer]) * piece.ButtonsIncome * IncomeUtility;
 
-			value += Helpers.ButtonIncomeAmountAfterPosition(state.PlayerPosition[state.ActivePlayer]) * piece.ButtonsIncome * piece.ButtonsIncome * IncomeSquaredUtility;
+			value += SimulationHelpers.ButtonIncomeAmountAfterPosition(state.PlayerPosition[state.ActivePlayer]) * piece.ButtonsIncome * piece.ButtonsIncome * IncomeSquaredUtility;
 
 			//TODO: Should this be boolean or vary by difference in location?
 			if (state.PlayerPosition[state.NonActivePlayer] >= (state.PlayerPosition[state.ActivePlayer] + piece.TimeCost))
 				value += GetAnotherTurnUtility;
 
 			//TODO: Should this be boolean or vary by income amount?
-			if (Helpers.ButtonIncomeAmountAfterPosition(state.PlayerPosition[state.ActivePlayer]) != Helpers.ButtonIncomeAmountAfterPosition(Math.Min(SimulationState.EndLocation, state.PlayerPosition[state.ActivePlayer] + piece.TimeCost)))
+			if (SimulationHelpers.ButtonIncomeAmountAfterPosition(state.PlayerPosition[state.ActivePlayer]) != SimulationHelpers.ButtonIncomeAmountAfterPosition(Math.Min(SimulationState.EndLocation, state.PlayerPosition[state.ActivePlayer] + piece.TimeCost)))
 				value += ReceiveIncomeUtility;
 
 			return value; //TODO Clamp? Divide by total utilities?

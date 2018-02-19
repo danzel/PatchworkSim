@@ -118,6 +118,9 @@ namespace PathworkSim.Test
 
 			//Check someone bought something
 			Assert.True(state.Pieces.Count < PieceDefinition.AllPieceDefinitions.Length);
+
+			Assert.Equal(11, state.PlayerButtonIncome[0]);
+			Assert.Equal(37, state.PlayerButtonAmount[0]);
 		}
 	}
 }

@@ -165,24 +165,19 @@ namespace PatchworkSim
 
 		private void MoveActivePlayer(int targetPosition)
 		{
+#if DEBUG
 			if (targetPosition > EndLocation)
 				throw new ArgumentOutOfRangeException(nameof(targetPosition), nameof(targetPosition) + " (" + targetPosition + ") is past the EndLocation (" + EndLocation + ")");
 			if (targetPosition <= PlayerPosition[ActivePlayer])
 				throw new ArgumentOutOfRangeException(nameof(targetPosition), nameof(targetPosition) + " (" + targetPosition + ") is not past the current position of this player");
-
+#endif
 			var startPosition = PlayerPosition[ActivePlayer];
 			//Move us
 			PlayerPosition[ActivePlayer] = targetPosition;
 
 
 			//Check if we get buttons for passing a button marker
-			foreach (var pos in ButtonIncomeMarkers)
-			{
-				if (pos > startPosition && pos <= targetPosition)
-				{
-					PlayerButtonAmount[ActivePlayer] += PlayerButtonIncome[ActivePlayer];
-				}
-			}
+			PlayerButtonAmount[ActivePlayer] += PlayerButtonIncome[ActivePlayer] * (SimulationHelpers.ButtonIncomeAmountAfterPosition(startPosition) - SimulationHelpers.ButtonIncomeAmountAfterPosition(targetPosition));
 
 			//Check if the player gets a leather patch
 			if (LeatherPatchesIndex < LeatherPatches.Length && targetPosition >= LeatherPatches[LeatherPatchesIndex])

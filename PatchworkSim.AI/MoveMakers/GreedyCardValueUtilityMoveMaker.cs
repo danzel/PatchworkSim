@@ -23,7 +23,7 @@
 		protected override double CalculateValue(SimulationState state, int pieceIndex, PieceDefinition piece)
 		{
 			var value = piece.TotalUsedLocations * 2 - piece.ButtonCost - piece.TimeCost * _timeCostValue;
-			value += Helpers.ButtonIncomeAmountAfterPosition(state.PlayerPosition[state.ActivePlayer]) * piece.ButtonsIncome;
+			value += SimulationHelpers.ButtonIncomeAmountAfterPosition(state.PlayerPosition[state.ActivePlayer]) * piece.ButtonsIncome;
 			//TODO: We should value gaining buttons more near the start of the game because they let us buy more, not sure if we need to put some extra stuff in for that
 
 			return value;

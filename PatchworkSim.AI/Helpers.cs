@@ -5,17 +5,6 @@ namespace PatchworkSim.AI
 {
 	public static class Helpers
 	{
-		private static int[] _buttonIncomeAmountAfterPositionCache;
-
-		static Helpers()
-		{
-			_buttonIncomeAmountAfterPositionCache = new int[SimulationState.EndLocation + 1];
-			for (var i = 0; i < _buttonIncomeAmountAfterPositionCache.Length; i++)
-			{
-				_buttonIncomeAmountAfterPositionCache[i] = SimulationState.ButtonIncomeMarkers.Count(c => c > i);
-			}
-		}
-
 		/// <summary>
 		/// This runs from the highest x/y backwards, as a rule of thumb placement strategies should try place starting at 0,0 so this is likely to finish quicker
 		/// </summary>
@@ -78,11 +67,6 @@ namespace PatchworkSim.AI
 			return PieceDefinition.AllPieceDefinitions[state.Pieces[(state.NextPieceIndex + lookForwardAmount) % state.Pieces.Count]];
 		}
 
-		public static int ButtonIncomeAmountAfterPosition(int currentPosition)
-		{
-			return _buttonIncomeAmountAfterPositionCache[currentPosition];
-		}
-
 		/// <summary>
 		/// Estimates the end game value of the given players position.
 		/// Doesn't care that you would be able to spend any income to buy more pieces later. Basically assumes all players advance to end
@@ -90,7 +74,7 @@ namespace PatchworkSim.AI
 		public static int EstimateEndgameValue(SimulationState state, int player)
 		{
 			//space used * 2 + buttons + income * incomes remaining
-			return state.PlayerBoardUsedLocationsCount[player] * 2 + state.PlayerButtonAmount[player] + (11 * state.PlayerButtonIncome[player] * ButtonIncomeAmountAfterPosition(state.PlayerPosition[player]) / 10);
+			return state.PlayerBoardUsedLocationsCount[player] * 2 + state.PlayerButtonAmount[player] + (11 * state.PlayerButtonIncome[player] * SimulationHelpers.ButtonIncomeAmountAfterPosition(state.PlayerPosition[player]) / 10);
 		}
 	}
 }

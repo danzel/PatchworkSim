@@ -1,10 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PatchworkSim
 {
 	public static class SimulationHelpers
 	{
+		private static readonly int[] _buttonIncomeAmountAfterPositionCache;
+
+		static SimulationHelpers()
+		{
+			_buttonIncomeAmountAfterPositionCache = new int[SimulationState.EndLocation + 1];
+			for (var i = 0; i < _buttonIncomeAmountAfterPositionCache.Length; i++)
+			{
+				_buttonIncomeAmountAfterPositionCache[i] = SimulationState.ButtonIncomeMarkers.Count(c => c > i);
+			}
+		}
+
+		public static int ButtonIncomeAmountAfterPosition(int position)
+		{
+			return _buttonIncomeAmountAfterPositionCache[position];
+		}
+
 		public static List<int> GetRandomPieces(int? randomSeed = null)
 		{
 			var rand = randomSeed.HasValue ? new Random(randomSeed.Value) : new Random();
