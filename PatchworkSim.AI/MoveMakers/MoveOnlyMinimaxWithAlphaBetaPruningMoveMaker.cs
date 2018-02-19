@@ -79,6 +79,7 @@ namespace PatchworkSim.AI.MoveMakers
 			}
 
 			//Advance
+			if (bestMove != null) // Don't need to consider it if we can't purchase any pieces, we are definitely going to advance
 			{
 				var state = _pool.Value.Get();
 				state.Pieces.Clear();
