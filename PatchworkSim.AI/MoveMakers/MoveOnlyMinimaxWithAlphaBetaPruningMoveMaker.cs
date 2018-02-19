@@ -3,9 +3,9 @@ using System.Threading;
 
 namespace PatchworkSim.AI.MoveMakers
 {
-	public class MoveOnlyMinimaxWithAlphaBetaPruningMoveMaker : BaseUtilityMoveMaker
+	public class MoveOnlyMinimaxWithAlphaBetaPruningMoveMaker : IMoveDecisionMaker
 	{
-		public override string Name => $"MinimaxAlphaBeta({_maxSearchDepth})";
+		public string Name => $"MinimaxAlphaBeta({_maxSearchDepth})";
 
 		private readonly int _maxSearchDepth;
 
@@ -16,34 +16,103 @@ namespace PatchworkSim.AI.MoveMakers
 			_maxSearchDepth = maxSearchDepth;
 		}
 
-		protected override double CalculateValueOfAdvancing(SimulationState baseState)
+		public void MakeMove(SimulationState state)
 		{
-			var state = _pool.Value.Get();
-			state.Pieces.Clear();
-			baseState.CloneTo(state);
-			state.Fidelity = SimulationFidelity.NoPiecePlacing;
-			state.PerformAdvanceMove();
+			AlphaBeta(state, _maxSearchDepth, int.MinValue, int.MaxValue, state.ActivePlayer, out var bestMove);
 
-			var res = AlphaBeta(state, _maxSearchDepth, double.MinValue, double.MaxValue, baseState.ActivePlayer);
-			_pool.Value.Return(state);
-			return res;
-		}
-
-		protected override double CalculateValue(SimulationState baseState, int pieceIndex, PieceDefinition piece)
-		{
-			var state = _pool.Value.Get();
-			state.Pieces.Clear();
-			baseState.CloneTo(state);
-			state.Fidelity = SimulationFidelity.NoPiecePlacing;
-			state.PerformPurchasePiece(pieceIndex);
-
-			var res =  AlphaBeta(state, _maxSearchDepth, double.MinValue, double.MaxValue, baseState.ActivePlayer);
-			_pool.Value.Return(state);
-			return res;
+			if (!bestMove.HasValue)
+				state.PerformAdvanceMove();
+			else
+				state.PerformPurchasePiece(state.NextPieceIndex + bestMove.Value);
 		}
 
 		//https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning#Pseudocode
-		private double AlphaBeta(SimulationState parentState, int depth, double alpha, double beta, int maximizingPlayer)
+		private int AlphaBeta(SimulationState parentState, int depth, int alpha, int beta, int maximizingPlayer, out int? bestMove)
+		{
+			bestMove = null;
+
+			//We deviate from strict depth limited minimax here.
+			//We want to ensure that both players get the same amount(ish) of turns, otherwise when we get one more turn than our opponent we will think that is better.
+			//So to ensure fairness, we don't terminate a search until it is the maximizing players turn again, this ensures the opponent has had time to respond to our move
+			//TODO: This isn't totally perfect, if the last move we made gave us an extra move, we've got a turn advantage and it is our turn, so we'll terminate
+			//TODO: I roughly tested making this continue until the last player was the non-maximizing player also, this made the search 2.5x as long and it seemed slightly weaker
+			//TODO: Adding the ActivePlayer check vs not having it improves strength a lot, but makes the search runtime 2x
+			if ((depth <= 0 && parentState.ActivePlayer == maximizingPlayer) || parentState.GameHasEnded)
+				return Evaluate(parentState, maximizingPlayer);
+
+			var shouldMaximize = maximizingPlayer == parentState.ActivePlayer;
+			int bestValue = shouldMaximize ? int.MinValue : int.MaxValue;
+
+			//TODO: Can run faster if we try the best moves first
+			//foreach child
+
+			//Try buy all possible pieces
+			for (var i = 0; i < 3; i++)
+			{
+				var piece = Helpers.GetNextPiece(parentState, i);
+				if (Helpers.ActivePlayerCanPurchasePiece(parentState, piece))
+				{
+					var state = _pool.Value.Get();
+					state.Pieces.Clear();
+					parentState.CloneTo(state);
+					state.Fidelity = SimulationFidelity.NoPiecePlacing;
+					state.PerformPurchasePiece(state.NextPieceIndex + i);
+					var v = AlphaBeta(state, depth -1, alpha, beta, maximizingPlayer);
+					_pool.Value.Return(state);
+					if (shouldMaximize)
+					{
+						if (v > bestValue)
+							bestMove = i;
+						bestValue = Math.Max(bestValue, v);
+						alpha = Math.Max(alpha, bestValue);
+						if (beta <= alpha)
+							break;
+					}
+					else
+					{
+						bestValue = Math.Min(bestValue, v);
+						beta = Math.Min(beta, bestValue);
+						if (beta <= alpha)
+							break;
+					}
+				}
+			}
+
+			//Advance
+			{
+				var state = _pool.Value.Get();
+				state.Pieces.Clear();
+				parentState.CloneTo(state);
+				state.Fidelity = SimulationFidelity.NoPiecePlacing;
+				state.PerformAdvanceMove();
+				//Decrease alpha by 1 (if possible) so we can identify draws. We favor doing an advance in a draw, but we evaluate purchases first
+				//This gives us the same results as if we were evaluating advance first, but performance is better
+				var v = AlphaBeta(state, depth - 1, (alpha == int.MinValue ? int.MinValue : alpha - 1), beta, maximizingPlayer);
+				_pool.Value.Return(state);
+				if (shouldMaximize)
+				{
+					if (v >= bestValue)
+						bestMove = null;
+					bestValue = Math.Max(bestValue, v);
+					alpha = Math.Max(alpha, bestValue);
+					if (beta <= alpha)
+						return bestValue;
+				}
+				else
+				{
+					bestValue = Math.Min(bestValue, v);
+					beta = Math.Min(beta, bestValue);
+					if (beta <= alpha)
+						return bestValue;
+				}
+			}
+
+			return bestValue;
+		}
+
+
+		//https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning#Pseudocode
+		private int AlphaBeta(SimulationState parentState, int depth, int alpha, int beta, int maximizingPlayer)
 		{
 			//We deviate from strict depth limited minimax here.
 			//We want to ensure that both players get the same amount(ish) of turns, otherwise when we get one more turn than our opponent we will think that is better.
@@ -55,10 +124,11 @@ namespace PatchworkSim.AI.MoveMakers
 				return Evaluate(parentState, maximizingPlayer);
 
 			var shouldMaximize = maximizingPlayer == parentState.ActivePlayer;
-			double bestValue = shouldMaximize ? double.MinValue : double.MaxValue;
+			int bestValue = shouldMaximize ? int.MinValue : int.MaxValue;
 
 			//TODO: Can run faster if we try the best moves first
 			//foreach child
+
 			//Try buy all possible pieces
 			for (var i = 0; i < 3; i++)
 			{
@@ -68,8 +138,9 @@ namespace PatchworkSim.AI.MoveMakers
 					var state = _pool.Value.Get();
 					state.Pieces.Clear();
 					parentState.CloneTo(state);
+					state.Fidelity = SimulationFidelity.NoPiecePlacing;
 					state.PerformPurchasePiece(state.NextPieceIndex + i);
-					var v = AlphaBeta(state, depth -1, alpha, beta, maximizingPlayer);
+					var v = AlphaBeta(state, depth - 1, alpha, beta, maximizingPlayer);
 					_pool.Value.Return(state);
 					if (shouldMaximize)
 					{
@@ -93,6 +164,7 @@ namespace PatchworkSim.AI.MoveMakers
 				var state = _pool.Value.Get();
 				state.Pieces.Clear();
 				parentState.CloneTo(state);
+				state.Fidelity = SimulationFidelity.NoPiecePlacing;
 				state.PerformAdvanceMove();
 				var v = AlphaBeta(state, depth - 1, alpha, beta, maximizingPlayer);
 				_pool.Value.Return(state);
@@ -118,14 +190,14 @@ namespace PatchworkSim.AI.MoveMakers
 		/// <summary>
 		/// Score the simulation for the given player
 		/// </summary>
-		private double Evaluate(SimulationState state, int maximizingPlayer)
+		private int Evaluate(SimulationState state, int maximizingPlayer)
 		{
 			if (state.GameHasEnded)
 			{
 				if (maximizingPlayer == state.WinningPlayer)
-					return double.MaxValue;
+					return int.MaxValue;
 				else
-					return double.MinValue;
+					return int.MinValue;
 			}
 
 			return Helpers.EstimateEndgameValue(state, maximizingPlayer) - Helpers.EstimateEndgameValue(state, maximizingPlayer == 0 ? 1 : 0);
