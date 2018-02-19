@@ -90,7 +90,7 @@ namespace PatchworkSim.AI
 		public static int EstimateEndgameValue(SimulationState state, int player)
 		{
 			//space used * 2 + buttons + income * incomes remaining
-			return state.PlayerBoardUsedLocationsCount[player] * 2 + state.PlayerButtonAmount[player] + state.PlayerButtonIncome[player] * ButtonIncomeAmountAfterPosition(state.PlayerPosition[player]);
+			return state.PlayerBoardUsedLocationsCount[player] * 2 + state.PlayerButtonAmount[player] + (11 * state.PlayerButtonIncome[player] * ButtonIncomeAmountAfterPosition(state.PlayerPosition[player]) / 10);
 		}
 	}
 }
