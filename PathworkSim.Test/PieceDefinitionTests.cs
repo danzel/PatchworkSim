@@ -6,6 +6,12 @@ namespace PathworkSim.Test
 	public class PieceDefinitionTests
 	{
 		[Fact]
+		public void TotalPieces()
+		{
+			Assert.Equal(PieceDefinition.AllPieceDefinitions.Length, PieceDefinition.TotalPieces);
+		}
+
+		[Fact]
 		public void SinglePossibleOrientation()
 		{
 			var piece = new PieceDefinition("test", 0, 0, 0,

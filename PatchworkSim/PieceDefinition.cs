@@ -4,6 +4,8 @@ namespace PatchworkSim
 {
 	public class PieceDefinition
 	{
+		public const int TotalPieces = 33;
+
 		public string Name { get; }
 		public int ButtonCost { get; }
 		public int TimeCost { get; }

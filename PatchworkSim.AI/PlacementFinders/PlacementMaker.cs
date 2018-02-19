@@ -24,7 +24,7 @@ namespace PatchworkSim.AI.PlacementFinders
 
 		public void PlacePiece(SimulationState state)
 		{
-			if (_strategy.TryPlacePiece(state.PlayerBoardState[state.PieceToPlacePlayer], state.PieceToPlace, state.Pieces, state.NextPieceIndex, out var bitmap, out var x, out var y))
+			if (_strategy.TryPlacePiece(state.PlayerBoardState[state.PieceToPlacePlayer], state.PieceToPlace, state.Pieces.ToList(), state.NextPieceIndex, out var bitmap, out var x, out var y))
 				state.PerformPlacePiece(bitmap, x, y);
 			else
 				throw new Exception("There is no where to place the piece");

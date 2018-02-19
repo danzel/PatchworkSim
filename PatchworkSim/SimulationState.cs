@@ -72,7 +72,7 @@ namespace PatchworkSim
 		/// <summary>
 		/// The list of pieces (index in to PieceDefinition.AllPieceDefinitions) in picking order
 		/// </summary>
-		public List<int> Pieces;
+		public PieceCollection Pieces;
 
 		/// <summary>
 		/// The index (into Pieces) of the next piece (the next three will include the two after that, use modular maths!)
@@ -122,14 +122,15 @@ namespace PatchworkSim
 		}
 
 		public SimulationState()
-			: this(new List<int>(PieceDefinition.AllPieceDefinitions.Length), 0)
+			: this(null, 0)
 		{
 		}
 
-		/// <param name="pieces">This list is not cloned, we take ownership and modify the given list</param>
+		/// <param name="pieces">This list is not cloned, we take ownership and modify the given list</param> //TODO: THIS COMMENT IS WRONG
 		public SimulationState(List<int> pieces, int nextPieceIndex)
 		{
-			Pieces = pieces;
+			if (pieces != null)
+				Pieces.Populate(pieces);
 			NextPieceIndex = nextPieceIndex;
 
 			LeatherPatchesIndex = 0;
@@ -307,7 +308,7 @@ namespace PatchworkSim
 
 		public SimulationState Clone()
 		{
-			var state = new SimulationState(new List<int>(Pieces.Count), NextPieceIndex);
+			var state = new SimulationState();
 			CloneTo(state);
 
 			return state;
@@ -321,8 +322,8 @@ namespace PatchworkSim
 			if (target.Pieces.Count != 0)
 				throw new Exception("Target already has pieces WTF");
 #endif
-			for (var i = 0; i < Pieces.Count; i++)
-				target.Pieces.Add(Pieces[i]);
+			target.Pieces = Pieces;
+
 			target.NextPieceIndex = NextPieceIndex;
 
 			//Copy over other values

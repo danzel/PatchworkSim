@@ -61,7 +61,6 @@
 
 			for (var i = 0; i < playoutsPerMove; i++)
 			{
-				_simulationState.Pieces.Clear();
 				baseState.CloneTo(_simulationState);
 
 				_simulationState.Fidelity = SimulationFidelity.NoPiecePlacing;
@@ -92,7 +91,6 @@
 
 			for (var i = 0; i < playoutsPerMove; i++)
 			{
-				_simulationState.Pieces.Clear();
 				baseState.CloneTo(_simulationState);
 				_simulationState.Fidelity = SimulationFidelity.NoPiecePlacing;
 

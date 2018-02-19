@@ -50,6 +50,7 @@
     <Compile Include="FixedArray2.cs" />
     <Compile Include="ISimulationLogger.cs" />
     <Compile Include="PieceBitmap.cs" />
+    <Compile Include="PieceCollection.cs" />
     <Compile Include="PieceDefinition.cs" />
     <Compile Include="PlayerDecisionMaker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

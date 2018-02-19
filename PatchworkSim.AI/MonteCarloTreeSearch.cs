@@ -77,7 +77,6 @@ namespace PatchworkSim.AI
 			if (baseState.GameHasEnded)
 				return baseState.WinningPlayer;
 
-			_rolloutState.Pieces.Clear();
 			baseState.CloneTo(_rolloutState);
 			_rolloutState.Fidelity = SimulationFidelity.NoPiecePlacing;
 			if (_rolloutState.PieceToPlace != null)
@@ -191,7 +190,6 @@ namespace PatchworkSim.AI
 		public virtual void Reset()
 		{
 			Children.Clear();
-			State.Pieces.Clear();
 			Value = 0;
 			VisitCount = 0;
 			Parent = null;

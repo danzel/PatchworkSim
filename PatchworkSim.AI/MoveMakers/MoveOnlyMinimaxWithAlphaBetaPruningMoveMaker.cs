@@ -53,7 +53,6 @@ namespace PatchworkSim.AI.MoveMakers
 				if (Helpers.ActivePlayerCanPurchasePiece(parentState, piece))
 				{
 					var state = _pool.Value.Get();
-					state.Pieces.Clear();
 					parentState.CloneTo(state);
 					state.Fidelity = SimulationFidelity.NoPiecePlacing;
 					state.PerformPurchasePiece(state.NextPieceIndex + i);
@@ -82,7 +81,6 @@ namespace PatchworkSim.AI.MoveMakers
 			if (bestMove != null) // Don't need to consider it if we can't purchase any pieces, we are definitely going to advance
 			{
 				var state = _pool.Value.Get();
-				state.Pieces.Clear();
 				parentState.CloneTo(state);
 				state.Fidelity = SimulationFidelity.NoPiecePlacing;
 				state.PerformAdvanceMove();
@@ -138,7 +136,6 @@ namespace PatchworkSim.AI.MoveMakers
 				if (Helpers.ActivePlayerCanPurchasePiece(parentState, piece))
 				{
 					var state = _pool.Value.Get();
-					state.Pieces.Clear();
 					parentState.CloneTo(state);
 					state.Fidelity = SimulationFidelity.NoPiecePlacing;
 					state.PerformPurchasePiece(state.NextPieceIndex + i);
@@ -164,7 +161,6 @@ namespace PatchworkSim.AI.MoveMakers
 			//Advance
 			{
 				var state = _pool.Value.Get();
-				state.Pieces.Clear();
 				parentState.CloneTo(state);
 				state.Fidelity = SimulationFidelity.NoPiecePlacing;
 				state.PerformAdvanceMove();
