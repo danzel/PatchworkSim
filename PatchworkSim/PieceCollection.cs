@@ -65,20 +65,5 @@ namespace PatchworkSim
 			}
 			Count = pieces.Count;
 		}
-
-		[Obsolete]
-		public List<int> ToList()
-		{
-			var list = new List<int>(Count);
-			fixed (int* p = _value)
-			{
-				for (var i = 0; i < Count; i++)
-				{
-					list.Add(p[i]);
-				}
-			}
-
-			return list;
-		}
 	}
 }

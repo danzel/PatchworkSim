@@ -24,7 +24,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 			_lookAheadSpread = lookAheadSpread;
 		}
 
-		public bool TryPlacePiece(BoardState board, PieceDefinition piece, List<int> possibleFuturePieces, int possibleFuturePiecesOffset, out PieceBitmap resultBitmap, out int resultX, out int resultY)
+		public bool TryPlacePiece(BoardState board, PieceDefinition piece, in PieceCollection possibleFuturePieces, int possibleFuturePiecesOffset, out PieceBitmap resultBitmap, out int resultX, out int resultY)
 		{
 			resultBitmap = null;
 			resultX = -1;
@@ -45,7 +45,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 						{
 							long placementCount = 0;
 							for (var i = 0; i < _lookAheadSpread; i++)
-								placementCount += CalculatePlacementCount(board, bitmap, x, y, possibleFuturePieces, (possibleFuturePiecesOffset + i) % possibleFuturePieces.Count, _lookAheadAmount);
+								placementCount += CalculatePlacementCount(board, bitmap, x, y, in possibleFuturePieces, (possibleFuturePiecesOffset + i) % possibleFuturePieces.Count, _lookAheadAmount);
 
 							var tieBreaker = x + y;
 							if (placementCount > bestPlacementCount || (placementCount == bestPlacementCount && tieBreaker < bestTieBreaker))
@@ -75,7 +75,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 			(long)Math.Pow(10, 6),
 		};
 
-		private long CalculatePlacementCount(BoardState board, PieceBitmap justPlacedBitmap, int justPlacedX, int justPlacedY, List<int> possibleFuturePieces, int possibleFuturePiecesOffset, int lookAheadAmount)
+		private long CalculatePlacementCount(BoardState board, PieceBitmap justPlacedBitmap, int justPlacedX, int justPlacedY, in PieceCollection possibleFuturePieces, int possibleFuturePiecesOffset, int lookAheadAmount)
 		{
 			long placementCount = powCache[_lookAheadAmount - lookAheadAmount];//(int)Math.Pow(10, _lookAheadAmount - lookAheadAmount);
 
@@ -97,7 +97,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies
 					{
 						if (board.CanPlace(bitmap, x, y))
 						{
-							placementCount += CalculatePlacementCount(board, bitmap, x, y, possibleFuturePieces, (possibleFuturePiecesOffset + 1) % possibleFuturePieces.Count, lookAheadAmount - 1);
+							placementCount += CalculatePlacementCount(board, bitmap, x, y, in possibleFuturePieces, (possibleFuturePiecesOffset + 1) % possibleFuturePieces.Count, lookAheadAmount - 1);
 						}
 					}
 				}

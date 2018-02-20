@@ -83,11 +83,13 @@ namespace PatchworkRunner
 
 				var board = new BoardState();
 
-				var pieces = SimulationHelpers.GetRandomPieces(run);
+				var pieces = new PieceCollection();
+				pieces.Populate(SimulationHelpers.GetRandomPieces(run));
+
 				int myPlaced = 0;
 				for (var i = 0; i < pieces.Count; i++)
 				{
-					if (strategy.TryPlacePiece(board, PieceDefinition.AllPieceDefinitions[pieces[i]], pieces, i + 1, out var bitmap, out var x, out var y))
+					if (strategy.TryPlacePiece(board, PieceDefinition.AllPieceDefinitions[pieces[i]], in pieces, i + 1, out var bitmap, out var x, out var y))
 					{
 						board.Place(bitmap, x, y);
 						myPlaced++;
@@ -132,7 +134,8 @@ namespace PatchworkRunner
 			//4,1 - 46 seconds  | 12 Pieces
 			//5,1 - 29 minutes  | 11 Pieces
 
-			var pieces = SimulationHelpers.GetRandomPieces(2);
+			var pieces = new PieceCollection();
+			pieces.Populate(SimulationHelpers.GetRandomPieces(2));
 
 			var oldBoards = new BoardState[strategies.Length];
 			var boards = new BoardState[strategies.Length];
@@ -152,7 +155,7 @@ namespace PatchworkRunner
 					if (!stillPlacing[i])
 						continue;
 
-					if (strategies[i].TryPlacePiece(boards[i], piece, pieces, index + 1, out var bitmap, out var x, out var y))
+					if (strategies[i].TryPlacePiece(boards[i], piece, in pieces, index + 1, out var bitmap, out var x, out var y))
 					{
 						placed[i]++;
 						boards[i].Place(bitmap, x, y);

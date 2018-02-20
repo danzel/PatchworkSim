@@ -282,7 +282,8 @@ namespace PatchworkAIComparer
 
 					for (var i = 0; i < 100; i++)
 					{
-						var pieces = SimulationHelpers.GetRandomPieces(i);
+						var pieces = new PieceCollection();
+						pieces.Populate(SimulationHelpers.GetRandomPieces(i));
 						int index = 0;
 						int placed = 0;
 
@@ -294,7 +295,7 @@ namespace PatchworkAIComparer
 							pieces.RemoveAt(index);
 							index = index % pieces.Count;
 
-							if (strategy.TryPlacePiece(board, PieceDefinition.AllPieceDefinitions[piece], pieces, index, out var bitmap, out var x, out var y))
+							if (strategy.TryPlacePiece(board, PieceDefinition.AllPieceDefinitions[piece], in pieces, index, out var bitmap, out var x, out var y))
 							{
 								placed++;
 								board.Place(bitmap, x, y);

@@ -52,14 +52,15 @@ namespace PathworkSim.Test
 
 		private void TestStrategy(IPlacementStrategy strategy, int expectPiecesPlaced)
 		{
-			var pieces = SimulationHelpers.GetRandomPieces(1);
+			var pieces = new PieceCollection();
+			pieces.Populate(SimulationHelpers.GetRandomPieces(1));
 			int placed = 0;
 
 			var board = new BoardState();
 
-			foreach (var piece in pieces)
+			for(var i = 0; i < pieces.Count; i++)
 			{
-				if (strategy.TryPlacePiece(board, PieceDefinition.AllPieceDefinitions[piece], pieces, placed + 1, out var bitmap, out var x, out var y))
+				if (strategy.TryPlacePiece(board, PieceDefinition.AllPieceDefinitions[pieces[i]], in pieces, i + 1, out var bitmap, out var x, out var y))
 				{
 					placed++;
 					board.Place(bitmap, x, y);
