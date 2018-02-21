@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace PatchworkSim.AI
 {
@@ -71,6 +72,7 @@ namespace PatchworkSim.AI
 		/// Estimates the end game value of the given players position.
 		/// Doesn't care that you would be able to spend any income to buy more pieces later. Basically assumes all players advance to end
 		/// </summary>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static int EstimateEndgameValue(SimulationState state, int player)
 		{
 			//space used * 2 + buttons + income * incomes remaining

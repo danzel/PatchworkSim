@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace PatchworkSim
 {
@@ -217,18 +218,24 @@ namespace PatchworkSim
 		/// <param name="pieceIndex">The index of the patch in the Pieces List</param>
 		public void PerformPurchasePiece(int pieceIndex)
 		{
+#if DEBUG
 			if (PieceToPlace != null)
 				throw new Exception("Cannot purchase a piece when there is one waiting to be placed");
+#endif
 
 			//Check the piece is one of the next 3
 			pieceIndex = pieceIndex % Pieces.Count;
+#if DEBUG
 			if (pieceIndex != NextPieceIndex % Pieces.Count && pieceIndex != (NextPieceIndex + 1) % Pieces.Count && pieceIndex != (NextPieceIndex + 2) % Pieces.Count)
 				throw new Exception("pieceIndex (" + pieceIndex + ") is not one of the next 3 pieces");
+#endif
 			var piece = PieceDefinition.AllPieceDefinitions[Pieces[pieceIndex]];
 
 			//Check the player can afford it
+#if DEBUG
 			if (PlayerButtonAmount[ActivePlayer] < piece.ButtonCost)
 				throw new Exception("Player is trying to purchase a piece they cannot afford");
+#endif
 
 			//TODO(?) Check the player can place it
 
@@ -252,6 +259,7 @@ namespace PatchworkSim
 			}
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void PerformPurchasePlaceSteps45(PieceDefinition piece, int player)
 		{
 			//4. Place the Patch on Your Quilt Board
