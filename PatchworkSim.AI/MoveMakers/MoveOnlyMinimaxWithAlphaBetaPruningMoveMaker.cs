@@ -100,6 +100,10 @@ namespace PatchworkSim.AI.MoveMakers
 			for (var m = 0; m < possibleMovesAmount; m++)
 			{
 				var move = possibleMoves[m];
+
+				if (beta <= alpha && move != -1)
+					continue;
+
 				parentState.CloneTo(state);
 				state.Fidelity = SimulationFidelity.NoPiecePlacing;
 
@@ -124,11 +128,11 @@ namespace PatchworkSim.AI.MoveMakers
 						bestMove = move;
 				}
 
+				//Console.WriteLine($"Considering {m.ToString().PadLeft(2)} = {v}");
+
 
 				bestValue = Math.Max(bestValue, v);
 				alpha = Math.Max(alpha, bestValue);
-				if (beta <= alpha)
-					break;
 			}
 
 			_thisThreadPool.Return(state);
