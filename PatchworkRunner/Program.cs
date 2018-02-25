@@ -21,15 +21,15 @@ namespace PatchworkRunner
 		static void Main(string[] args)
 		{
 			//RunMoveMakerForPerformance();
-
 			//RunPlacementForPerformance();
 
 			//ComparePlacementStrategies();
-			WatchAGame();
+			
+			//WatchAGame();
+			CompareTwoAi();
 
 			//new GeneticTuneableUtilityEvolver().Run();
-
-			//CompareTwoAi();
+			//new MultiGeneticTuneableUtilityEvolver().Run();
 		}
 
 		private static void RunMoveMakerForPerformance()
