@@ -327,8 +327,6 @@ namespace PatchworkSim
 #if DEBUG
 			if (Pieces.Count == 0)
 				throw new Exception("We dont have pieces WTF");
-			if (target.Pieces.Count != 0)
-				throw new Exception("Target already has pieces WTF");
 #endif
 			target.Pieces = Pieces;
 

@@ -21,6 +21,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <LangVersion>7.2</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,6 +31,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <LangVersion>7.2</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -42,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FixedArray4.cs" />
     <Compile Include="MonteCarloTreeSearch.cs" />
     <Compile Include="MoveMakers\AlwaysAdvanceMoveMaker.cs" />
     <Compile Include="MoveMakers\BaseMoveOnlyMontoCarloTreeSearchMoveMaker.cs" />
@@ -57,6 +60,10 @@
     <Compile Include="MoveMakers\RandomMoveMaker.cs" />
     <Compile Include="MoveMakers\RangeSplitByBoardPositionDelegationMoveMaker.cs" />
     <Compile Include="MoveMakers\TuneableUtilityMoveMaker.cs" />
+    <Compile Include="MoveMakers\UtilityCalculators\AlwaysOneCalculator.cs" />
+    <Compile Include="MoveMakers\UtilityCalculators\IUtilityCalculator.cs" />
+    <Compile Include="MoveMakers\UtilityCalculators\TuneableByBoardPositionUtilityCalculator.cs" />
+    <Compile Include="MoveMakers\UtilityCalculators\TuneableUtilityCalculator.cs" />
     <Compile Include="PlacementFinders\PlacementMaker.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\BoardEvaluators\IBoardEvaluator.cs" />

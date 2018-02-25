@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using PatchworkSim;
 using PatchworkSim.AI.MoveMakers;
+using PatchworkSim.AI.MoveMakers.UtilityCalculators;
 using PatchworkSim.AI.PlacementFinders;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies.BoardEvaluators;
@@ -180,20 +181,27 @@ namespace PatchworkRunner
 
 		private static void WatchAGame()
 		{
-			
+
 			//var p = new PreplacerStrategy(new ExhaustiveMostFuturePlacementsPreplacer(3));
-			var p = new PreplacerStrategy(new WeightedTreeSearchPreplacer(new TightBoardEvaluator(true), 10000, 2));
-			var m = new MoveOnlyMonteCarloTreeSearchWithPreplacerMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1, p);
-			var pdm = new PlayerDecisionMaker(m, new PlacementMaker(p));
-			
-
-			var mcts = new MonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1, new TightBoardEvaluator(true), 2);
+			//var p = new PreplacerStrategy(new WeightedTreeSearchPreplacer(new TightBoardEvaluator(true), 10000, 2));
+			//var m = new MoveOnlyMonteCarloTreeSearchWithPreplacerMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1, p);
+			//var pdm = new PlayerDecisionMaker(m, new PlacementMaker(p));
 
 
-			var state = new SimulationState(SimulationHelpers.GetRandomPieces(5), 0);
+			//var mcts = new MonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1, new TightBoardEvaluator(true), 2);
+
+			var a = new PlayerDecisionMaker(new UtilityMoveMaker(TuneableByBoardPositionUtilityCalculator.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
+			var b = new PlayerDecisionMaker(new MoveOnlyMinimaxWithAlphaBetaPruningMoveMaker(13, TuneableUtilityCalculator.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
+			//var b = new PlayerDecisionMaker(new MoveOnlyMinimaxWithAlphaBetaPruningMoveMaker(13, AlwaysOneCalculator.Instance), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
+
+
+			var state = new SimulationState(SimulationHelpers.GetRandomPieces(10), 0);
+			//state.ActivePlayer = 1;
 			var runner = new SimulationRunner(state
-				, new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6)
-				, pdm
+				, a
+				, b
+				//, new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6)
+				//, pdm
 				//, new PlayerDecisionMaker(mcts, new PlacementMaker(mcts.PlacementStrategy))
 			//, new PlayerDecisionMaker(new DepthLimitedNoMoveMinimaxMoveMaker(10), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6)
 			);
@@ -220,8 +228,9 @@ namespace PatchworkRunner
 		{
 			//PlayerDecisionMaker AiA() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
 
-			PlayerDecisionMaker AiA() => new PlayerDecisionMaker(new MoveOnlyMinimaxMoveMaker(6), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
-			PlayerDecisionMaker AiB() => new PlayerDecisionMaker(new MoveOnlyMinimaxMoveMaker(8), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
+			PlayerDecisionMaker AiA() => new PlayerDecisionMaker(new UtilityMoveMaker(TuneableByBoardPositionUtilityCalculator.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
+			//PlayerDecisionMaker AiB() => new PlayerDecisionMaker(new MoveOnlyMinimaxWithAlphaBetaPruningMoveMaker(13, TuneableUtilityCalculator.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
+			PlayerDecisionMaker AiB() => new PlayerDecisionMaker(new MoveOnlyMinimaxWithAlphaBetaPruningMoveMaker(14, AlwaysOneCalculator.Instance), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
 
 			/*PlayerDecisionMaker AiB()
 			{
@@ -233,12 +242,15 @@ namespace PatchworkRunner
 				//return new PlayerDecisionMaker(m, new PlacementMaker(p));
 			}*/
 
-			const int TotalRuns = 24;
+			const int TotalRuns = 100;
 
 			//TODO: Play each AI against each other AI 100 times and print a table of results
 
 			long aTicks = 0;
 			long bTicks = 0;
+
+			int totalAWins = 0;
+			int totalBWins = 0;
 
 			Parallel.For(0, TotalRuns / 2, new ParallelOptions { MaxDegreeOfParallelism = 6 }, run =>
 			//for (var run = 0; run < TotalRuns / 2; run++)
@@ -281,10 +293,14 @@ namespace PatchworkRunner
 				{
 					Console.WriteLine($"{run} Z Draw");
 				}
+
+				Interlocked.Add(ref totalAWins, aWins);
+				Interlocked.Add(ref totalBWins, bWins);
 			}
 			);
 
 			Console.WriteLine($"Total Time {aTicks * 1000 / Stopwatch.Frequency} / {bTicks * 1000 / Stopwatch.Frequency}");
+			Console.WriteLine($"Total Wins {totalAWins} / {totalBWins}");
 
 			Console.ReadLine();
 		}
