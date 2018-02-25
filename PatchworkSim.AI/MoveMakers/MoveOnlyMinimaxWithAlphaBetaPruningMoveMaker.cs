@@ -103,15 +103,28 @@ namespace PatchworkSim.AI.MoveMakers
 				parentState.CloneTo(state);
 				state.Fidelity = SimulationFidelity.NoPiecePlacing;
 
+				int v;
 				if (move == -1)
+				{
 					state.PerformAdvanceMove();
+
+					//Decrease alpha by 1 (if possible) so we can identify draws. We favor doing an advance in a draw, but we evaluate purchases first
+					//This gives us the same results as if we were evaluating advance first, but performance is better
+					//This makes us stronger than favoring buying pieces in a draw (Which probably implies our Evaluate method is incorrect?), but costs slight runtime performance
+					v = AlphaBeta(state, _maxSearchDepth - 1, (alpha == int.MinValue ? int.MinValue : alpha - 1), beta, maximizingPlayer);
+
+					if (v >= bestValue)
+						bestMove = move;
+				}
 				else
+				{
 					state.PerformPurchasePiece(state.NextPieceIndex + move);
+					v = AlphaBeta(state, _maxSearchDepth - 1, alpha, beta, maximizingPlayer);
+					if (v > bestValue)
+						bestMove = move;
+				}
 
-				var v = AlphaBeta(state, _maxSearchDepth - 1, alpha, beta, maximizingPlayer);
 
-				if (v > bestValue)
-					bestMove = move;
 				bestValue = Math.Max(bestValue, v);
 				alpha = Math.Max(alpha, bestValue);
 				if (beta <= alpha)
