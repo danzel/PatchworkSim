@@ -31,6 +31,8 @@ namespace PatchworkRunner
 
 			//new GeneticTuneableUtilityEvolver().Run();
 			//new MultiGeneticTuneableUtilityEvolver().Run();
+			//new Pattern2x2Evolver().Run();
+			//new Pattern3x3Evolver().Run();
 		}
 
 		private static void RunMoveMakerForPerformance()
