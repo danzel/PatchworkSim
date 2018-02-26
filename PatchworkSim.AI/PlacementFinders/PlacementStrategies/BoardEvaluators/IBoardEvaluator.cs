@@ -12,6 +12,6 @@
 		/// <summary>
 		/// Evaluate the given board state (compared to the one provided in BeginEvaluation) and return a value. Larger values imply a better resulting board state
 		/// </summary>
-		int Evaluate(BoardState board, int minX, int maxX, int minY, int maxY);
+		int Evaluate(in BoardState board, int minX, int maxX, int minY, int maxY);
 	}
 }

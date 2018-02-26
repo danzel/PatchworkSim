@@ -116,7 +116,7 @@ namespace PatchworkSim.AI.MoveMakers
 								//evaluate child nodes
 								var copy = board;
 								copy.Place(bitmap, x, y);
-								var utility = BoardEvaluator.Evaluate(copy, x, x + bitmap.Width, y, y + bitmap.Height);
+								var utility = BoardEvaluator.Evaluate(in copy, x, x + bitmap.Width, y, y + bitmap.Height);
 
 								//Insertion sort us in to the children list
 								SearchNode child = null;

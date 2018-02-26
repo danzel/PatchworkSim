@@ -26,7 +26,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.BoardEvaluators
 				_boardEvalY[y] = EvaluateInternal(currentBoard, 0, 0, y, y + 1);
 		}
 
-		public int Evaluate(BoardState board, int minX, int maxX, int minY, int maxY)
+		public int Evaluate(in BoardState board, int minX, int maxX, int minY, int maxY)
 		{
 			var utilityBefore = 0;
 			for (var x = minX; x < maxX; x++)

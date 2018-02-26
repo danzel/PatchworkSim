@@ -156,7 +156,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers
 							var copy = node.Board;
 
 							copy.Place(bitmap, x, y);
-							var utility = _boardEvaluator.Evaluate(copy, x, x + bitmap.Width, y, y + bitmap.Height);
+							var utility = _boardEvaluator.Evaluate(in copy, x, x + bitmap.Width, y, y + bitmap.Height);
 
 							//Insertion sort us in to the children list
 							SearchNode child = null;

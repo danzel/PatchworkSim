@@ -272,6 +272,7 @@ namespace PatchworkAIComparer
 				//TightPlacementStrategy.InstanceIncrement,
 				ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_1,
 				ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_6,
+				new BestEvaluatorStrategy(new Pattern2x2BoardEvaluator()),
 			};
 
 			//foreach (var strategy in strategies)

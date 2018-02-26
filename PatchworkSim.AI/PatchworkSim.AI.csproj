@@ -66,7 +66,9 @@
     <Compile Include="MoveMakers\UtilityCalculators\TuneableUtilityCalculator.cs" />
     <Compile Include="PlacementFinders\PlacementMaker.cs" />
     <Compile Include="Helpers.cs" />
+    <Compile Include="PlacementFinders\PlacementStrategies\NoLookahead\BestEvaluatorStrategy.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\BoardEvaluators\IBoardEvaluator.cs" />
+    <Compile Include="PlacementFinders\PlacementStrategies\BoardEvaluators\Pattern2x2BoardEvaluator.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\BoardEvaluators\TightBoardEvaluator.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\NoLookahead\ClosestToCornerLeastHolesTieBreakerPlacementStrategy.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\NoLookahead\FirstPossiblePlacementStrategy.cs" />
