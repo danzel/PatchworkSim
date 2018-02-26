@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Pattern2x2Evolver.cs" />
     <Compile Include="MultiGeneticTuneableUtilityEvolver.cs" />
     <Compile Include="GeneticTuneableUtilityEvolver.cs" />
     <Compile Include="Program.cs" />
