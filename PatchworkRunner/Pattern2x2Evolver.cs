@@ -13,7 +13,7 @@ namespace PatchworkRunner
 {
 	class Pattern2x2Evolver
 	{
-		private const int PopulationSize = 30;
+		private const int PopulationSize = 60;
 		private readonly Random _random = new Random();
 		List<PopulationMember> _population;
 		const int MaxGeneration = 10_000;
@@ -24,6 +24,14 @@ namespace PatchworkRunner
 		private void GenerateInitialPopulation()
 		{
 			_population = new List<PopulationMember>();
+
+			//Best 4 I've found so far
+			_population.Add(new PopulationMember(new[] { 82, -36, -33, -23, 11, -36, -71, 10, -42, -63, -81, 55, -39, -10, 60, 99 }));
+			_population.Add(new PopulationMember(new[] { 74, -3, -64, -53, 11, -91, -76, -93, -100, -84, -100, 35, -82, -26, 50, 100 }));
+			_population.Add(new PopulationMember(new[] { 67, -74, -29, -56, -12, -57, -96, -10, -52, -89, -100, 29, -67, -3, 39, 100 }));
+			_population.Add(new PopulationMember(new[] { 50, -36, -45, -66, -79, -52, -92, -18, -49, -100, -100, 19, -42, -1, 19, 75 }));
+			foreach (var p in _population)
+				EvaluateFitness(p);
 
 			for (var i = _population.Count; i < PopulationSize; i++)
 			{
@@ -142,7 +150,6 @@ namespace PatchworkRunner
 			Parallel.For(0, GameCount, new ParallelOptions { MaxDegreeOfParallelism = 8 }, (i) =>
 			{
 				var pieces = RandomPiecesCache[i];
-				var placements = 0;
 
 				var board = new BoardState();
 				var pieceIndex = 0;
