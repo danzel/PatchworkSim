@@ -5,14 +5,18 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.BoardEvaluators
 {
 	public class TuneablePattern2x2BoardEvaluator : IBoardEvaluator
 	{
-		public static readonly TuneablePattern2x2BoardEvaluator Tuning1 = new TuneablePattern2x2BoardEvaluator(new[] { 82, -36, -33, -23, 11, -36, -71, 10, -42, -63, -81, 55, -39, -10, 60, 99 });
+		public static readonly TuneablePattern2x2BoardEvaluator Tuning1 = new TuneablePattern2x2BoardEvaluator(new[] { 82, -36, -33, -23, 11, -36, -71, 10, -42, -63, -81, 55, -39, -10, 60, 99 }, "Tuning1");
 
 		private readonly int[] _weights;
+		private readonly string _name;
 
 		public string Name
 		{
 			get
 			{
+				if (_name != null)
+					return $"TuneablePattern2x2BoardEvaluator({_name})";
+
 				var sb = new StringBuilder();
 				sb.Append("TuneablePattern2x2BoardEvaluator(");
 
@@ -28,11 +32,12 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.BoardEvaluators
 			}
 		}
 
-		public TuneablePattern2x2BoardEvaluator(int[] weights)
+		public TuneablePattern2x2BoardEvaluator(int[] weights, string name = null)
 		{
 			if (weights.Length != 16)
 				throw new Exception("Expected 16 weights");
 			_weights = weights;
+			_name = name;
 		}
 
 		public void BeginEvaluation(BoardState currentBoard)
