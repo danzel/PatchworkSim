@@ -321,5 +321,130 @@ namespace PatchworkAIComparer
 
 			Console.ReadLine();
 		}
+
+		static void TestPreplacers()
+		{
+			var preplacers = new IPreplacer[]
+			{
+				new ExhaustiveMostFuturePlacementsPreplacer(1), 
+				new ExhaustiveMostFuturePlacementsPreplacer(2),
+				//new ExhaustiveMostFuturePlacementsPreplacer(3),
+
+				new EvaluatorTreeSearchPreplacer(new TightBoardEvaluator(true), 2, 2, false),
+				new EvaluatorTreeSearchPreplacer(new TightBoardEvaluator(true), 3, 2, false),
+				new EvaluatorTreeSearchPreplacer(new TightBoardEvaluator(true), 4, 2, false),
+				new EvaluatorTreeSearchPreplacer(new TightBoardEvaluator(true), 5, 2, false),
+				new EvaluatorTreeSearchPreplacer(new TightBoardEvaluator(true), 6, 2, false),
+				new EvaluatorTreeSearchPreplacer(new TightBoardEvaluator(true), 2, 3, false),
+				new EvaluatorTreeSearchPreplacer(new TightBoardEvaluator(true), 3, 3, false),
+				new EvaluatorTreeSearchPreplacer(new TightBoardEvaluator(true), 4, 3, false),
+				new EvaluatorTreeSearchPreplacer(new TightBoardEvaluator(true), 5, 3, false),
+				new EvaluatorTreeSearchPreplacer(new TightBoardEvaluator(true), 2, 4, false),
+				new EvaluatorTreeSearchPreplacer(new TightBoardEvaluator(true), 3, 4, false),
+				new EvaluatorTreeSearchPreplacer(new TightBoardEvaluator(true), 4, 4, false),
+				new EvaluatorTreeSearchPreplacer(new TightBoardEvaluator(true), 2, 5, false),
+				new EvaluatorTreeSearchPreplacer(new TightBoardEvaluator(true), 3, 5, false),
+				//new EvaluatorTreeSearchPreplacer(new TightBoardEvaluator(true), 4, 5, false),
+				//new EvaluatorTreeSearchPreplacer(new TightBoardEvaluator(true), 5, 5, false),
+				new EvaluatorTreeSearchPreplacer(new TightBoardEvaluator(true), 2, 6, false),
+				new EvaluatorTreeSearchPreplacer(new TightBoardEvaluator(true), 3, 6, false),
+				//new EvaluatorTreeSearchPreplacer(new TightBoardEvaluator(true), 4, 6, false),
+				//new EvaluatorTreeSearchPreplacer(new TightBoardEvaluator(true), 5, 6, false),
+				//new EvaluatorTreeSearchPreplacer(new TightBoardEvaluator(true), 6, 6, false),
+
+				
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 2, 2, false),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 3, 2, false),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 4, 2, false),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 5, 2, false),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 6, 2, false),
+
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 2, 3, false),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 3, 3, false),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 4, 3, false),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 5, 3, false),
+
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 2, 4, false),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 3, 4, false),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 4, 4, false),
+
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 2, 5, false),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 3, 5, false),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 4, 5, false),
+				//new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 5, 5, false),
+
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 2, 6, false),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 3, 6, false),
+				//new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 4, 6, false),
+				//new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 5, 6, false),
+				//new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 6, 6, false),
+
+
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 2, 2, true),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 3, 2, true),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 4, 2, true),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 5, 2, true),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 6, 2, true),
+
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 2, 3, true),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 3, 3, true),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 4, 3, true),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 5, 3, true),
+
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 2, 4, true),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 3, 4, true),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 4, 4, true),
+
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 2, 5, true),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 3, 5, true),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 4, 5, true),
+				//new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 5, 5, true),
+
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 2, 6, true),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 3, 6, true),
+				//new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 4, 6, true),
+				//new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 5, 6, true),
+				//new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 6, 6, true),
+
+				//new WeightedTreeSearchPreplacer(new TightBoardEvaluator(true), 1000, 3),
+				//new WeightedTreeSearchPreplacer(new TightBoardEvaluator(true), 1000, 3),
+				//new WeightedTreeSearchPreplacer(new Pattern2x2BoardEvaluator(), 1000, 3),
+				//new WeightedTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 1000, 3),
+				//new WeightedTreeSearchPreplacer(TuneablePattern3x3BoardEvaluator.Tuning1, 1000, 3),
+			};
+
+			//foreach (var strategy in strategies)
+			Parallel.ForEach(preplacers, new ParallelOptions { MaxDegreeOfParallelism = 4}, (preplacer) =>
+				{
+					var sw = Stopwatch.StartNew();
+
+					int totalPlaced = 0;
+
+					for (var i = 0; i < 1000; i++)
+					{
+						var pieces = SimulationHelpers.GetRandomPieces(i).Select(p => PieceDefinition.AllPieceDefinitions[p]).ToList();
+						int placed = 0;
+
+						var board = new BoardState();
+
+						while (Helpers.CanPlace(board, pieces[0]))
+						{
+							var preplacement = preplacer.Preplace(board, pieces);
+							board.Place(preplacement.Bitmap, preplacement.X, preplacement.Y);
+							placed++;
+							pieces.RemoveAt(0);
+						}
+
+						totalPlaced += placed;
+					}
+
+					Console.WriteLine($"{totalPlaced},{sw.ElapsedMilliseconds},{preplacer.Name}");
+				}
+			);
+
+			Console.WriteLine("Done");
+			Console.ReadLine();
+		}
+
 	}
 }
