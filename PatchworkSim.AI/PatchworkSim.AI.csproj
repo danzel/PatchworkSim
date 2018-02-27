@@ -83,6 +83,7 @@
     <Compile Include="PlacementFinders\PlacementStrategies\NoLookahead\SmallestBoundingBoxPlacementStrategy.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\NoLookahead\TightPlacementStrategy.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\PreplacerStrategy.cs" />
+    <Compile Include="PlacementFinders\PlacementStrategies\Preplacers\EvaluatorTreeSearchPreplacer.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\Preplacers\ExhaustiveMostFuturePlacementsPreplacer.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\Preplacers\IPreplacer.cs" />
     <Compile Include="PlacementFinders\PlacementStrategies\Preplacers\Preplacement.cs" />
