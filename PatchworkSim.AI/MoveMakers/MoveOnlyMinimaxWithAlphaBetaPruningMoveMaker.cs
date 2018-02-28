@@ -197,22 +197,15 @@ namespace PatchworkSim.AI.MoveMakers
 				{
 					bestValue = Math.Max(bestValue, v);
 					alpha = Math.Max(alpha, bestValue);
-					if (beta <= alpha)
-					{
-						_thisThreadPool.Return(state);
-						return bestValue;
-					}
 				}
 				else
 				{
 					bestValue = Math.Min(bestValue, v);
 					beta = Math.Min(beta, bestValue);
-					if (beta <= alpha)
-					{
-						_thisThreadPool.Return(state);
-						return bestValue;
-					}
 				}
+
+				if (beta <= alpha)
+					break;
 			}
 
 			_thisThreadPool.Return(state);
