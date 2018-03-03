@@ -113,7 +113,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers
 
 		private long PreplaceRecursive(in BoardState board, List<PieceDefinition> pieces, int depth)
 		{
-			if (depth == _depth)
+			if (depth == _depth || depth == pieces.Count)
 			{
 				var eval = 1;
 				if (_scoreFinalState)

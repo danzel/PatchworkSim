@@ -6,7 +6,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using PatchworkSim;
+using PatchworkSim.AI;
 using PatchworkSim.AI.MoveMakers;
+using PatchworkSim.AI.MoveMakers.UtilityCalculators;
 using PatchworkSim.AI.PlacementFinders;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies.BoardEvaluators;
@@ -21,142 +23,57 @@ namespace PatchworkAIComparer
 		static void Main(string[] args)
 		{
 			TestFullAi();
-
 			//TestPlacementOnly();
+			//TestPreplacers();
 		}
 
 		static void TestFullAi()
 		{
-			/*var aiToTest = new Func<PlayerDecisionMaker>[]
-			{
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-3), PlacementMaker.FirstPossibleInstance),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-2), PlacementMaker.FirstPossibleInstance),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-1), PlacementMaker.FirstPossibleInstance),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), PlacementMaker.FirstPossibleInstance),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), PlacementMaker.FirstPossibleInstance),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.FirstPossibleInstance),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(3), PlacementMaker.FirstPossibleInstance),
-
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-3), PlacementMaker.SimpleClosestToWallAndCornerInstance),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-2), PlacementMaker.SimpleClosestToWallAndCornerInstance),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-1), PlacementMaker.SimpleClosestToWallAndCornerInstance),
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), PlacementMaker.SimpleClosestToWallAndCornerInstance),
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), PlacementMaker.SimpleClosestToWallAndCornerInstance),
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.SimpleClosestToWallAndCornerInstance),
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(3), PlacementMaker.SimpleClosestToWallAndCornerInstance),
-
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-3), PlacementMaker.ClosestToCornerLeastHolesTieBreakerInstance),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-2), PlacementMaker.ClosestToCornerLeastHolesTieBreakerInstance),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-1), PlacementMaker.ClosestToCornerLeastHolesTieBreakerInstance),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), PlacementMaker.ClosestToCornerLeastHolesTieBreakerInstance),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), PlacementMaker.ClosestToCornerLeastHolesTieBreakerInstance),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.ClosestToCornerLeastHolesTieBreakerInstance),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(3), PlacementMaker.ClosestToCornerLeastHolesTieBreakerInstance),
-
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-3), PlacementMaker.NextToPieceEdgeLeastHolesTieBreakerInstance),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-2), PlacementMaker.NextToPieceEdgeLeastHolesTieBreakerInstance),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-1), PlacementMaker.NextToPieceEdgeLeastHolesTieBreakerInstance),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), PlacementMaker.NextToPieceEdgeLeastHolesTieBreakerInstance),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), PlacementMaker.NextToPieceEdgeLeastHolesTieBreakerInstance),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.NextToPieceEdgeLeastHolesTieBreakerInstance),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(3), PlacementMaker.NextToPieceEdgeLeastHolesTieBreakerInstance),
-
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-3), PlacementMaker.TightDoublerInstance),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-2), PlacementMaker.TightDoublerInstance),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-1), PlacementMaker.TightDoublerInstance),
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), PlacementMaker.TightDoublerInstance),
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), PlacementMaker.TightDoublerInstance),
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.TightDoublerInstance),
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(3), PlacementMaker.TightDoublerInstance),
-
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-3), PlacementMaker.TightIncrementInstance),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-2), PlacementMaker.TightIncrementInstance),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-1), PlacementMaker.TightIncrementInstance),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), PlacementMaker.TightIncrementInstance),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), PlacementMaker.TightIncrementInstance),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.TightIncrementInstance),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(3), PlacementMaker.TightIncrementInstance),
-
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-3), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_1),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-2), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_1),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_1),
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_1),
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_1),
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_1),
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(3), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_1),
-
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-3), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-2), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(3), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-
-				//() => new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, PlacementMaker.FirstPossibleInstance),
-				//() => new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, PlacementMaker.SimpleClosestToWallAndCornerInstance),
-
-				//() => new PlayerDecisionMaker(new RandomMoveMaker(), PlacementMaker.FirstPossibleInstance),
-				//() => new PlayerDecisionMaker(new RandomMoveMaker(), PlacementMaker.SimpleClosestToWallAndCornerInstance),
-
-				//() => new PlayerDecisionMaker(AlwaysAdvanceMoveMaker.Instance, PlacementMaker.FirstPossibleInstance)
-			};*/
 
 			var aiToTest = new Func<PlayerDecisionMaker>[]
 			{
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-1), PlacementMaker.TightDoublerInstance),
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), PlacementMaker.TightDoublerInstance),
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), PlacementMaker.TightDoublerInstance),
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.TightDoublerInstance),
-
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-1), PlacementMaker.TightDoublerInstance),
+				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), PlacementMaker.TightDoublerInstance),
+				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), PlacementMaker.TightDoublerInstance),
+				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.TightDoublerInstance),
 				//
-				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(1000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(5000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(-1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(0), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				//() => new PlayerDecisionMaker(new GreedyCardValueUtilityMoveMaker(2), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 
-				() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(1000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(5000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				//() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(6, 1000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				//() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(10, 2000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				//() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(20, 5000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				//() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(30, 10000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+
+				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(1000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+
+				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+
 				() =>
 				{
-					var p = new PreplacerStrategy(new WeightedTreeSearchPreplacer(new TightBoardEvaluator(true), 10000, 2));
-					var m = new MoveOnlyMonteCarloTreeSearchWithPreplacerMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1, p);
-					return new PlayerDecisionMaker(m, new PlacementMaker(p));
-				},
-				() =>
-				{
-					var p = new PreplacerStrategy(new ExhaustiveMostFuturePlacementsPreplacer(3));
+					var p = new PreplacerStrategy(new EvaluatorTreeSearchPreplacer(new Pattern2x2BoardEvaluator(), 4, 4, true));
 					var m = new MoveOnlyMonteCarloTreeSearchWithPreplacerMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1, p);
 					return new PlayerDecisionMaker(m, new PlacementMaker(p));
 				},
 
-				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), new PlacementMaker(new WeightedTreeSearchPlacementStrategy(new WeightedTreeSearchPlacementStrategy.TightPlacementWTSUF(true, 1), 10000, 2)))
-
-				() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(6, 1000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(10, 2000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(20, 5000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				() => new PlayerDecisionMaker(new QuickRandomSearchMoveMaker(30, 10000), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-
-				() => new PlayerDecisionMaker(new MoveOnlyMinimaxMoveMaker(6), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				() => new PlayerDecisionMaker(new MoveOnlyMinimaxMoveMaker(8), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-
-				() =>
-				{
-					var mcts = new MonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1, new TightBoardEvaluator(true), 2);
-					return new PlayerDecisionMaker(mcts, new PlacementMaker(mcts.PlacementStrategy));
-				},
-
-				() =>
-				{
-					var mcts = new MonteCarloTreeSearchMoveMaker(20000, TuneableUtilityMoveMaker.Tuning1, new TightBoardEvaluator(true), 2);
-					return new PlayerDecisionMaker(mcts, new PlacementMaker(mcts.PlacementStrategy));
-				},
+				//() => new PlayerDecisionMaker(new MoveOnlyMinimaxWithAlphaBetaPruningMoveMaker(13, TuneableByBoardPositionUtilityCalculator.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				//() => new PlayerDecisionMaker(new MoveOnlyMinimaxWithAlphaBetaPruningMoveMaker(14, TuneableByBoardPositionUtilityCalculator.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 				//
-				//() => new PlayerDecisionMaker(TuneableUtilityMoveMaker.Tuning1, PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				//() =>
+				//{
+				//	var p = new PreplacerStrategy(new EvaluatorTreeSearchPreplacer(new Pattern2x2BoardEvaluator(), 4, 4, true));
+				//	var m = new MoveOnlyMinimaxWithAlphaBetaPruningWithPreplacerMoveMaker(13, TuneableByBoardPositionUtilityCalculator.Tuning1, p);
+				//	return new PlayerDecisionMaker(m, new PlacementMaker(p));
+				//},
+
+				() =>
+				{
+					var p = new PreplacerStrategy(new EvaluatorTreeSearchPreplacer(new Pattern2x2BoardEvaluator(), 4, 4, true));
+					var m = new MoveOnlyMinimaxWithAlphaBetaPruningWithPreplacerMoveMaker(15, TuneableByBoardPositionUtilityCalculator.Tuning1, p);
+					return new PlayerDecisionMaker(m, new PlacementMaker(p));
+				},
 			};
 
 			const int TotalRuns = 100;
@@ -229,7 +146,7 @@ namespace PatchworkAIComparer
 			var filename = "result_" + DateTimeOffset.Now.Ticks + ".csv";
 			var res = new List<string>();
 
-			res.Add("," + string.Join(", ", aiToTest.Select(ai => ai().Name)) + ",Win%,Rank");
+			res.Add("," + string.Join(", ", aiToTest.Select(ai => ai().Name)) + ",Win%,Rank,Total Time");
 			for (var a = 0; a < aiToTest.Length; a++)
 			{
 				var line = aiToTest[a]().Name;
@@ -244,13 +161,10 @@ namespace PatchworkAIComparer
 				//Win% and rank
 				line += "," + (total[a] / (float)(aiToTest.Length - 1)).ToString("0.0");
 				line += "," + (aiToTest.Length - total.Count(c => c < total[a]));
+				line += "," + totalTimeTaken[a];
 
 				res.Add(line);
 			}
-
-			res.Add("");
-			for (var a = 0; a < aiToTest.Length; a++)
-				res.Add(aiToTest[a]().Name + "," + totalTimeTaken[a]);
 
 			Console.WriteLine("Saving results as " + filename);
 			File.WriteAllLines(filename, res);
@@ -328,7 +242,7 @@ namespace PatchworkAIComparer
 			{
 				new ExhaustiveMostFuturePlacementsPreplacer(1), 
 				new ExhaustiveMostFuturePlacementsPreplacer(2),
-				//new ExhaustiveMostFuturePlacementsPreplacer(3),
+				new ExhaustiveMostFuturePlacementsPreplacer(3),
 
 				new EvaluatorTreeSearchPreplacer(new TightBoardEvaluator(true), 2, 2, false),
 				new EvaluatorTreeSearchPreplacer(new TightBoardEvaluator(true), 3, 2, false),
@@ -371,13 +285,13 @@ namespace PatchworkAIComparer
 				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 2, 5, false),
 				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 3, 5, false),
 				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 4, 5, false),
-				//new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 5, 5, false),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 5, 5, false),
 
 				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 2, 6, false),
 				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 3, 6, false),
-				//new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 4, 6, false),
-				//new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 5, 6, false),
-				//new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 6, 6, false),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 4, 6, false),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 5, 6, false),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 6, 6, false),
 
 
 				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 2, 2, true),
@@ -398,13 +312,13 @@ namespace PatchworkAIComparer
 				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 2, 5, true),
 				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 3, 5, true),
 				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 4, 5, true),
-				//new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 5, 5, true),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 5, 5, true),
 
 				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 2, 6, true),
 				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 3, 6, true),
-				//new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 4, 6, true),
-				//new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 5, 6, true),
-				//new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 6, 6, true),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 4, 6, true),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 5, 6, true),
+				new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 6, 6, true),
 
 				//new WeightedTreeSearchPreplacer(new TightBoardEvaluator(true), 1000, 3),
 				//new WeightedTreeSearchPreplacer(new TightBoardEvaluator(true), 1000, 3),
@@ -420,7 +334,7 @@ namespace PatchworkAIComparer
 
 					int totalPlaced = 0;
 
-					for (var i = 0; i < 1000; i++)
+					for (var i = 0; i < 100; i++)
 					{
 						var pieces = SimulationHelpers.GetRandomPieces(i).Select(p => PieceDefinition.AllPieceDefinitions[p]).ToList();
 						int placed = 0;

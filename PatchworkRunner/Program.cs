@@ -195,8 +195,13 @@ namespace PatchworkRunner
 
 			//var mcts = new MonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1, new TightBoardEvaluator(true), 2);
 
-			var a = new PlayerDecisionMaker(new UtilityMoveMaker(TuneableByBoardPositionUtilityCalculator.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
-			var b = new PlayerDecisionMaker(new MoveOnlyMinimaxWithAlphaBetaPruningMoveMaker(13, TuneableUtilityCalculator.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
+			var b = new PlayerDecisionMaker(new UtilityMoveMaker(TuneableByBoardPositionUtilityCalculator.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
+			//var a = new PlayerDecisionMaker(new MoveOnlyMinimaxWithAlphaBetaPruningMoveMaker(5, TuneableUtilityCalculator.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
+
+			var aP = new PreplacerStrategy(new ExhaustiveMostFuturePlacementsPreplacer(2));
+			var aMove = new MoveOnlyMinimaxWithAlphaBetaPruningWithPreplacerMoveMaker(5, TuneableUtilityCalculator.Tuning1, aP);
+			var a = new PlayerDecisionMaker(aMove, new PlacementMaker(aP));
+			
 			//var b = new PlayerDecisionMaker(new MoveOnlyMinimaxWithAlphaBetaPruningMoveMaker(13, AlwaysOneCalculator.Instance), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
 
 
@@ -231,11 +236,23 @@ namespace PatchworkRunner
 
 		private static void CompareTwoAi()
 		{
-			//PlayerDecisionMaker AiA() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
+			PlayerDecisionMaker AiA() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
 
-			PlayerDecisionMaker AiA() => new PlayerDecisionMaker(new UtilityMoveMaker(TuneableByBoardPositionUtilityCalculator.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
+			PlayerDecisionMaker AiB() => new PlayerDecisionMaker(new MoveOnlyMinimaxWithAlphaBetaPruningMoveMaker(13, TuneableByBoardPositionUtilityCalculator.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
+
+			/*PlayerDecisionMaker AiB() {
+				var aP = new PreplacerStrategy(new EvaluatorTreeSearchPreplacer(new Pattern2x2BoardEvaluator(), 4, 6, false));
+				//var aP = new PreplacerStrategy(new ExhaustiveMostFuturePlacementsPreplacer(3));
+
+				//var aMove = new MoveOnlyMonteCarloTreeSearchWithPreplacerMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1, aP);
+				var aMove = new MoveOnlyMinimaxWithAlphaBetaPruningWithPreplacerMoveMaker(13, TuneableByBoardPositionUtilityCalculator.Tuning1, aP);
+
+				return new PlayerDecisionMaker(aMove, new PlacementMaker(aP));
+			};*/
+
+			//PlayerDecisionMaker AiA() => new PlayerDecisionMaker(new UtilityMoveMaker(TuneableByBoardPositionUtilityCalculator.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
 			//PlayerDecisionMaker AiB() => new PlayerDecisionMaker(new MoveOnlyMinimaxWithAlphaBetaPruningMoveMaker(13, TuneableUtilityCalculator.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
-			PlayerDecisionMaker AiB() => new PlayerDecisionMaker(new MoveOnlyMinimaxWithAlphaBetaPruningMoveMaker(14, AlwaysOneCalculator.Instance), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
+			//PlayerDecisionMaker AiB() => new PlayerDecisionMaker(new MoveOnlyMinimaxWithAlphaBetaPruningMoveMaker(14, AlwaysOneCalculator.Instance), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
 
 			/*PlayerDecisionMaker AiB()
 			{
