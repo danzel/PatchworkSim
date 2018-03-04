@@ -158,8 +158,8 @@ namespace PatchworkAIComparer
 						line += "," + totalWins[a, b];
 				}
 
-				//Win% and rank
-				line += "," + (total[a] / (float)(aiToTest.Length - 1)).ToString("0.0");
+				//Win%, rank, time
+				line += "," + (total[a] / (float)(aiToTest.Length - 1) * 100 / TotalRuns).ToString("0.0");
 				line += "," + (aiToTest.Length - total.Count(c => c < total[a]));
 				line += "," + totalTimeTaken[a];
 
