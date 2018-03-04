@@ -234,6 +234,39 @@ namespace PatchworkRunner
 			Console.ReadLine();
 		}
 
+		private static void VerifyPreplacement()
+		{
+			var aP = new PreplacerStrategy(new ExhaustiveMostFuturePlacementsPreplacer(2), true);
+			//var aMove = new MoveOnlyMonteCarloTreeSearchWithPreplacerMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1, aP);
+			var aMove = new MoveOnlyMinimaxWithAlphaBetaPruningWithPreplacerMoveMaker(13, TuneableByBoardPositionUtilityCalculator.Tuning1, aP);
+			var a = new PlayerDecisionMaker(aMove, new PlacementMaker(aP));
+
+			var b = new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
+			//var b = new PlayerDecisionMaker(new UtilityMoveMaker(TuneableByBoardPositionUtilityCalculator.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
+
+
+			var state = new SimulationState(SimulationHelpers.GetRandomPieces(10), 0);
+			var runner = new SimulationRunner(state
+				, a
+				, b
+			);
+			var logger = new ConsoleLogger(state) { PrintBoardsAfterPlacement = true };
+			state.Logger = logger;
+
+			while (!state.GameHasEnded)
+			{
+				runner.PerformNextStep();
+			}
+
+			//Console.WriteLine($"Player {state.WinningPlayer} Won [{state.CalculatePlayerEndGameWorth(0)} | {state.CalculatePlayerEndGameWorth(1)}]");
+			//Console.WriteLine($"Total Time {runner.Stopwatches[0].ElapsedMilliseconds} / {runner.Stopwatches[1].ElapsedMilliseconds}");
+
+			aP.PrintPredictionAccuracy();
+
+			Console.WriteLine("Press any key to exit");
+			Console.ReadLine();
+		}
+
 		private static void CompareTwoAi()
 		{
 			PlayerDecisionMaker AiA() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
