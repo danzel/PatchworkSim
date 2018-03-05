@@ -2,6 +2,7 @@
 
 namespace PatchworkSim.AI.MoveMakers.UtilityCalculators
 {
+	[Obsolete("Generally TuneableByBoardPosition is better")]
 	public class TuneableUtilityCalculator : IUtilityCalculator
 	{
 		public static readonly TuneableUtilityCalculator Tuning1 = new TuneableUtilityCalculator(-0.03892573, 1, -0.593965087, -0.984706754, 0.554044008, -0.052553921, 0.609957017, -0.015045333, "Tuning1");
