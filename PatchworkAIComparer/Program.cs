@@ -53,7 +53,7 @@ namespace PatchworkAIComparer
 
 				() =>
 				{
-					var p = new PreplacerStrategy(new EvaluatorTreeSearchPreplacer(new Pattern2x2BoardEvaluator(), 4, 4, true));
+					var p = new PreplacerStrategy(new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 4, 4, true));
 					var m = new MoveOnlyMonteCarloTreeSearchWithPreplacerMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1, p);
 					return new PlayerDecisionMaker(m, new PlacementMaker(p));
 				},
@@ -70,7 +70,7 @@ namespace PatchworkAIComparer
 
 				() =>
 				{
-					var p = new PreplacerStrategy(new EvaluatorTreeSearchPreplacer(new Pattern2x2BoardEvaluator(), 4, 4, true));
+					var p = new PreplacerStrategy(new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 4, 4, true));
 					var m = new MoveOnlyMinimaxWithAlphaBetaPruningWithPreplacerMoveMaker(15, TuneableByBoardPositionUtilityCalculator.Tuning1, p);
 					return new PlayerDecisionMaker(m, new PlacementMaker(p));
 				},
@@ -186,7 +186,7 @@ namespace PatchworkAIComparer
 				//TightPlacementStrategy.InstanceIncrement,
 				ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_1,
 				ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_6,
-				new BestEvaluatorStrategy(new Pattern2x2BoardEvaluator()),
+				new BestEvaluatorStrategy(TuneablePattern2x2BoardEvaluator.HandTuned),
 				new BestEvaluatorStrategy(TuneablePattern2x2BoardEvaluator.Tuning1),
 			};
 

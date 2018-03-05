@@ -5,7 +5,8 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.BoardEvaluators
 {
 	public class TuneablePattern2x2BoardEvaluator : IBoardEvaluator
 	{
-		public static readonly TuneablePattern2x2BoardEvaluator Tuning1 = new TuneablePattern2x2BoardEvaluator(new[] { 82, -36, -33, -23, 11, -36, -71, 10, -42, -63, -81, 55, -39, -10, 60, 99 }, "Tuning1");
+		public static readonly TuneablePattern2x2BoardEvaluator Tuning1 = new TuneablePattern2x2BoardEvaluator(new[]   { 82, -36, -33, -23, 11, -36, -71, 10, -42, -63, -81, 55, -39, -10, 60, 99 }, "Tuning1");
+		public static readonly TuneablePattern2x2BoardEvaluator HandTuned = new TuneablePattern2x2BoardEvaluator(new[] {  0,   0,   0,   0,  0,   0,  -5,  0,   0,  -5,   5,  0,   5,   0,  0, 10 }, "HandTuned");
 
 		private readonly int[] _weights;
 		private readonly string _name;
