@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsolePlayer\ConsoleMoveMaker.cs" />
     <Compile Include="Pattern3x3Evolver.cs" />
     <Compile Include="Pattern2x2Evolver.cs" />
     <Compile Include="MultiGeneticTuneableUtilityEvolver.cs" />

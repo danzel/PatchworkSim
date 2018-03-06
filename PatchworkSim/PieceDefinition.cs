@@ -16,6 +16,8 @@ namespace PatchworkSim
 
 		public PieceBitmap[] PossibleOrientations { get; }
 
+		public bool[,] Boolmap;
+
 		public PieceDefinition(string name, int buttonCost, int timeCost, int buttonsIncome, string[] bitmap)
 		{
 			Name = name;
@@ -27,6 +29,8 @@ namespace PatchworkSim
 			TotalUsedLocations = BoolmapOps.SumUsed(boolmap);
 
 			PossibleOrientations = BoolmapOps.CalculatePossibleOrientations(boolmap).Select(b => new PieceBitmap(b)).ToArray();
+
+			Boolmap = boolmap;
 		}
 
 		private bool[,] Parse(string[] bitmap)
