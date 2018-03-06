@@ -74,6 +74,17 @@ namespace PatchworkSim.AI.MoveMakers
 				else
 				{
 					ExpandByMove(root);
+
+					//When keeping only single children, expand immediately
+					if (MaxChildrenPerPiece == 1)
+					{
+						for (var i = 0; i < root.Children.Count; i++)
+						{
+							var p = root.Children[i];
+							if (p.PieceToPurchase.HasValue)
+								ExpandByPlacing(p);
+						}
+					}
 				}
 			}
 
