@@ -49,7 +49,8 @@ namespace PatchworkAIComparer
 
 				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(1000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
 
-				//() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), new PlacementMaker(new BestEvaluatorStrategy(TuneablePattern2x2BoardEvaluator.Tuning1))),
 
 				() =>
 				{
@@ -58,8 +59,8 @@ namespace PatchworkAIComparer
 					return new PlayerDecisionMaker(m, new PlacementMaker(p));
 				},
 
-				//() => new PlayerDecisionMaker(new MoveOnlyMinimaxWithAlphaBetaPruningMoveMaker(13, TuneableByBoardPositionUtilityCalculator.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				//() => new PlayerDecisionMaker(new MoveOnlyMinimaxWithAlphaBetaPruningMoveMaker(14, TuneableByBoardPositionUtilityCalculator.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				() => new PlayerDecisionMaker(new MoveOnlyAlphaBetaMoveMaker(15, TuneableByBoardPositionUtilityCalculator.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				() => new PlayerDecisionMaker(new MoveOnlyAlphaBetaMoveMaker(15, TuneableByBoardPositionUtilityCalculator.Tuning1), new PlacementMaker(new BestEvaluatorStrategy(TuneablePattern2x2BoardEvaluator.Tuning1))),
 				//
 				//() =>
 				//{
@@ -71,7 +72,7 @@ namespace PatchworkAIComparer
 				() =>
 				{
 					var p = new PreplacerStrategy(new EvaluatorTreeSearchPreplacer(TuneablePattern2x2BoardEvaluator.Tuning1, 4, 4, true));
-					var m = new MoveOnlyMinimaxWithAlphaBetaPruningWithPreplacerMoveMaker(15, TuneableByBoardPositionUtilityCalculator.Tuning1, p);
+					var m = new MoveOnlyAlphaBetaWithPreplacerMoveMaker(15, TuneableByBoardPositionUtilityCalculator.Tuning1, p);
 					return new PlayerDecisionMaker(m, new PlacementMaker(p));
 				},
 			};
