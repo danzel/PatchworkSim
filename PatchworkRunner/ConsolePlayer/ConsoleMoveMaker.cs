@@ -46,8 +46,9 @@ namespace PatchworkRunner.ConsolePlayer
 			}
 
 			//Print out the players income and button count
-			Console.WriteLine($"Buttons: {state.PlayerButtonAmount[state.ActivePlayer]}");
-			Console.WriteLine($"Income: {state.PlayerButtonIncome[state.ActivePlayer]}");
+			Console.WriteLine($"Position: {state.PlayerPosition[state.ActivePlayer]} / {state.PlayerPosition[state.NonActivePlayer]}");
+			Console.WriteLine($"Buttons: {state.PlayerButtonAmount[state.ActivePlayer]} / {state.PlayerButtonAmount[state.NonActivePlayer]}");
+			Console.WriteLine($"Income: {state.PlayerButtonIncome[state.ActivePlayer]} / {state.PlayerButtonIncome[state.NonActivePlayer]}");
 
 			//Player enters an action
 			while (true)
