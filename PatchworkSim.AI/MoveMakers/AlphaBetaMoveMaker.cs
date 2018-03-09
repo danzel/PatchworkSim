@@ -2,12 +2,14 @@
 using System.Runtime.CompilerServices;
 using System.Threading;
 using PatchworkSim.AI.MoveMakers.UtilityCalculators;
+using PatchworkSim.AI.PlacementFinders;
+using PatchworkSim.AI.PlacementFinders.PlacementStrategies;
 
 namespace PatchworkSim.AI.MoveMakers
 {
-	public class MoveOnlyAlphaBetaMoveMaker : IMoveDecisionMaker
+	public class AlphaBetaMoveMaker : IMoveDecisionMaker
 	{
-		public string Name => $"MO-AlphaBeta({_maxSearchDepth})";
+		public string Name => _placementMaker == null ? $"MO-AlphaBeta({_maxSearchDepth})" : $"AlphaBeta({_maxSearchDepth})";
 
 		private readonly int _maxSearchDepth;
 		private readonly IUtilityCalculator _calculator;
@@ -15,12 +17,22 @@ namespace PatchworkSim.AI.MoveMakers
 		private readonly ThreadLocal<SingleThreadedStackPool<SimulationState>> _pool = new ThreadLocal<SingleThreadedStackPool<SimulationState>>(() => new SingleThreadedStackPool<SimulationState>(), false);
 
 		private readonly SingleThreadedStackPool<SimulationState> _thisThreadPool;
+		private readonly PlacementMaker _placementMaker;
 
-		public MoveOnlyAlphaBetaMoveMaker(int maxSearchDepth, IUtilityCalculator calculator)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="maxSearchDepth"></param>
+		/// <param name="calculator"></param>
+		/// <param name="placementStrategy">If specified, AB will place pieces, otherwise runs in NoPiecePlacing fidelity</param>
+		public AlphaBetaMoveMaker(int maxSearchDepth, IUtilityCalculator calculator, IPlacementStrategy placementStrategy = null)
 		{
 			_thisThreadPool = _pool.Value;
 			_maxSearchDepth = maxSearchDepth;
 			_calculator = calculator;
+
+			if (placementStrategy != null)
+				_placementMaker = new PlacementMaker(placementStrategy);
 		}
 
 		public void MakeMove(SimulationState state)
@@ -105,12 +117,18 @@ namespace PatchworkSim.AI.MoveMakers
 					continue;
 
 				parentState.CloneTo(state);
-				state.Fidelity = SimulationFidelity.NoPiecePlacing;
+				if (_placementMaker == null)
+					state.Fidelity = SimulationFidelity.NoPiecePlacing;
 
 				int v;
 				if (move == -1)
 				{
 					state.PerformAdvanceMove();
+					if (_placementMaker != null)
+					{
+						while (state.PieceToPlace != null)
+							_placementMaker.PlacePiece(state);
+					}
 
 					//Decrease alpha by 1 (if possible) so we can identify draws. We favor doing an advance in a draw, but we evaluate purchases first
 					//This gives us the same results as if we were evaluating advance first, but performance is better
@@ -123,6 +141,11 @@ namespace PatchworkSim.AI.MoveMakers
 				else
 				{
 					state.PerformPurchasePiece(state.NextPieceIndex + move);
+					if (_placementMaker != null)
+					{
+						while (state.PieceToPlace != null)
+							_placementMaker.PlacePiece(state);
+					}
 					v = AlphaBeta(state, _maxSearchDepth - 1, alpha, beta, maximizingPlayer);
 					if (v > bestValue)
 						bestMove = move;
@@ -190,6 +213,11 @@ namespace PatchworkSim.AI.MoveMakers
 					state.PerformAdvanceMove();
 				else
 					state.PerformPurchasePiece(state.NextPieceIndex + move);
+				if (_placementMaker != null)
+				{
+					while (state.PieceToPlace != null)
+						_placementMaker.PlacePiece(state);
+				}
 
 				var v = AlphaBeta(state, depth - 1, alpha, beta, maximizingPlayer);
 
