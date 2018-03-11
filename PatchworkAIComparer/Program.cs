@@ -59,8 +59,8 @@ namespace PatchworkAIComparer
 					return new PlayerDecisionMaker(m, new PlacementMaker(p));
 				},
 
-				() => new PlayerDecisionMaker(new MoveOnlyAlphaBetaMoveMaker(15, TuneableByBoardPositionUtilityCalculator.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
-				() => new PlayerDecisionMaker(new MoveOnlyAlphaBetaMoveMaker(15, TuneableByBoardPositionUtilityCalculator.Tuning1), new PlacementMaker(new BestEvaluatorStrategy(TuneablePattern2x2BoardEvaluator.Tuning1))),
+				() => new PlayerDecisionMaker(new AlphaBetaMoveMaker(15, TuneableByBoardPositionUtilityCalculator.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6),
+				() => new PlayerDecisionMaker(new AlphaBetaMoveMaker(15, TuneableByBoardPositionUtilityCalculator.Tuning1), new PlacementMaker(new BestEvaluatorStrategy(TuneablePattern2x2BoardEvaluator.Tuning1))),
 				//
 				//() =>
 				//{
@@ -77,7 +77,7 @@ namespace PatchworkAIComparer
 				},
 			};
 
-			const int TotalRuns = 100;
+			const int TotalRuns = 500;
 			const bool enableConsoleLogging = false;
 
 			//TODO: Play each AI against each other AI 100 times and print a table of results

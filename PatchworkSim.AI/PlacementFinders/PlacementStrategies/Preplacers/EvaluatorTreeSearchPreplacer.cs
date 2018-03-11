@@ -29,13 +29,13 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers
 			var root = FindBestPlacements(in board, plannedFuturePieces[0]);
 
 			long bestScore = long.MinValue;
-			Preplacement bestPreplacement = null;
+			Preplacement? bestPreplacement = null;
 
 			for (var i = 0; i < root.Length; i++)
 			{
 				if (root[i] == null)
 					break;
-				var move = root[i];
+				var move = root[i].Value;
 
 				var clone = board;
 				clone.Place(move.Bitmap, move.X, move.Y);
@@ -48,13 +48,13 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers
 				}
 			}
 
-			return bestPreplacement;
+			return bestPreplacement.Value;
 		}
 
-		private Preplacement[] FindBestPlacements(in BoardState board, PieceDefinition piece)
+		private Preplacement?[] FindBestPlacements(in BoardState board, PieceDefinition piece)
 		{
 			var bestScores = new int[_branching];
-			var bestPlacements = new Preplacement[_branching];
+			var bestPlacements = new Preplacement?[_branching];
 			int size = 0;
 
 			_boardEvaluator.BeginEvaluation(board);
@@ -147,7 +147,7 @@ namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers
 			{
 				if (placements[i] == null)
 					break;
-				var move = placements[i];
+				var move = placements[i].Value;
 
 				var clone = board;
 				clone.Place(move.Bitmap, move.X, move.Y);

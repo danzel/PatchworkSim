@@ -5,7 +5,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using PatchworkRunner.ConsolePlayer;
 using PatchworkSim;
+using PatchworkSim.AI.CNTK;
 using PatchworkSim.AI.MoveMakers;
 using PatchworkSim.AI.MoveMakers.UtilityCalculators;
 using PatchworkSim.AI.PlacementFinders;
@@ -25,14 +27,16 @@ namespace PatchworkRunner
 			//RunPlacementForPerformance();
 
 			//ComparePlacementStrategies();
-			
+
 			//WatchAGame();
-			CompareTwoAi();
+			//VerifyPreplacement();
+			//CompareTwoAi();
 
 			//new GeneticTuneableUtilityEvolver().Run();
 			//new MultiGeneticTuneableUtilityEvolver().Run();
 			//new Pattern2x2Evolver().Run();
 			//new Pattern3x3Evolver().Run();
+			new TrainingRunner().Run();
 		}
 
 		private static void RunMoveMakerForPerformance()
@@ -128,11 +132,11 @@ namespace PatchworkRunner
 				//NextToPieceEdgeLeastHolesTieBreakerPlacementStrategy.Instance,
 				//TightPlacementStrategy.InstanceDoubler,
 				//TightPlacementStrategy.InstanceIncrement,
-				ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_1,
-				ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_6,
-				new BestEvaluatorStrategy(new TightBoardEvaluator(true)), 
-				new BestEvaluatorStrategy(new TightBoardEvaluator(false)), 
-				new BestEvaluatorStrategy(new Pattern2x2BoardEvaluator()), 
+				//ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_1,
+				//ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_6,
+				//new BestEvaluatorStrategy(new TightBoardEvaluator(true)), 
+				//new BestEvaluatorStrategy(new TightBoardEvaluator(false)), 
+				new BestEvaluatorStrategy(TuneablePattern2x2BoardEvaluator.HandTuned), 
 			};
 
 			//ExhaustiveMostFuturePlacementsPlacementStrategy
@@ -141,7 +145,7 @@ namespace PatchworkRunner
 			//5,1 - 29 minutes  | 11 Pieces
 
 			var pieces = new PieceCollection();
-			pieces.Populate(SimulationHelpers.GetRandomPieces(2));
+			pieces.Populate(SimulationHelpers.GetRandomPieces(5));
 
 			var oldBoards = new BoardState[strategies.Length];
 			var boards = new BoardState[strategies.Length];
@@ -186,6 +190,7 @@ namespace PatchworkRunner
 
 		private static void WatchAGame()
 		{
+			var a = new PlayerDecisionMaker(new ConsoleMoveMaker(), new PlacementMaker(new BestEvaluatorStrategy(TuneablePattern2x2BoardEvaluator.Tuning1)));// new ConsolePlacementMaker());
 
 			//var p = new PreplacerStrategy(new ExhaustiveMostFuturePlacementsPreplacer(3));
 			//var p = new PreplacerStrategy(new WeightedTreeSearchPreplacer(new TightBoardEvaluator(true), 10000, 2));
@@ -195,24 +200,40 @@ namespace PatchworkRunner
 
 			//var mcts = new MonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1, new TightBoardEvaluator(true), 2);
 
-			var b = new PlayerDecisionMaker(new UtilityMoveMaker(TuneableByBoardPositionUtilityCalculator.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
-			//var a = new PlayerDecisionMaker(new MoveOnlyMinimaxWithAlphaBetaPruningMoveMaker(5, TuneableUtilityCalculator.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
+			//var b = new PlayerDecisionMaker(new UtilityMoveMaker(TuneableByBoardPositionUtilityCalculator.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
+			//var b = new PlayerDecisionMaker(new MoveOnlyMinimaxWithAlphaBetaPruningMoveMaker(5, TuneableUtilityCalculator.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
 
-			var aP = new PreplacerStrategy(new ExhaustiveMostFuturePlacementsPreplacer(2));
-			var aMove = new MoveOnlyMinimaxWithAlphaBetaPruningWithPreplacerMoveMaker(5, TuneableUtilityCalculator.Tuning1, aP);
-			var a = new PlayerDecisionMaker(aMove, new PlacementMaker(aP));
-			
-			//var b = new PlayerDecisionMaker(new MoveOnlyMinimaxWithAlphaBetaPruningMoveMaker(13, AlwaysOneCalculator.Instance), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
+			//var aP = new PreplacerStrategy(new ExhaustiveMostFuturePlacementsPreplacer(2));
+			//var aMove = new MoveOnlyMinimaxWithAlphaBetaPruningWithPreplacerMoveMaker(5, TuneableByBoardPositionUtilityCalculator.Tuning1, aP);
+			//var a = new PlayerDecisionMaker(aMove, new PlacementMaker(aP));
 
 
-			var state = new SimulationState(SimulationHelpers.GetRandomPieces(10), 0);
+			var b = new PlayerDecisionMaker(new AlphaBetaMoveMaker(13, TuneableByBoardPositionUtilityCalculator.Tuning1), new PlacementMaker(new BestEvaluatorStrategy(TuneablePattern2x2BoardEvaluator.Tuning1)));
+			//var b = new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), new PlacementMaker(new BestEvaluatorStrategy(TuneablePattern2x2BoardEvaluator.Tuning1)));
+
+
+			/*PlayerDecisionMaker AiA()
+			{
+				var mcts = new MonteCarloTreeSearchMoveMaker(1000, TuneableUtilityMoveMaker.Tuning1, TuneablePattern2x2BoardEvaluator.Tuning1, 1);
+				return new PlayerDecisionMaker(mcts, new PlacementMaker(mcts.PlacementStrategy));
+			}*/
+
+			/*PlayerDecisionMaker AiB()
+			{
+				var mcts = new MonteCarloTreeSearchMoveMaker(5000, TuneableUtilityMoveMaker.Tuning1, TuneablePattern2x2BoardEvaluator.Tuning1, 1);
+				return new PlayerDecisionMaker(mcts, new PlacementMaker(mcts.PlacementStrategy));
+			}*/
+
+			var state = new SimulationState(SimulationHelpers.GetRandomPieces(4), 0);
 			//state.ActivePlayer = 1;
 			var runner = new SimulationRunner(state
+				//, AiA()
+				//, AiB()
 				, a
-				, b
-				//, new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6)
-				//, pdm
-				//, new PlayerDecisionMaker(mcts, new PlacementMaker(mcts.PlacementStrategy))
+			, b
+			//, new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6)
+			//, pdm
+			//, new PlayerDecisionMaker(mcts, new PlacementMaker(mcts.PlacementStrategy))
 			//, new PlayerDecisionMaker(new DepthLimitedNoMoveMinimaxMoveMaker(10), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6)
 			);
 			var logger = new ConsoleLogger(state);
@@ -238,7 +259,7 @@ namespace PatchworkRunner
 		{
 			var aP = new PreplacerStrategy(new ExhaustiveMostFuturePlacementsPreplacer(2), true);
 			//var aMove = new MoveOnlyMonteCarloTreeSearchWithPreplacerMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1, aP);
-			var aMove = new MoveOnlyMinimaxWithAlphaBetaPruningWithPreplacerMoveMaker(13, TuneableByBoardPositionUtilityCalculator.Tuning1, aP);
+			var aMove = new MoveOnlyAlphaBetaWithPreplacerMoveMaker(13, TuneableByBoardPositionUtilityCalculator.Tuning1, aP);
 			var a = new PlayerDecisionMaker(aMove, new PlacementMaker(aP));
 
 			var b = new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
@@ -269,9 +290,19 @@ namespace PatchworkRunner
 
 		private static void CompareTwoAi()
 		{
-			PlayerDecisionMaker AiA() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(10000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
+			//PlayerDecisionMaker AiA() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(1000, TuneableUtilityMoveMaker.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
+			//PlayerDecisionMaker AiA() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(1000, TuneableUtilityMoveMaker.Tuning1), new PlacementMaker(new BestEvaluatorStrategy(TuneablePattern2x2BoardEvaluator.Tuning1)));
 
-			PlayerDecisionMaker AiB() => new PlayerDecisionMaker(new MoveOnlyMinimaxWithAlphaBetaPruningMoveMaker(13, TuneableByBoardPositionUtilityCalculator.Tuning1), PlacementMaker.ExhaustiveMostFuturePlacementsInstance1_6);
+			//PlayerDecisionMaker AiB() => new PlayerDecisionMaker(new MoveOnlyMonteCarloTreeSearchMoveMaker(2000, TuneableUtilityMoveMaker.Tuning1), new PlacementMaker(new BestEvaluatorStrategy(TuneablePattern2x2BoardEvaluator.Tuning1)));
+
+			/*PlayerDecisionMaker AiB()
+			{
+				var mcts = new MonteCarloTreeSearchMoveMaker(1000, TuneableUtilityMoveMaker.Tuning1, TuneablePattern2x2BoardEvaluator.Tuning1, 1);
+				return new PlayerDecisionMaker(mcts, new PlacementMaker(mcts.PlacementStrategy));
+			}*/
+
+			PlayerDecisionMaker AiA() => new PlayerDecisionMaker(new AlphaBetaMoveMaker(13, TuneableByBoardPositionUtilityCalculator.Tuning1, new BestEvaluatorStrategy(TuneablePattern2x2BoardEvaluator.Tuning1)), new PlacementMaker(new BestEvaluatorStrategy(TuneablePattern2x2BoardEvaluator.Tuning1)));
+			PlayerDecisionMaker AiB() => new PlayerDecisionMaker(new AlphaBetaMoveMaker(13, TuneableByBoardPositionUtilityCalculator.Tuning1), new PlacementMaker(new BestEvaluatorStrategy(TuneablePattern2x2BoardEvaluator.Tuning1)));
 
 			/*PlayerDecisionMaker AiB() {
 				var aP = new PreplacerStrategy(new EvaluatorTreeSearchPreplacer(new Pattern2x2BoardEvaluator(), 4, 6, false));
@@ -309,7 +340,7 @@ namespace PatchworkRunner
 
 			Parallel.For(0, TotalRuns / 2, new ParallelOptions { MaxDegreeOfParallelism = 6 }, run =>
 			//for (var run = 0; run < TotalRuns / 2; run++)
-			//foreach (var run in new [] { 5,8,11,12,14,16,17,18,19,20,21,24,26,28,29,31,34,38,42,45,49})
+			//foreach (var run in new [] { 6, 43})
 			{
 				//Console.WriteLine($"{run} Run {run}");
 				int aWins = 0;

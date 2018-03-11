@@ -1,6 +1,6 @@
 ﻿namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers
 {
-	public class Preplacement
+	public struct Preplacement
 	{
 		public readonly PieceBitmap Bitmap;
 		public readonly int X;
