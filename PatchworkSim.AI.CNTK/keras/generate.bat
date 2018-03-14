@@ -1,3 +1,4 @@
+REM Enable the CNTK backend first https://keras.io/backend/
 python createmodel.py
 
 REM I had to hack the keras2_parser to remove the clear_session call cause it didn't work
