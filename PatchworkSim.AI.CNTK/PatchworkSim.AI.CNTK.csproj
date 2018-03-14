@@ -48,8 +48,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BoardWithPlacement.cs" />
+    <Compile Include="BoardWithParent.cs" />
     <Compile Include="BulkBoardEvaluator.cs" />
+    <Compile Include="CNTKBoardEvaluator.cs" />
     <Compile Include="CNTKEvaluatorTreeSearchPreplacer.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="ListPool.cs" />

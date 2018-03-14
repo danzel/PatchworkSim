@@ -57,10 +57,12 @@ namespace PatchworkSim.AI.CNTK
 			});
 		}
 
-		public void RecordPlacementsForTraining(List<BoardState> boards, int finalAreaCovered)
+		public void RecordPlacementsForTraining(HashSet<BoardState> boards, int finalAreaCovered)
 		{
-			for (var i = 0; i < boards.Count; i++)
-				_samples.Add(new TrainingSample(boards[i], finalAreaCovered));
+			foreach (var board in boards)
+			{
+				_samples.Add(new TrainingSample(board, finalAreaCovered));
+			}
 		}
 
 		public bool ReadyToTrain => _samples.Count >= _batchSize;

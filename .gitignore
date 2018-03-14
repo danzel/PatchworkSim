@@ -259,3 +259,10 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/PatchworkSim.AI.CNTK/keras/converted.json
+/PatchworkSim.AI.CNTK/keras/converted.npy
+/PatchworkSim.AI.CNTK/keras/converted.pb
+/PatchworkSim.AI.CNTK/keras/converted_cntk.py
+/PatchworkSim.AI.CNTK/keras/model.dnn
+/PatchworkSim.AI.CNTK/keras/model.h5
+/PatchworkSim.AI.CNTK/keras/model.json

@@ -8,20 +8,19 @@ from keras.layers.convolutional import Conv2D, ZeroPadding2D
 def layers(input_shape):
     return [
         ZeroPadding2D((2, 2), input_shape=input_shape),
-        Conv2D(32, (5, 5), padding='valid'),
-        Activation('relu'),
+        Conv2D(64, (5, 5), activation='relu'),
 
-        ZeroPadding2D((1, 1), input_shape=input_shape),
-        Conv2D(16, (3, 3), padding='valid'),
-        Activation('relu'),
+        ZeroPadding2D((1, 1)),
+        Conv2D(32, (3, 3), activation='relu'),
 
-        ZeroPadding2D((1, 1), input_shape=input_shape),
-        Conv2D(16, (3, 3), padding='valid'),
-        Activation('relu'),
+        ZeroPadding2D((1, 1)),
+        Conv2D(32, (3, 3), activation='relu'),
+
+        ZeroPadding2D((1, 1)),
+        Conv2D(32, (3, 3), activation='relu'),
 
         Flatten(),
-        Dense(512),
-        Activation('relu'),
+        Dense(256, activation='relu')
     ]
 
 

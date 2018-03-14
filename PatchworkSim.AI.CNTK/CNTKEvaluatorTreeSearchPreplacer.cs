@@ -1,39 +1,45 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PatchworkSim.AI.PlacementFinders.PlacementStrategies;
-using PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers;
+using System.Diagnostics;
 
 namespace PatchworkSim.AI.CNTK
 {
 	/// <summary>
-	/// Preplacer primarily to be used for training the neural network.
-	/// Performs like EvaluatorTreeSearchPreplacer, but evaluates possible boards in parallel using the NN.
+	/// Performs similar to a preplacer, but keeps multiple possible boards for each placement.  Evaluates possible boards in parallel using the NN.
 	/// </summary>
-	internal class CNTKEvaluatorTreeSearchPreplacer : IPreplacer
+	internal class CNTKEvaluatorTreeSearch
 	{
-		public string Name => $"CNTKEvaluatorTreeSearchPreplacer({_depth}/{_branching})";
-
 		private readonly BulkBoardEvaluator _evaluator;
-		private readonly int _depth;
 		private readonly int _branching;
 
-		private readonly ListPool<BoardWithPlacement> _pool = new ListPool<BoardWithPlacement>();
+		private readonly ListPool<BoardWithParent> _pool = new ListPool<BoardWithParent>();
 
-		public CNTKEvaluatorTreeSearchPreplacer(BulkBoardEvaluator evaluator, int depth, int branching)
+		public CNTKEvaluatorTreeSearch(BulkBoardEvaluator evaluator, int branching)
 		{
 			_evaluator = evaluator;
-			_depth = depth;
 			_branching = branching;
 		}
 
-		public Preplacement Preplace(BoardState initialBoard, List<PieceDefinition> plannedFuturePieces)
+		/// <summary>
+		/// Do a BFS of the best placements, keeping the best {branching} worth from each level
+		/// </summary>
+		public HashSet<BoardState> PreplaceAll(List<PieceDefinition> pieces, out int totalPlaceAreaCovered)
 		{
-			var currentBoards = GetAllPossibleInitialPlacements(in initialBoard, plannedFuturePieces[0]);
-			CleanPlacements(currentBoards);
+			//TODO: We can keep the HashSet and just clear it each time (GC)
+			/*
+			 * Get {branching} worth of the best next placements
+			 * while (pieces left to place) {
+			 *	place the next piece in all of the current placements and keep the best {branching}
+			 * if we couldnt place, just keep the last placements
+			 * return all of the (unique) boards that lead to the current best placements
+			 * }
+			 */
 
-			for (var depth = 1; depth < _depth; depth++)
+			var initialBoard = new BoardState();
+			var currentBoards = GetAllPossibleInitialPlacements(in initialBoard, pieces[0]);
+			CleanPlacements(currentBoards);
+			int areaCovered = pieces[0].TotalUsedLocations;
+
+			for (var depth = 1; depth < pieces.Count; depth++)
 			{
 				var nextBoards = _pool.Get();
 
@@ -42,11 +48,16 @@ namespace PatchworkSim.AI.CNTK
 				{
 					var boardWithPlacement = currentBoards[i];
 
-					GetAllPossiblePlacements(in boardWithPlacement.Board, plannedFuturePieces[depth], boardWithPlacement.FirstPiecePlacement, nextBoards);
+					GetAllPossiblePlacements(boardWithPlacement, pieces[depth], nextBoards);
 				}
 
 				if (nextBoards.Count == 0)
+				{
+					_pool.Return(nextBoards);
 					break;
+				}
+
+				areaCovered += pieces[depth].TotalUsedLocations;
 
 				CleanPlacements(nextBoards);
 
@@ -54,22 +65,34 @@ namespace PatchworkSim.AI.CNTK
 				currentBoards = nextBoards;
 			}
 
-			var res =  currentBoards[0].FirstPiecePlacement;
+			//Unroll all of the (unique) boards that led to here in to the result, and calculate
+			var result = new HashSet<BoardState>();
+			for (var i = 0; i < currentBoards.Count; i++)
+			{
+				var board = currentBoards[i];
+				while (board != null)
+				{
+					result.Add(board.Board);
+					board = board.Parent;
+				}
+			}
+
+			totalPlaceAreaCovered = areaCovered;
+
 			_pool.Return(currentBoards);
-			return res;
+			return result;
 		}
 
-		private void CleanPlacements(List<BoardWithPlacement> nextBoards)
+		private void CleanPlacements(List<BoardWithParent> nextBoards)
 		{
-//Sort by score and only keep _branching worth of them
+			//Sort by score and only keep _branching worth of them
 			_evaluator.Evaluate(nextBoards);
 			nextBoards.Sort();
-			//TODO: Check high scores are at the top
 			if (nextBoards.Count > _branching)
 				nextBoards.RemoveRange(_branching, nextBoards.Count - _branching);
 		}
 
-		private List<BoardWithPlacement> GetAllPossibleInitialPlacements(in BoardState board, PieceDefinition piece)
+		private List<BoardWithParent> GetAllPossibleInitialPlacements(in BoardState board, PieceDefinition piece)
 		{
 			//TODO: Maybe optimise empty board placement?
 
@@ -85,7 +108,7 @@ namespace PatchworkSim.AI.CNTK
 						{
 							var clone = board;
 							clone.Place(bitmap, x, y);
-							result.Add(new BoardWithPlacement(clone, new Preplacement(bitmap, x, y)));
+							result.Add(new BoardWithParent(null, clone));
 						}
 					}
 				}
@@ -94,21 +117,19 @@ namespace PatchworkSim.AI.CNTK
 			return result;
 		}
 
-		private void GetAllPossiblePlacements(in BoardState board, PieceDefinition piece, Preplacement firstPiecePlacement, List<BoardWithPlacement> result)
+		private void GetAllPossiblePlacements(BoardWithParent boardWithParent, PieceDefinition piece, List<BoardWithParent> result)
 		{
-			//TODO: Maybe optimise empty board placement?
-
 			foreach (var bitmap in piece.PossibleOrientations)
 			{
 				for (int x = 0; x < BoardState.Width - bitmap.Width + 1; x++)
 				{
 					for (int y = 0; y < BoardState.Height - bitmap.Height + 1; y++)
 					{
-						if (board.CanPlace(bitmap, x, y))
+						if (boardWithParent.Board.CanPlace(bitmap, x, y))
 						{
-							var clone = board;
+							var clone = boardWithParent.Board;
 							clone.Place(bitmap, x, y);
-							result.Add(new BoardWithPlacement(clone, firstPiecePlacement));
+							result.Add(new BoardWithParent(boardWithParent, clone));
 						}
 					}
 				}

@@ -34,7 +34,7 @@ namespace PatchworkSim.AI.CNTK
 			//int imageSize = inputShape.TotalSize;
 		}
 
-		public void Evaluate(List<BoardWithPlacement> boards)
+		public void Evaluate(List<BoardWithParent> boards)
 		{
 			//https://github.com/Microsoft/CNTK/blob/06ee7b83a5a95457f2e6e1fd8a452f28dc47ebd0/Examples/Evaluation/CNTKLibraryCSEvalCPUOnlyExamples/CNTKLibraryCSEvalExamples.cs#L105
 			// EvaluationBatchOfImages
@@ -43,7 +43,7 @@ namespace PatchworkSim.AI.CNTK
 
 			for (var i = 0; i < boards.Count; i++)
 			{
-				CNTKHelpers.CopyBoardToArray(boards[i].Board, vals, boards.Count * BoardState.Width * BoardState.Height);
+				CNTKHelpers.CopyBoardToArray(boards[i].Board, vals, i * BoardState.Width * BoardState.Height);
 			}
 
 
@@ -76,6 +76,7 @@ namespace PatchworkSim.AI.CNTK
 
 				boards[b].SetScore(score);
 			}
+
 
 			//https://github.com/Microsoft/CNTK/issues/2954
 			inputVal.Erase();

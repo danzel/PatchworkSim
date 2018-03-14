@@ -8,7 +8,7 @@ namespace PatchworkSim
 	/// <summary>
 	/// The State of an individual players board
 	/// </summary>
-	public struct BoardState
+	public struct BoardState : IComparable<BoardState>
 	{
 		public const int Width = 9;
 		public const int Height = 9;
@@ -100,6 +100,16 @@ namespace PatchworkSim
 			for (var x = 0; x < Width; x++)
 				for (var y = 0; y < Height; y++)
 					XYToPositionMask[x + Width * y] = UInt128.One << (x + y * Width);
+		}
+
+		public int CompareTo(BoardState other)
+		{
+			return _state.CompareTo(other._state);
+		}
+
+		public override int GetHashCode()
+		{
+			return _state.GetHashCode();
 		}
 	}
 }
