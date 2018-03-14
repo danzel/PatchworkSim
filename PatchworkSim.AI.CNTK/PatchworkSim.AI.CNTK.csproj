@@ -51,6 +51,7 @@
     <Compile Include="BoardWithPlacement.cs" />
     <Compile Include="BulkBoardEvaluator.cs" />
     <Compile Include="CNTKEvaluatorTreeSearchPreplacer.cs" />
+    <Compile Include="Helpers.cs" />
     <Compile Include="ListPool.cs" />
     <Compile Include="ModelTrainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

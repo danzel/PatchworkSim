@@ -39,21 +39,11 @@ namespace PatchworkSim.AI.CNTK
 			//https://github.com/Microsoft/CNTK/blob/06ee7b83a5a95457f2e6e1fd8a452f28dc47ebd0/Examples/Evaluation/CNTKLibraryCSEvalCPUOnlyExamples/CNTKLibraryCSEvalExamples.cs#L105
 			// EvaluationBatchOfImages
 
-			float[] vals = new float[9 * 9 * boards.Count];
+			float[] vals = new float[BoardState.Width * BoardState.Height * boards.Count];
 
-			//TODO: This is Copy/Paste from ModelTrainer.RecordPlacementsForTraining
-			int trainingBase = 0;
 			for (var i = 0; i < boards.Count; i++)
 			{
-				var board = boards[i].Board;
-				for (var x = 0; x < BoardState.Width; x++)
-				{
-					for (var y = 0; y < BoardState.Height; y++)
-					{
-						vals[trainingBase] = board[x, y] ? 1 : 0;
-						trainingBase++;
-					}
-				}
+				CNTKHelpers.CopyBoardToArray(boards[i].Board, vals, boards.Count * BoardState.Width * BoardState.Height);
 			}
 
 

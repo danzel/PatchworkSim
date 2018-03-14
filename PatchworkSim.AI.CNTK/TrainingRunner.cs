@@ -25,7 +25,8 @@ namespace PatchworkSim.AI.CNTK
 				TestIt(generation, preplacer);
 
 				int totalAreaCovered = 0;
-				for (var i = 0; i < batchSize; i++)
+				int gamesPlayed = 0;
+				while (!trainer.ReadyToTrain)
 				{
 					//Random pieces and do preplacements
 					boards.Clear();
@@ -49,7 +50,7 @@ namespace PatchworkSim.AI.CNTK
 					trainer.RecordPlacementsForTraining(boards, areaCovered);
 				}
 
-				Console.WriteLine($"Score: {totalAreaCovered} @ {totalAreaCovered / (double)(batchSize * BoardState.Width * BoardState.Height)}%");
+				Console.WriteLine($"Score: {totalAreaCovered} @ {totalAreaCovered / (double)(gamesPlayed * BoardState.Width * BoardState.Height)}%");
 
 				trainer.Train();
 				generation++;
