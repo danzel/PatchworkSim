@@ -65,21 +65,18 @@ namespace PatchworkSim.AI.CNTK
 			}
 		}
 
-		public bool ReadyToTrain => _samples.Count >= _batchSize;
+		public bool ReadyToTrain => _samples.Count >= _batchSize * 1.5;
 
 		private void PrepareDataForTraining()
 		{
 			ShuffleSamples();
 
-			//TODO: Keep only _batchSize worth
-
-
+			//Keep only _batchSize worth
 			for (var i = 0; i < _batchSize; i++)
 			{
 				var board = _samples[i].Board;
 				CNTKHelpers.CopyBoardToArray(board, _trainingData, i * BoardState.Width * BoardState.Height);
 			}
-
 			for (var i = 0; i < _batchSize; i++)
 			{
 				_labelData[(i * 82) + _samples[i].FinalAreaCovered] = 1;
@@ -88,7 +85,7 @@ namespace PatchworkSim.AI.CNTK
 			_samples.Clear();
 		}
 
-		public void Train()
+		public TrainingResult Train()
 		{
 			PrepareDataForTraining();
 
@@ -113,10 +110,12 @@ namespace PatchworkSim.AI.CNTK
 			Generation++;
 			float trainLossValue = (float)_trainer.PreviousMinibatchLossAverage();
 			float evaluationValue = (float)_trainer.PreviousMinibatchEvaluationAverage();
-			Console.WriteLine($"Minibatch: {Generation} CrossEntropyLoss = {trainLossValue}, EvaluationCriterion = {evaluationValue}");
+			//Console.WriteLine($"Minibatch: {Generation} CrossEntropyLoss = {trainLossValue}, EvaluationCriterion = {evaluationValue}");
 
 			Array.Clear(_trainingData, 0, _trainingData.Length);
 			Array.Clear(_labelData, 0, _labelData.Length);
+
+			return new TrainingResult(trainLossValue, evaluationValue);
 		}
 
 		public void Save(string path)
@@ -124,19 +123,30 @@ namespace PatchworkSim.AI.CNTK
 			ModelFunc.Save(path);
 		}
 
-		private readonly Random rng = new Random(0);
+		private readonly Random _rng = new Random(0);
 
 		public void ShuffleSamples()
 		{
-
 			int n = _samples.Count;
 			while (n > 1)
 			{
 				n--;
-				int k = rng.Next(n + 1);
+				int k = _rng.Next(n + 1);
 				var value = _samples[k];
 				_samples[k] = _samples[n];
 				_samples[n] = value;
+			}
+		}
+
+		public struct TrainingResult
+		{
+			public readonly float LossAverage;
+			public readonly float EvaluationAverage;
+
+			public TrainingResult(float lossAverage, float evaluationAverage)
+			{
+				LossAverage = lossAverage;
+				EvaluationAverage = evaluationAverage;
 			}
 		}
 	}

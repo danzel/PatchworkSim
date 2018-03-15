@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace PatchworkSim.AI.CNTK
@@ -10,13 +11,21 @@ namespace PatchworkSim.AI.CNTK
 	{
 		private readonly BulkBoardEvaluator _evaluator;
 		private readonly int _branching;
+		private readonly int _keepRandom;
 
 		private readonly ListPool<BoardWithParent> _pool = new ListPool<BoardWithParent>();
 
-		public CNTKEvaluatorTreeSearch(BulkBoardEvaluator evaluator, int branching)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="evaluator"></param>
+		/// <param name="branching">How many to keep at each level</param>
+		/// <param name="keepRandom">How many at each level to keep that are not the 'best'</param>
+		public CNTKEvaluatorTreeSearch(BulkBoardEvaluator evaluator, int branching, int keepRandom)
 		{
 			_evaluator = evaluator;
 			_branching = branching;
+			_keepRandom = keepRandom;
 		}
 
 		/// <summary>
@@ -89,8 +98,33 @@ namespace PatchworkSim.AI.CNTK
 			_evaluator.Evaluate(nextBoards);
 			nextBoards.Sort();
 			if (nextBoards.Count > _branching)
+			{
+				//Shuffle _keepRandom worth, so we don't always keep the best, we keep some that might not be good, so that we can learn from them
+				if (_keepRandom > 0)
+				{
+					ShuffleKeepRandom(nextBoards);
+				}
 				nextBoards.RemoveRange(_branching, nextBoards.Count - _branching);
+			}
 		}
+
+		private readonly Random _rng = new Random(0);
+
+		/// <summary>
+		/// Shuffle from (_branching - keepRandom) to _branching, so the last few that we keep are random ones
+		/// </summary>
+		public void ShuffleKeepRandom(List<BoardWithParent> list)
+		{
+			for (var n = _branching - _keepRandom; n < _branching; n++)
+			{
+				int k = n + _rng.Next(list.Count - n);
+				var value = list[k];
+				list[k] = list[n];
+				list[n] = value;
+			}
+		}
+
+
 
 		private List<BoardWithParent> GetAllPossibleInitialPlacements(in BoardState board, PieceDefinition piece)
 		{

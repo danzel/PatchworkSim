@@ -12,18 +12,19 @@ namespace PatchworkSim.AI.CNTK
 		{
 			var device = DeviceDescriptor.GPUDevice(0);
 
-			int batchSize = 1024;
+			int batchSize = 512;
 			var trainer = new ModelTrainer("../../../../PatchworkSim.AI.CNTK/keras/model.dnn", batchSize, device);
 			var boardEvaluator = new BulkBoardEvaluator(trainer.ModelFunc, device);
-			var evaluatorTreeSearch = new CNTKEvaluatorTreeSearch(boardEvaluator, 16);
+			var evaluatorTreeSearch = new CNTKEvaluatorTreeSearch(boardEvaluator, 128, 64);
 			var greedyPlacer = new CNTKNoLookaheadPlacementStrategy(boardEvaluator);
 
 			int generation = 0;
 			int rand = 0;
 
+			Console.WriteLine($"Gen\tTotlArea\tArea%\tTestArea\tLossAvg\tEvalAvg");
+
 			while (true)
 			{
-				//TestIt(generation, greedyPlacer);
 
 				int totalAreaCovered = 0;
 				int gamesPlayed = 0;
@@ -35,21 +36,25 @@ namespace PatchworkSim.AI.CNTK
 					var boards = evaluatorTreeSearch.PreplaceAll(pieces, out var areaCovered);
 
 					//Pass those to the trainer
-					Console.WriteLine($"Managed to cover {areaCovered} resulting in {boards.Count} boards");
+					//Console.WriteLine($"Managed to cover {areaCovered} resulting in {boards.Count} boards");
 					totalAreaCovered += areaCovered;
 					trainer.RecordPlacementsForTraining(boards, areaCovered);
 					gamesPlayed++;
 				}
 
-				Console.WriteLine($"Score: {totalAreaCovered} @ {totalAreaCovered * 100.0 / (gamesPlayed * BoardState.Width * BoardState.Height)}%");
 
-				trainer.Train();
+				var areaPercent = totalAreaCovered * 100.0 / (gamesPlayed * BoardState.Width * BoardState.Height);
+				int testCaseAreaCovered = TestIt(greedyPlacer, false);
+
+				var result = trainer.Train();
+
+				Console.WriteLine($"{generation}\t{totalAreaCovered.ToString().PadRight(8)}\t{areaPercent:0.0}\t{testCaseAreaCovered.ToString().PadRight(8)}\t{result.LossAverage:0.0000}\t{result.EvaluationAverage:0.0000}");
 				generation++;
 				trainer.Save($"./model-{generation.ToString().PadLeft(4, '0')}-{DateTimeOffset.UtcNow.Ticks}.dnn");
 			}
 		}
 
-		private void TestIt(int generation, CNTKNoLookaheadPlacementStrategy placer)
+		private int TestIt(CNTKNoLookaheadPlacementStrategy placer, bool printOutput)
 		{
 			var pieces = new[]
 			{
@@ -89,11 +94,14 @@ namespace PatchworkSim.AI.CNTK
 					}
 				}
 
-				Console.WriteLine("----------------------------------------");
-				ConsoleLogger.PrintBoardsDiff(oldBoards, boards);
+				if (printOutput)
+				{
+					Console.WriteLine("----------------------------------------");
+					ConsoleLogger.PrintBoardsDiff(oldBoards, boards);
+				}
 			}
 
-			Console.WriteLine($"{generation} Covered {areaCovered}");
+			return areaCovered;
 		}
 	}
 }
