@@ -96,7 +96,7 @@ namespace PatchworkSim.AI.CNTK
 		{
 			//Sort by score and only keep _branching worth of them
 			_evaluator.Evaluate(nextBoards);
-			nextBoards.Sort();
+			//nextBoards.Sort();
 			if (nextBoards.Count > _branching)
 			{
 				//Shuffle _keepRandom worth, so we don't always keep the best, we keep some that might not be good, so that we can learn from them

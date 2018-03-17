@@ -63,7 +63,7 @@ namespace PatchworkSim.AI.CNTK
 			resultX = -1;
 			resultY = -1;
 
-			int bestScore = -1;
+			float bestScore = -1;
 			for (var i = 0; i < _boards.Count; i++)
 			{
 				if (_boards[i].Score > bestScore)

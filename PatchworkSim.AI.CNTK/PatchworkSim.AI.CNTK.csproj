@@ -52,6 +52,7 @@
     <Compile Include="BulkBoardEvaluator.cs" />
     <Compile Include="CNTKBoardEvaluator.cs" />
     <Compile Include="CNTKEvaluatorTreeSearchPreplacer.cs" />
+    <Compile Include="CNTKSingleFutureMultiEvaluator.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="ListPool.cs" />
     <Compile Include="ModelTrainer.cs" />

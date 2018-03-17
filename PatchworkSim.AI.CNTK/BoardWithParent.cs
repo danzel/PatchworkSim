@@ -1,5 +1,4 @@
 ﻿using System;
-using PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers;
 
 namespace PatchworkSim.AI.CNTK
 {
@@ -7,7 +6,16 @@ namespace PatchworkSim.AI.CNTK
 	{
 		public readonly BoardWithParent Parent;
 		public readonly BoardState Board;
-		public int Score;
+
+		/// <summary>
+		/// % Change this is a good move
+		/// </summary>
+		public float Score;
+
+		/// <summary>
+		/// For SNTKSingleFutureMultiEvaluator
+		/// </summary>
+		public int ParentIndex;
 
 		public BoardWithParent(BoardWithParent parent, BoardState board)
 		{
@@ -18,10 +26,10 @@ namespace PatchworkSim.AI.CNTK
 
 		public int CompareTo(BoardWithParent other)
 		{
-			return other.Score - Score;
+			return other.Score.CompareTo(Score);
 		}
 
-		public void SetScore(int score)
+		public void SetScore(float score)
 		{
 			Score = score;
 		}

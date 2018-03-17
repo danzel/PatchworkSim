@@ -12,16 +12,24 @@ namespace PatchworkSim.AI.CNTK
 		{
 			var device = DeviceDescriptor.GPUDevice(0);
 
-			int batchSize = 512;
-			var trainer = new ModelTrainer("../../../../PatchworkSim.AI.CNTK/keras/model.dnn", batchSize, device);
+			int batchSize = 128;
+			int batchesPerCycle = 20;
+
+			//const int gamesPlayedPerLoop = 1; //Should be 1 for CNTKEvaluatorTreeSearch (which only calculates a single playout per loop)
+			const int gamesPlayedPerLoop = 20; //For CNTKSingleFutureMultiEvaluator this is how many random playouts it generates for the given placements.
+
+			var trainer = new ModelTrainer("../../../../PatchworkSim.AI.CNTK/keras/model.dnn", batchSize, batchesPerCycle, device);
 			var boardEvaluator = new BulkBoardEvaluator(trainer.ModelFunc, device);
-			var evaluatorTreeSearch = new CNTKEvaluatorTreeSearch(boardEvaluator, 128, 64);
+			//var trainingDataGenerator = new CNTKEvaluatorTreeSearch(boardEvaluator, 32, 4);
+			var trainingDataGenerator = new CNTKSingleFutureMultiEvaluator(boardEvaluator, gamesPlayedPerLoop);
 			var greedyPlacer = new CNTKNoLookaheadPlacementStrategy(boardEvaluator);
 
 			int generation = 0;
 			int rand = 0;
 
 			Console.WriteLine($"Gen\tTotlArea\tArea%\tTestArea\tLossAvg\tEvalAvg");
+
+			int bestTestCoverage = 0;
 
 			while (true)
 			{
@@ -33,18 +41,25 @@ namespace PatchworkSim.AI.CNTK
 					//Random pieces and do preplacements
 					var pieces = SimulationHelpers.GetRandomPieces(rand++).Select(x => PieceDefinition.AllPieceDefinitions[x]).ToList();
 
-					var boards = evaluatorTreeSearch.PreplaceAll(pieces, out var areaCovered);
+					//var boards = trainingDataGenerator.PreplaceAll(pieces, out var areaCovered).Select(b => new TrainingSample(b, areaCovered)).ToList();
+					var boards = trainingDataGenerator.GenerateTrainingData(pieces, out var areaCovered);
 
 					//Pass those to the trainer
 					//Console.WriteLine($"Managed to cover {areaCovered} resulting in {boards.Count} boards");
 					totalAreaCovered += areaCovered;
-					trainer.RecordPlacementsForTraining(boards, areaCovered);
-					gamesPlayed++;
+					trainer.RecordPlacementsForTraining(boards);
+					gamesPlayed += gamesPlayedPerLoop;
 				}
 
 
 				var areaPercent = totalAreaCovered * 100.0 / (gamesPlayed * BoardState.Width * BoardState.Height);
 				int testCaseAreaCovered = TestIt(greedyPlacer, false);
+
+				if (testCaseAreaCovered > bestTestCoverage)
+				{
+					bestTestCoverage = testCaseAreaCovered;
+					TestIt(greedyPlacer, true);
+				}
 
 				var result = trainer.Train();
 

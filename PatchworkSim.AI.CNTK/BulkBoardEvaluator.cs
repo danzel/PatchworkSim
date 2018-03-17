@@ -63,18 +63,7 @@ namespace PatchworkSim.AI.CNTK
 			{
 				var ourData = outputData[b];
 
-				int score = 0;
-				float best = ourData[0];
-				for (var i = 1; i < ourData.Count; i++)
-				{
-					if (ourData[i] > best)
-					{
-						score = i;
-						best = ourData[i];
-					}
-				}
-
-				boards[b].SetScore(score);
+				boards[b].SetScore(ourData[1]);
 			}
 
 

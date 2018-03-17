@@ -5,7 +5,7 @@ using CNTK;
 
 namespace PatchworkSim.AI.CNTK
 {
-	internal struct TrainingSample
+	public struct TrainingSample
 	{
 		public readonly BoardState Board;
 		public readonly int FinalAreaCovered;
@@ -21,6 +21,7 @@ namespace PatchworkSim.AI.CNTK
 	{
 		public readonly Function ModelFunc;
 		private readonly int _batchSize;
+		private readonly int _batchesPerCycle;
 		private readonly DeviceDescriptor _device;
 
 		public int Generation = 0;
@@ -33,23 +34,24 @@ namespace PatchworkSim.AI.CNTK
 		private readonly Variable _labelsVar;
 		private readonly Trainer _trainer;
 
-		public ModelTrainer(string modelPath, int batchSize, DeviceDescriptor device)
+		public ModelTrainer(string modelPath, int batchSize, int batchesPerCycle, DeviceDescriptor device)
 		{
 			_batchSize = batchSize;
+			_batchesPerCycle = batchesPerCycle;
 			_device = device;
 			ModelFunc = Function.Load(modelPath, device);
 
-			_samples = new List<TrainingSample>(batchSize * 2);
+			_samples = new List<TrainingSample>(batchSize * (batchesPerCycle + 2));
 
 			_trainingData = new float[BoardState.Width * BoardState.Height * _batchSize];
-			_labelData = new float[82 * _batchSize];
+			_labelData = new float[(BoardState.Width * BoardState.Height + 1) * _batchSize];
 
 			_labelsVar = CNTKLib.InputVariable(new int[] { ModelFunc.Output.Shape.TotalSize }, DataType.Float, new AxisVector() { ModelFunc.Output.DynamicAxes[0] });
 
 			var trainingLoss = CNTKLib.CrossEntropyWithSoftmax(ModelFunc, _labelsVar, "lossFunction");
 			var prediction = CNTKLib.ClassificationError(ModelFunc, _labelsVar, "predictionError");
 
-			var learningRatePerSample = new TrainingParameterScheduleDouble(0.1);
+			var learningRatePerSample = new TrainingParameterScheduleDouble(0.0001, (uint)batchSize);
 
 			_trainer = Trainer.CreateTrainer(ModelFunc, trainingLoss, prediction, new List<Learner>
 			{
@@ -57,65 +59,78 @@ namespace PatchworkSim.AI.CNTK
 			});
 		}
 
-		public void RecordPlacementsForTraining(HashSet<BoardState> boards, int finalAreaCovered)
+		public void RecordPlacementsForTraining(List<TrainingSample> samples)
 		{
-			foreach (var board in boards)
+			for (var i = 0; i < samples.Count; i++)
 			{
-				_samples.Add(new TrainingSample(board, finalAreaCovered));
+				_samples.Add(samples[i]);
 			}
 		}
 
-		public bool ReadyToTrain => _samples.Count >= _batchSize * 1.5;
+		public bool ReadyToTrain => _samples.Count >= _batchSize * _batchesPerCycle;
 
-		private void PrepareDataForTraining()
+		private void PrepareDataForTraining(int batch)
 		{
-			ShuffleSamples();
-
-			//Keep only _batchSize worth
+			//Copy _batchSize worth
 			for (var i = 0; i < _batchSize; i++)
 			{
-				var board = _samples[i].Board;
+				var index = i + (batch * _batchSize);
+				var board = _samples[index].Board;
 				CNTKHelpers.CopyBoardToArray(board, _trainingData, i * BoardState.Width * BoardState.Height);
-			}
-			for (var i = 0; i < _batchSize; i++)
-			{
-				_labelData[(i * 82) + _samples[i].FinalAreaCovered] = 1;
+
+				var goodnessScale = _samples[index].FinalAreaCovered / (float)(BoardState.Width * BoardState.Height);
+				goodnessScale = goodnessScale * goodnessScale * goodnessScale;
+				//TODO: Is this a good scaling curve?
+				//x^3: 0.5 -> 0.12, 0.8 -> 0.5
+
+				_labelData[i * 2 + 0] = 1 - goodnessScale;
+				_labelData[i * 2 + 1] = goodnessScale;
 			}
 
-			_samples.Clear();
 		}
 
 		public TrainingResult Train()
 		{
-			PrepareDataForTraining();
-
-			var input = ModelFunc.Arguments.Single();
-
-
-			var inputBatch = Value.CreateBatch(input.Shape, _trainingData, 0, _batchSize * BoardState.Width * BoardState.Height, _device);
-			var labelBatch = Value.CreateBatch(ModelFunc.Output.Shape, _labelData, 0, _batchSize * 82, _device);
-
-			var arguments = new Dictionary<Variable, Value>
-			{
-				{ input, inputBatch },
-				{ _labelsVar, labelBatch }
-			};
-
-			_trainer.TrainMinibatch(arguments, false, _device);
-
-			//https://github.com/Microsoft/CNTK/issues/2954
-			inputBatch.Erase();
-			labelBatch.Erase();
-
 			Generation++;
-			float trainLossValue = (float)_trainer.PreviousMinibatchLossAverage();
-			float evaluationValue = (float)_trainer.PreviousMinibatchEvaluationAverage();
-			//Console.WriteLine($"Minibatch: {Generation} CrossEntropyLoss = {trainLossValue}, EvaluationCriterion = {evaluationValue}");
 
-			Array.Clear(_trainingData, 0, _trainingData.Length);
-			Array.Clear(_labelData, 0, _labelData.Length);
+			float totalTrainLoss = 0;
+			float totalEvaluation = 0;
 
-			return new TrainingResult(trainLossValue, evaluationValue);
+			ShuffleSamples();
+			for (var i = 0; i < _batchesPerCycle; i++)
+			{
+				PrepareDataForTraining(i);
+
+				var input = ModelFunc.Arguments.Single();
+
+
+				var inputBatch = Value.CreateBatch(input.Shape, _trainingData, 0, _batchSize * BoardState.Width * BoardState.Height, _device);
+				var labelBatch = Value.CreateBatch(ModelFunc.Output.Shape, _labelData, 0, _batchSize * 2, _device);
+
+				var arguments = new Dictionary<Variable, Value>
+				{
+					{ input, inputBatch },
+					{ _labelsVar, labelBatch }
+				};
+
+				_trainer.TrainMinibatch(arguments, false, _device);
+
+				//https://github.com/Microsoft/CNTK/issues/2954
+				inputBatch.Erase();
+				labelBatch.Erase();
+
+				float trainLossValue = (float)_trainer.PreviousMinibatchLossAverage();
+				float evaluationValue = (float)_trainer.PreviousMinibatchEvaluationAverage();
+				//Console.WriteLine($"Minibatch: {Generation}[{i}] CrossEntropyLoss = {trainLossValue}, EvaluationCriterion = {evaluationValue}");
+				totalTrainLoss += trainLossValue;
+				totalEvaluation += evaluationValue;
+
+				Array.Clear(_trainingData, 0, _trainingData.Length);
+				Array.Clear(_labelData, 0, _labelData.Length);
+			}
+
+			_samples.Clear();
+			return new TrainingResult(totalTrainLoss / _batchesPerCycle, totalEvaluation / _batchesPerCycle);
 		}
 
 		public void Save(string path)
