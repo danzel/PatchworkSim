@@ -13,15 +13,16 @@ namespace PatchworkSim.AI.CNTK
 			var device = DeviceDescriptor.GPUDevice(0);
 
 			int batchSize = 128;
-			int batchesPerCycle = 20;
+			int batchesPerCycle = 1;
 
-			//const int gamesPlayedPerLoop = 1; //Should be 1 for CNTKEvaluatorTreeSearch (which only calculates a single playout per loop)
-			const int gamesPlayedPerLoop = 20; //For CNTKSingleFutureMultiEvaluator this is how many random playouts it generates for the given placements.
+			const int gamesPlayedPerLoop = 1; //Should be 1 for CNTKEvaluatorTreeSearch (which only calculates a single playout per loop)
+			//const int gamesPlayedPerLoop = 20; //For CNTKSingleFutureMultiEvaluator this is how many random playouts it generates for the given placements.
 
 			var trainer = new ModelTrainer("../../../../PatchworkSim.AI.CNTK/keras/model.dnn", batchSize, batchesPerCycle, device);
 			var boardEvaluator = new BulkBoardEvaluator(trainer.ModelFunc, device);
 			//var trainingDataGenerator = new CNTKEvaluatorTreeSearch(boardEvaluator, 32, 4);
-			var trainingDataGenerator = new CNTKSingleFutureMultiEvaluator(boardEvaluator, gamesPlayedPerLoop);
+			//var trainingDataGenerator = new CNTKSingleFutureMultiEvaluator(boardEvaluator, gamesPlayedPerLoop);
+			var trainingDataGenerator = new CNTKBetterAlternativeEvaluator(boardEvaluator);
 			var greedyPlacer = new CNTKNoLookaheadPlacementStrategy(boardEvaluator);
 
 			int generation = 0;
@@ -38,16 +39,17 @@ namespace PatchworkSim.AI.CNTK
 				int gamesPlayed = 0;
 				while (!trainer.ReadyToTrain)
 				{
+					//Console.WriteLine(rand);
 					//Random pieces and do preplacements
 					var pieces = SimulationHelpers.GetRandomPieces(rand++).Select(x => PieceDefinition.AllPieceDefinitions[x]).ToList();
 
 					//var boards = trainingDataGenerator.PreplaceAll(pieces, out var areaCovered).Select(b => new TrainingSample(b, areaCovered)).ToList();
-					var boards = trainingDataGenerator.GenerateTrainingData(pieces, out var areaCovered);
+					var trainingSamples = trainingDataGenerator.GenerateTrainingData(pieces, out var areaCovered); //TODO: Provide multiple piece arrays per loop for efficiency
 
 					//Pass those to the trainer
 					//Console.WriteLine($"Managed to cover {areaCovered} resulting in {boards.Count} boards");
 					totalAreaCovered += areaCovered;
-					trainer.RecordPlacementsForTraining(boards);
+					trainer.RecordPlacementsForTraining(trainingSamples);
 					gamesPlayed += gamesPlayedPerLoop;
 				}
 

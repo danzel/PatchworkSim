@@ -8,12 +8,12 @@ namespace PatchworkSim.AI.CNTK
 	public struct TrainingSample
 	{
 		public readonly BoardState Board;
-		public readonly int FinalAreaCovered;
+		public readonly float Score;
 
-		public TrainingSample(BoardState board, int finalAreaCovered)
+		public TrainingSample(BoardState board, float score)
 		{
 			Board = board;
-			FinalAreaCovered = finalAreaCovered;
+			Score = score;
 		}
 	}
 
@@ -78,13 +78,13 @@ namespace PatchworkSim.AI.CNTK
 				var board = _samples[index].Board;
 				CNTKHelpers.CopyBoardToArray(board, _trainingData, i * BoardState.Width * BoardState.Height);
 
-				var goodnessScale = _samples[index].FinalAreaCovered / (float)(BoardState.Width * BoardState.Height);
-				goodnessScale = goodnessScale * goodnessScale * goodnessScale;
+				//var goodnessScale = _samples[index].FinalAreaCovered / (float)(BoardState.Width * BoardState.Height);
+				//goodnessScale = goodnessScale * goodnessScale * goodnessScale;
 				//TODO: Is this a good scaling curve?
 				//x^3: 0.5 -> 0.12, 0.8 -> 0.5
 
-				_labelData[i * 2 + 0] = 1 - goodnessScale;
-				_labelData[i * 2 + 1] = goodnessScale;
+				_labelData[i * 2 + 0] = 1 - _samples[index].Score;
+				_labelData[i * 2 + 1] = _samples[index].Score;
 			}
 
 		}
