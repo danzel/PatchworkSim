@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if false
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -171,3 +172,4 @@ namespace PatchworkSim.AI.CNTK
 		}
 	}
 }
+#endif

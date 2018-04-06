@@ -67,7 +67,7 @@ namespace PatchworkSim.AI.CNTK
 				{
 					var ourData = outputData[b];
 
-					boards[start + b].SetScore(ourData[1]);
+					boards[start + b].SetScore(ourData[0]);
 				}
 
 				//https://github.com/Microsoft/CNTK/issues/2954

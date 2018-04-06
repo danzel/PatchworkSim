@@ -50,7 +50,7 @@ namespace PatchworkSim.AI.CNTK
 						{
 							var clone = board;
 							clone.Place(bitmap, x, y);
-							_boards.Add(new BoardWithParent(null, clone));
+							_boards.Add(new BoardWithParent(clone));
 							_placements.Add(new Preplacement(bitmap, x, y));
 						}
 					}
