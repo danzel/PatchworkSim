@@ -25,6 +25,7 @@ namespace PatchworkSim.AI.CNTK
 		private readonly DeviceDescriptor _device;
 
 		private readonly List<TrainingSample> _samples;
+		private readonly Dictionary<BoardState, int> _sampleBoardLookup = new Dictionary<BoardState, int>();
 		private int _samplesIndex;
 
 		private readonly float[] _trainingData;
@@ -62,11 +63,23 @@ namespace PatchworkSim.AI.CNTK
 			//Add memories until we are full, then overwrite old memories
 			for (var i = 0; i < samples.Count; i++)
 			{
-				if (_samples.Count < _totalMemorySize)
-					_samples.Add(samples[i]);
+				var s = samples[i];
+				//If this already exists, replace or ignore
+				if (_sampleBoardLookup.TryGetValue(s.Board, out var index) && _samples[index].Board.CompareTo(s.Board) == 0)
+				{
+					//Only replace if our score is better
+					if (s.Score > _samples[index].Score)
+						_samples[index] = s;
+				}
 				else
-					_samples[_samplesIndex] = samples[i];
-				_samplesIndex = (_samplesIndex + 1) % _totalMemorySize;
+				{
+					if (_samples.Count < _totalMemorySize)
+						_samples.Add(s);
+					else
+						_samples[_samplesIndex] = s;
+					_sampleBoardLookup[s.Board] = _samplesIndex;
+					_samplesIndex = (_samplesIndex + 1) % _totalMemorySize;
+				}
 			}
 		}
 

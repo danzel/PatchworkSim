@@ -11,6 +11,8 @@ namespace PatchworkSim.AI.CNTK
 	{
 		public void Run()
 		{
+			const bool showImprovedPlacements = false;
+
 			var device = DeviceDescriptor.GPUDevice(0);
 
 			//https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf
@@ -20,12 +22,12 @@ namespace PatchworkSim.AI.CNTK
 			//  This is required so we know how full the board got
 
 			const int batchSize = 32;
-			const int totalMemorySize = 1_000_000;
+			const int totalMemorySize = 100_000;
 
 			//We scale epsilon down from initial to final value linearly over {epsilonGamesToDecreaseToFinal} games, then it is fixed at the final value
 			const double epsilonInitial = 1f;
 			const double epsilonFinal = 0.1f;
-			const int epsilonGamesToDecreaseToFinal = 100_000;
+			const int epsilonGamesToDecreaseToFinal = 40_000;
 
 
 			var trainer = new ModelTrainer("../../../../PatchworkSim.AI.CNTK/keras/model.dnn", batchSize, totalMemorySize, device);
@@ -37,11 +39,13 @@ namespace PatchworkSim.AI.CNTK
 			int generation = 0;
 			int rand = 0;
 
-			Console.WriteLine($"Gen\tTotlArea\tArea%\tTestArea\tLossAvg\tEvalAvg");
+			if(showImprovedPlacements)
+				Console.WriteLine($"Gen\tTotlArea\tArea%\tTestArea\tLossAvg\tEvalAvg");
 
-			int bestTestCoverage = TestIt(greedyPlacer, true);
+			int bestTestCoverage = TestIt(greedyPlacer, showImprovedPlacements);
 
-			while (true)
+			//while (true)
+			for (var i = 0; i <= 5000; i++)
 			{
 				int totalAreaCovered = 0;
 				int gamesPlayed = 0;
@@ -57,7 +61,7 @@ namespace PatchworkSim.AI.CNTK
 				do
 				{
 					//Get the pieces we are going to place
-					var pieces = SimulationHelpers.GetRandomPieces(rand).Select(x => PieceDefinition.AllPieceDefinitions[x]).ToList();
+					var pieces = SimulationHelpers.GetRandomPieces(generation % 6).Select(x => PieceDefinition.AllPieceDefinitions[x]).ToList();
 
 					var trainingSamples = trainingDataGenerator.GenerateTrainingData(pieces, out var areaCovered);
 
@@ -79,15 +83,20 @@ namespace PatchworkSim.AI.CNTK
 				if (testCaseAreaCovered > bestTestCoverage)
 				{
 					bestTestCoverage = testCaseAreaCovered;
-					TestIt(greedyPlacer, true);
+					TestIt(greedyPlacer, showImprovedPlacements);
 				}
 
-				Console.WriteLine($"{generation}\t{totalAreaCovered.ToString().PadRight(8)}\t{areaPercent:0.0}\t{testCaseAreaCovered.ToString().PadRight(8)}\t{result.LossAverage:0.0000}\t{result.EvaluationAverage:0.0000}");
+				//Console.WriteLine($"{generation}\t{totalAreaCovered.ToString().PadRight(8)}\t{areaPercent:0.0}\t{testCaseAreaCovered.ToString().PadRight(8)}\t{result.LossAverage:0.0000}\t{result.EvaluationAverage:0.0000}");
+				Console.WriteLine($"{generation}\t{totalAreaCovered.ToString().PadRight(8)}\t{areaPercent:0.0}\t{testCaseAreaCovered.ToString().PadRight(8)}\t{bestTestCoverage.ToString().PadRight(8)}");
 				generation++;
 
-				if (generation % 10000 == 0)
+				if (generation % 1000 == 0)
 					trainer.Save($"./model-{generation.ToString().PadLeft(4, '0')}-{DateTimeOffset.UtcNow.Ticks}.dnn");
 			}
+
+			if (showImprovedPlacements)
+				Console.WriteLine("DONE!");
+			Console.ReadLine();
 		}
 
 		private int TestIt(CNTKNoLookaheadPlacementStrategy placer, bool printOutput)
@@ -95,9 +104,11 @@ namespace PatchworkSim.AI.CNTK
 			var pieces = new[]
 			{
 				SimulationHelpers.GetRandomPieces(0).Select(x => PieceDefinition.AllPieceDefinitions[x]).ToList(),
-				///SimulationHelpers.GetRandomPieces(1).Select(x => PieceDefinition.AllPieceDefinitions[x]).ToList(),
-				///SimulationHelpers.GetRandomPieces(2).Select(x => PieceDefinition.AllPieceDefinitions[x]).ToList(),
-				///SimulationHelpers.GetRandomPieces(3).Select(x => PieceDefinition.AllPieceDefinitions[x]).ToList(),
+				SimulationHelpers.GetRandomPieces(1).Select(x => PieceDefinition.AllPieceDefinitions[x]).ToList(),
+				SimulationHelpers.GetRandomPieces(2).Select(x => PieceDefinition.AllPieceDefinitions[x]).ToList(),
+				SimulationHelpers.GetRandomPieces(3).Select(x => PieceDefinition.AllPieceDefinitions[x]).ToList(),
+				SimulationHelpers.GetRandomPieces(4).Select(x => PieceDefinition.AllPieceDefinitions[x]).ToList(),
+				SimulationHelpers.GetRandomPieces(5).Select(x => PieceDefinition.AllPieceDefinitions[x]).ToList(),
 			};
 
 			int areaCovered = 0;
@@ -140,6 +151,7 @@ namespace PatchworkSim.AI.CNTK
 			if (printOutput)
 			{
 				Console.WriteLine("Placed " + String.Join(", ", pieces.Select(p => PieceDefinition.AllPieceDefinitions.Length - p.Count)));
+				//Console.WriteLine("Placed " + String.Join(", ", pieces.Select(p => (PieceDefinition.AllPieceDefinitions.Length - p.Count) + $" (next: {p.First().Name})")));
 			}
 
 			return areaCovered;
@@ -223,6 +235,9 @@ namespace PatchworkSim.AI.CNTK
 
 		private List<BoardWithParent> GetAllPossiblePlacements(in BoardState board, PieceDefinition piece)
 		{
+			if (board.IsEmpty)
+				return GetAllInitialPlacements(in board, piece);
+
 			var result = new List<BoardWithParent>();
 
 			foreach (var bitmap in piece.PossibleOrientations)
@@ -244,5 +259,35 @@ namespace PatchworkSim.AI.CNTK
 			return result;
 		}
 
+		private List<BoardWithParent> GetAllInitialPlacements(in BoardState board, PieceDefinition piece)
+		{
+			var result = new List<BoardWithParent>();
+
+			foreach (var bitmap in piece.PossibleOrientations)
+			{
+				// Want to only try at these positions (except at 9x9 size of course)
+				// Anything else is just a mirror
+				// ###__
+				// _##__
+				// __#__
+				// _____
+				// _____
+
+				for (int x = 0; x <= BoardState.Width / 2; x++)
+				{
+					for (int y = x; y <= BoardState.Height / 2; y++)
+					{
+						if (board.CanPlace(bitmap, x, y))
+						{
+							var clone = board;
+							clone.Place(bitmap, x, y);
+							result.Add(new BoardWithParent(clone));
+						}
+					}
+				}
+			}
+
+			return result;
+		}
 	}
 }

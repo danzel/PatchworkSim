@@ -34,9 +34,9 @@ namespace PatchworkRunner
 
 			//new GeneticTuneableUtilityEvolver().Run();
 			//new MultiGeneticTuneableUtilityEvolver().Run();
-			//new Pattern2x2Evolver().Run();
+			new Pattern2x2Evolver().Run();
 			//new Pattern3x3Evolver().Run();
-			new TrainingRunner().Run();
+			//new TrainingRunner().Run();
 		}
 
 		private static void RunMoveMakerForPerformance()
@@ -136,7 +136,7 @@ namespace PatchworkRunner
 				//ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_6,
 				//new BestEvaluatorStrategy(new TightBoardEvaluator(true)), 
 				//new BestEvaluatorStrategy(new TightBoardEvaluator(false)), 
-				new BestEvaluatorStrategy(TuneablePattern2x2BoardEvaluator.HandTuned), 
+				new BestEvaluatorStrategy(TuneablePattern2x2BoardEvaluator.Tuning1), 
 			};
 
 			//ExhaustiveMostFuturePlacementsPlacementStrategy
@@ -145,7 +145,7 @@ namespace PatchworkRunner
 			//5,1 - 29 minutes  | 11 Pieces
 
 			var pieces = new PieceCollection();
-			pieces.Populate(SimulationHelpers.GetRandomPieces(5));
+			pieces.Populate(SimulationHelpers.GetRandomPieces(0));
 
 			var oldBoards = new BoardState[strategies.Length];
 			var boards = new BoardState[strategies.Length];

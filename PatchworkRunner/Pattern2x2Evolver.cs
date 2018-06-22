@@ -26,9 +26,13 @@ namespace PatchworkRunner
 			_population = new List<PopulationMember>();
 
 			//Best 4 I've found so far
+			//2754
 			_population.Add(new PopulationMember(new[] { 82, -36, -33, -23, 11, -36, -71, 10, -42, -63, -81, 55, -39, -10, 60, 99 }));
+			//2753
 			_population.Add(new PopulationMember(new[] { 74, -3, -64, -53, 11, -91, -76, -93, -100, -84, -100, 35, -82, -26, 50, 100 }));
+			//2751
 			_population.Add(new PopulationMember(new[] { 67, -74, -29, -56, -12, -57, -96, -10, -52, -89, -100, 29, -67, -3, 39, 100 }));
+			//2749
 			_population.Add(new PopulationMember(new[] { 50, -36, -45, -66, -79, -52, -92, -18, -49, -100, -100, 19, -42, -1, 19, 75 }));
 			foreach (var p in _population)
 				EvaluateFitness(p);
@@ -124,6 +128,7 @@ namespace PatchworkRunner
 		private void EvaluateFitness(PopulationMember populationMember)
 		{
 			populationMember.Fitness = 1 + CalculateChallengerWinsFrom100(populationMember.Strategy);
+			Console.WriteLine(populationMember.Fitness);
 		}
 
 		private int[] CreateRandomGene()
