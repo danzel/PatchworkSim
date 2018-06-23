@@ -59,10 +59,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PatchworkSim.AI.CNTK\PatchworkSim.AI.CNTK.csproj">
-      <Project>{078F1E73-AA43-4486-94BE-BE89B7E51D4B}</Project>
-      <Name>PatchworkSim.AI.CNTK</Name>
-    </ProjectReference>
     <ProjectReference Include="..\PatchworkSim.AI\PatchworkSim.AI.csproj">
       <Project>{B7F26ADB-568C-4588-9637-07F184257871}</Project>
       <Name>PatchworkSim.AI</Name>

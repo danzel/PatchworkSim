@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using PatchworkRunner.ConsolePlayer;
 using PatchworkSim;
-using PatchworkSim.AI.CNTK;
 using PatchworkSim.AI.MoveMakers;
 using PatchworkSim.AI.MoveMakers.UtilityCalculators;
 using PatchworkSim.AI.PlacementFinders;

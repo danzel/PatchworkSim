@@ -15,8 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatchworkRunner", "Patchwor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatchworkAIComparer", "PatchworkAIComparer\PatchworkAIComparer.csproj", "{193AD43B-9E23-4B7C-9515-E8133EC56DDA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatchworkSim.AI.CNTK", "PatchworkSim.AI.CNTK\PatchworkSim.AI.CNTK.csproj", "{078F1E73-AA43-4486-94BE-BE89B7E51D4B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -47,10 +45,6 @@ Global
 		{193AD43B-9E23-4B7C-9515-E8133EC56DDA}.Debug|x64.Build.0 = Debug|x64
 		{193AD43B-9E23-4B7C-9515-E8133EC56DDA}.Release|x64.ActiveCfg = Release|x64
 		{193AD43B-9E23-4B7C-9515-E8133EC56DDA}.Release|x64.Build.0 = Release|x64
-		{078F1E73-AA43-4486-94BE-BE89B7E51D4B}.Debug|x64.ActiveCfg = Debug|x64
-		{078F1E73-AA43-4486-94BE-BE89B7E51D4B}.Debug|x64.Build.0 = Debug|x64
-		{078F1E73-AA43-4486-94BE-BE89B7E51D4B}.Release|x64.ActiveCfg = Release|x64
-		{078F1E73-AA43-4486-94BE-BE89B7E51D4B}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
