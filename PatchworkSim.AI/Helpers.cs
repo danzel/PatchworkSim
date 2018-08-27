@@ -70,13 +70,26 @@ namespace PatchworkSim.AI
 
 		/// <summary>
 		/// Estimates the end game value of the given players position.
-		/// Doesn't care that you would be able to spend any income to buy more pieces later. Basically assumes all players advance to end
+		/// Doesn't care that you would be able to spend any income to buy more pieces later. Basically assumes all players advance to end.
+		/// Provides a slight bias towards getting button income early (Useful for minimax style ai)
 		/// </summary>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static int EstimateEndgameValue(SimulationState state, int player)
 		{
-			//space used * 2 + buttons + income * incomes remaining
+			//space used * 2 + buttons + 1.1 * income * incomes remaining
 			return state.PlayerBoardUsedLocationsCount[player] * 2 + state.PlayerButtonAmount[player] + (11 * state.PlayerButtonIncome[player] * SimulationHelpers.ButtonIncomeAmountAfterPosition(state.PlayerPosition[player]) / 10);
+		}
+
+		/// <summary>
+		/// Estimates the end game value of the given players position.
+		/// Doesn't care that you would be able to spend any income to buy more pieces later. Basically assumes all players advance to end.
+		/// Does not bias getting button income early
+		/// </summary>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static int EstimateEndgameValueUnbiased(SimulationState state, int player)
+		{
+			//space used * 2 + buttons + income * incomes remaining
+			return state.PlayerBoardUsedLocationsCount[player] * 2 + state.PlayerButtonAmount[player] + state.PlayerButtonIncome[player] * SimulationHelpers.ButtonIncomeAmountAfterPosition(state.PlayerPosition[player]);
 		}
 	}
 }
