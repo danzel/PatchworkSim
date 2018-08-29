@@ -1,41 +1,44 @@
 import logging
-import requests
 import time
+import grpc
+import patchwork_pb2
+import patchwork_pb2_grpc
 from tensorforce.agents import PPOAgent
 from tensorforce.environments import Environment
 from tensorforce.execution import Runner
-
-obs_size = requests.get('http://localhost:5000/api/Patchwork/observation-size')
-obs_size = int(obs_size.text)
-print(f'obs_size is {obs_size}')
 
 opponent_strength = 10
 
 class PatchworkEnv(Environment):
     def __init__(self):
-        self.session = requests.Session()
+        self.channel = grpc.insecure_channel('localhost:50900')
+        self.stub = patchwork_pb2_grpc.PatchworkServerStub(self.channel)
+        self.obs_size = self.stub.GetStaticConfig(patchwork_pb2.StaticConfigRequest())
+        print(f'obs_size is {self.obs_size}')
         self.wins = []
 
     def reset(self):
-        req = self.session.post('http://localhost:5000/api/Patchwork/create', json = { "opponentStrength": opponent_strength })
-        res = req.json()
-        self.gameId = res['gameId']
+        #req = self.session.post('http://localhost:5000/api/Patchwork/create', json = { "opponentStrength": opponent_strength })
+        #res = req.json()
+        res = self.stub.Create(patchwork_pb2.CreateRequest(opponentStrength = opponent_strength))
+        self.gameId = res.gameId
 
-        return res['observationForNextMove']
+        return res.observation.observationForNextMove
 
     def execute(self, action):
         move = int(action)
-        req = self.session.post('http://localhost:5000/api/Patchwork/perform-move', json = { "gameId": self.gameId, "move": move })
-        res = req.json()
+        #req = self.session.post('http://localhost:5000/api/Patchwork/perform-move', json = { "gameId": self.gameId, "move": move })
+        #res = req.json()
+        res = self.stub.PerformMove(patchwork_pb2.MoveRequest(gameId = self.gameId, move = move))
 
-        if res['gameHasEnded']:
-            self.wins.append(1 - res['winningPlayer'])
+        if res.gameHasEnded:
+            self.wins.append(1 - res.winningPlayer)
 
-        return (res['observationForNextMove'], res['gameHasEnded'], res['reward'])
+        return (res.observation.observationForNextMove, res.gameHasEnded, res.observation.reward)
 
     @property
     def states(self):
-        return dict(shape=(obs_size,), type='float')
+        return dict(shape=(self.obs_size.observationSize,), type='float')
 
     @property
     def actions(self):

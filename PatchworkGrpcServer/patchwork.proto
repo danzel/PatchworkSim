@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+service PatchworkServer {
+	rpc GetStaticConfig (StaticConfigRequest) returns (StaticConfigReply) {}
+
+	rpc Create (CreateRequest) returns (CreateReply) {}
+
+	rpc PerformMove (MoveRequest) returns (MoveReply) {}
+}
+
+message StaticConfigRequest {
+}
+
+message StaticConfigReply {
+	int32 observationSize = 1;
+}
+
+
+message CreateRequest {
+	int32 opponentStrength = 1;
+}
+
+message CreateReply {
+	int32 gameId = 1;
+
+	Observation observation = 2;
+}
+
+
+message MoveRequest {
+	int32 gameId = 1;
+	int32 move = 2;
+}
+
+message MoveReply {
+	bool gameHasEnded = 1;
+	int32 winningPlayer = 2;
+
+	Observation observation = 3;
+}
+
+
+message Observation {
+	float reward = 1;
+
+	repeated float observationForNextMove = 2;
+}
