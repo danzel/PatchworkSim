@@ -33,7 +33,7 @@ namespace PatchworkGrpcServer
 	class PatchworkServerImpl : PatchworkServer.PatchworkServerBase
 	{
 		const int PlayerObservations = 10;
-		const int LookAheadPieceAmount = 12;
+		const int LookAheadPieceAmount = 24;
 		const int PieceFields = 3;
 
 		const float PlayerPositionScale = SimulationState.EndLocation;
@@ -132,13 +132,14 @@ namespace PatchworkGrpcServer
 		private float CalculateReward(SimulationState sim, bool moveWasInvalid, float currentValue, float resultingValue)
 		{
 			var res = resultingValue - currentValue;
-			if (sim.GameHasEnded)
+			res *= 10;
+			/*if (sim.GameHasEnded)
 			{
 				if (sim.WinningPlayer == 0)
 					res += 1;
 				else
 					res -= 1;
-			}
+			}*/
 
 			//if (moveWasInvalid)
 			//	res -= 1;
