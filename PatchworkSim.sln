@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PatchworkWebRunner", "Patch
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatchworkGrpcServer", "PatchworkGrpcServer\PatchworkGrpcServer.csproj", "{0F6AB6BF-E698-4ABD-B0E5-85E1155EE1BD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatchworkSim.AI.KerasAlphaZero", "PatchworkSim.AI.KerasAlphaZero\PatchworkSim.AI.KerasAlphaZero.csproj", "{80E5BDD2-2113-4C42-B8D9-170A7A073DAB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,6 +80,12 @@ Global
 		{0F6AB6BF-E698-4ABD-B0E5-85E1155EE1BD}.Release|Any CPU.Build.0 = Release|x64
 		{0F6AB6BF-E698-4ABD-B0E5-85E1155EE1BD}.Release|x64.ActiveCfg = Release|x64
 		{0F6AB6BF-E698-4ABD-B0E5-85E1155EE1BD}.Release|x64.Build.0 = Release|x64
+		{80E5BDD2-2113-4C42-B8D9-170A7A073DAB}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{80E5BDD2-2113-4C42-B8D9-170A7A073DAB}.Debug|x64.ActiveCfg = Debug|x64
+		{80E5BDD2-2113-4C42-B8D9-170A7A073DAB}.Debug|x64.Build.0 = Debug|x64
+		{80E5BDD2-2113-4C42-B8D9-170A7A073DAB}.Release|Any CPU.ActiveCfg = Release|x64
+		{80E5BDD2-2113-4C42-B8D9-170A7A073DAB}.Release|x64.ActiveCfg = Release|x64
+		{80E5BDD2-2113-4C42-B8D9-170A7A073DAB}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

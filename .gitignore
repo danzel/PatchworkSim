@@ -266,3 +266,7 @@ __pycache__/
 /PatchworkSim.AI.CNTK/keras/model.dnn
 /PatchworkSim.AI.CNTK/keras/model.h5
 /PatchworkSim.AI.CNTK/keras/model.json
+/python/PatchworkSim.KerasAlphaZero/*.h5
+/python/PatchworkSim.Tensorforce/models
+/python/PatchworkSim.Tensorforce/checkpoint
+/PatchworkWebRunner/PatchworkWebRunner.xml

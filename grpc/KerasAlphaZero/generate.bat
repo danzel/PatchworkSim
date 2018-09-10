@@ -1,0 +1,3 @@
+..\..\packages\Grpc.Tools.1.14.1\tools\windows_x86\protoc.exe --csharp_out ../../PatchworkSim.AI.KerasAlphaZero --grpc_out ../../PatchworkSim.AI.KerasAlphaZero patchwork.proto --plugin=protoc-gen-grpc=..\..\packages\Grpc.Tools.1.14.1\tools\windows_x86\grpc_csharp_plugin.exe
+
+python -m grpc_tools.protoc --python_out=../../python/PatchworkSim.KerasAlphaZero/ --grpc_python_out=../../python/PatchworkSim.KerasAlphaZero/ -I. patchwork.proto

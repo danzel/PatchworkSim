@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+service PatchworkServer {
+	rpc GetStaticConfig (StaticConfigRequest) returns (StaticConfigReply) {}
+
+	rpc Evaluate (EvaluateRequest) returns (EvaluateReply) {}
+
+	rpc Train (TrainRequest) returns (TrainReply) {}
+}
+
+message StaticConfigRequest {
+}
+
+message StaticConfigReply {
+	int32 observationSize = 1;
+}
+
+
+message GameState {
+	repeated float observation = 1;
+}
+
+message EvaluateRequest {
+	repeated GameState state = 1;
+}
+
+message Evaluation {
+	float winRate = 1;
+	repeated float moveRating = 2;
+}
+
+message EvaluateReply {
+	repeated Evaluation evaluations = 1;
+}
+
+
+message TrainSample {
+	GameState state = 1;
+	bool isWin = 2;
+	repeated float moveRating = 3;
+	//EvaluateReply recommendation = 2;
+}
+
+message TrainRequest {
+	repeated TrainSample samples = 1;
+}
+
+message TrainReply {
+}
