@@ -40,7 +40,7 @@ public static partial class PatchworkServer
 	{
 		public T Item;
 	}
-
+	/*
 	class BatchingPatchworkServerClient : IPatchworkServerClient
 	{
 		private readonly IPatchworkServerClient _client;
@@ -48,8 +48,11 @@ public static partial class PatchworkServer
 		private EvaluateRequest _nextEval;
 		private SemaphoreSlim _nextSemaphore;
 		private ResultBox<EvaluateReply> _nextResult;
-
 		private bool _requestInProgress;
+
+		private Semaphore _previousSemaphore;
+		private bool _someoneWaitingOnPreviousSemaphore;
+
 
 		public BatchingPatchworkServerClient(IPatchworkServerClient client)
 		{
@@ -66,6 +69,9 @@ public static partial class PatchworkServer
 			SemaphoreSlim semi;
 			ResultBox<EvaluateReply> result;
 			bool shouldRunRequest = false;
+
+			SemaphoreSlim previous;
+			bool shouldWaitOnPrevious = false;
 
 			lock (this)
 			{
@@ -86,13 +92,23 @@ public static partial class PatchworkServer
 					_nextSemaphore = new SemaphoreSlim(0);
 					_nextResult = new ResultBox<EvaluateReply>();
 				}
+				else if (!_someoneWaitingOnPreviousSemaphore)
+				{
+					_someoneWaitingOnPreviousSemaphore = true;
+					shouldWaitOnPrevious = true;
+
+				}
 			}
 
 			if (shouldRunRequest)
 			{
 				Console.WriteLine("Running " + eval.State.Count);
 				result.Item = _client.Evaluate(eval);
-				semi.Release(eval.State.Count); //Enough for everyone
+				lock (this)
+				{
+					semi.Release(eval.State.Count); //Enough for everyone
+
+				}
 			}
 			else
 			{
@@ -109,7 +125,7 @@ public static partial class PatchworkServer
 		{
 			return Train(request, null);
 		}
-	}
+	}*/
 }
 
 namespace PatchworkSim.AI.KerasAlphaZero
