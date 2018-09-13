@@ -34,7 +34,7 @@ namespace PatchworkSim.AI
 		/// Performs a MCTS search starting at the given state.
 		/// Returns the root of the search tree, you must call NodePool.Value.ReturnAll() afterwards.
 		/// </summary>
-		public T PerformMCTS(SimulationState state)
+		public T PerformMCTS(SimulationState state, bool useMinusOne, double progressiveBiasWeight)
 		{
 			var root = NodePool.Value.Get();
 			state.CloneTo(root.State);
@@ -52,7 +52,7 @@ namespace PatchworkSim.AI
 				else
 				{
 					//Expansion
-					Expand(leaf);
+					Expand(leaf, progressiveBiasWeight);
 
 					//Randomly choose one of the newly expanded nodes
 					leaf = Select(leaf);
@@ -64,7 +64,7 @@ namespace PatchworkSim.AI
 				//Backpropagation
 				do
 				{
-					leaf.ReceiveBackpropagation(winningPlayer);
+					leaf.ReceiveBackpropagation(winningPlayer, useMinusOne);
 					leaf = leaf.Parent;
 				} while (leaf != null);
 			}
@@ -120,9 +120,9 @@ namespace PatchworkSim.AI
 			return root;
 		}
 
-		protected virtual void Expand(T root)
+		protected virtual void Expand(T root, double progressiveBiasWeight)
 		{
-			root.Expand();
+			root.Expand(progressiveBiasWeight);
 		}
 
 		/// <summary>
@@ -151,17 +151,22 @@ namespace PatchworkSim.AI
 	public abstract class MCTSNode
 	{
 		private static readonly double epsilon = 1e-6;
-		private static readonly double explorationParameter = Math.Sqrt(2);
+		private static readonly double explorationParameter = 1.5;
 
 		public int VisitCount;
 		public int Value;
 
+		protected double ProgressiveBias;
+
 		public double CalculateUCT(Random random, MCTSNode parent)
 		{
 			//https://en.wikipedia.org/wiki/Monte_Carlo_tree_search#Exploration_and_exploitation
-			return Value / (VisitCount + epsilon) +
+			var res = Value / (VisitCount + epsilon) +
 			       explorationParameter * Math.Sqrt(Math.Log(parent.VisitCount + 1) / (VisitCount + epsilon)) +
 			       random.NextDouble() * epsilon; // small random number to break ties randomly in unexpanded nodes
+
+			res += ProgressiveBias / (VisitCount + 1);
+			return res;
 		}
 	}
 
@@ -178,14 +183,16 @@ namespace PatchworkSim.AI
 			Children = new List<T>(initialChildrenSize);
 		}
 
-		public void ReceiveBackpropagation(int winningPlayer)
+		public void ReceiveBackpropagation(int winningPlayer, bool useMinusOne)
 		{
 			VisitCount++;
 			if (Parent != null && winningPlayer == Parent.State.ActivePlayer)
 				Value++;
+			else if (useMinusOne)
+				Value--;
 		}
 
-		public abstract void Expand();
+		public abstract void Expand(double progressiveBiasWeight);
 
 		public virtual void Reset()
 		{

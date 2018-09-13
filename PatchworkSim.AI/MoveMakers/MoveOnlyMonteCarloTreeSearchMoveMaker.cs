@@ -6,15 +6,20 @@
 	/// </summary>
 	public class MoveOnlyMonteCarloTreeSearchMoveMaker : BaseMoveOnlyMonteCarloTreeSearchMoveMaker
 	{
-		public override string Name => $"MO-MCTS({Mcts.Iterations}+{Mcts.RolloutMoveMaker.Name})";
+		private readonly bool _useMinusOne;
+		private readonly double _progressiveBiasWeight;
 
-		public MoveOnlyMonteCarloTreeSearchMoveMaker(int iterations, IMoveDecisionMaker rolloutMoveMaker = null) : base(iterations, rolloutMoveMaker)
+		public override string Name => $"MO-MCTS({Mcts.Iterations}+{Mcts.RolloutMoveMaker.Name}+{_useMinusOne}+{_progressiveBiasWeight})";
+
+		public MoveOnlyMonteCarloTreeSearchMoveMaker(int iterations, IMoveDecisionMaker rolloutMoveMaker = null, bool useMinusOne = false, double progressiveBiasWeight = 0) : base(iterations, rolloutMoveMaker)
 		{
+			_useMinusOne = useMinusOne;
+			_progressiveBiasWeight = progressiveBiasWeight;
 		}
 
 		public override void MakeMove(SimulationState state)
 		{
-			var root = Mcts.PerformMCTS(state);
+			var root = Mcts.PerformMCTS(state, _useMinusOne, _progressiveBiasWeight);
 
 			var bestChild = Mcts.FindBestChild(root);
 			//DumpChildren(root);

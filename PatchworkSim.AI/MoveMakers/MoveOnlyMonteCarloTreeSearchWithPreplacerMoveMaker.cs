@@ -18,7 +18,7 @@ namespace PatchworkSim.AI.MoveMakers
 
 		public override void MakeMove(SimulationState state)
 		{
-			var root = Mcts.PerformMCTS(state);
+			var root = Mcts.PerformMCTS(state, true, 0);
 			//DumpChildren(root);
 
 			_lookahead.Clear();

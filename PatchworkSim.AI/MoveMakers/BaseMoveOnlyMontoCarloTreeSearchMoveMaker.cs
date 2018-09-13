@@ -36,7 +36,7 @@ namespace PatchworkSim.AI.MoveMakers
 			{
 			}
 
-			public override void Expand()
+			public override void Expand(double progressiveBiasWeight)
 			{
 #if DEBUG
 				if (Children.Count != 0)
@@ -51,6 +51,8 @@ namespace PatchworkSim.AI.MoveMakers
 					State.CloneTo(node.State);
 					node.State.Fidelity = SimulationFidelity.NoPiecePlacing;
 					node.State.PerformAdvanceMove();
+
+					node.ProgressiveBias = progressiveBiasWeight == 0 ? 0 : progressiveBiasWeight * UtilityCalculators.TuneableByBoardPositionUtilityCalculator.Tuning1.CalculateValueOfAdvancing(State);
 
 					node.Parent = this;
 					Children.Add(node);
@@ -68,6 +70,8 @@ namespace PatchworkSim.AI.MoveMakers
 						node.State.Fidelity = SimulationFidelity.NoPiecePlacing;
 						var pieceIndex = node.State.NextPieceIndex + i;
 						node.State.PerformPurchasePiece(pieceIndex);
+
+						node.ProgressiveBias = progressiveBiasWeight == 0 ? 0 : progressiveBiasWeight * UtilityCalculators.TuneableByBoardPositionUtilityCalculator.Tuning1.CalculateValueOfPurchasing(State, pieceIndex, Helpers.GetNextPiece(State, i));
 
 						node.Parent = this;
 						node.PieceToPurchase = pieceIndex;

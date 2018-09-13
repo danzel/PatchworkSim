@@ -25,7 +25,7 @@ namespace PatchworkSim.AI.MoveMakers
 
 		public void MakeMove(SimulationState state)
 		{
-			var root = _mcts.PerformMCTS(state);
+			var root = _mcts.PerformMCTS(state, true, 0);
 
 			var bestChild = _mcts.FindBestChild(root);
 			//DumpChildren(root);
@@ -65,7 +65,7 @@ namespace PatchworkSim.AI.MoveMakers
 				BoardEvaluator = boardEvaluator;
 			}
 
-			protected override void Expand(SearchNode root)
+			protected override void Expand(SearchNode root, double progressiveBiasWeight)
 			{
 				if (root.State.PieceToPlace != null)
 				{
@@ -235,7 +235,7 @@ namespace PatchworkSim.AI.MoveMakers
 			{
 			}
 
-			public override void Expand()
+			public override void Expand(double progressiveBiasWeight)
 			{
 				throw new Exception("This is implemented in MonteCarloTreeSearchPlacementExpander.Expand");
 			}
