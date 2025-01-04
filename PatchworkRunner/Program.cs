@@ -1,10 +1,5 @@
 ﻿//#define PERF_PARALLEL
 
-using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using PatchworkRunner.ConsolePlayer;
 using PatchworkSim;
 using PatchworkSim.AI.MoveMakers;
@@ -15,6 +10,11 @@ using PatchworkSim.AI.PlacementFinders.PlacementStrategies.BoardEvaluators;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers;
 using PatchworkSim.Loggers;
+using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace PatchworkRunner
 {
@@ -22,8 +22,8 @@ namespace PatchworkRunner
 	{
 		static void Main(string[] args)
 		{
-			//RunMoveMakerForPerformance();
-			//RunPlacementForPerformance();
+			RunMoveMakerForPerformance();
+			RunPlacementForPerformance();
 
 			//ComparePlacementStrategies();
 
@@ -33,7 +33,7 @@ namespace PatchworkRunner
 
 			//new GeneticTuneableUtilityEvolver().Run();
 			//new MultiGeneticTuneableUtilityEvolver().Run();
-			new Pattern2x2Evolver().Run();
+			//new Pattern2x2Evolver().Run();
 			//new Pattern3x3Evolver().Run();
 			//new TrainingRunner().Run();
 		}
@@ -44,7 +44,7 @@ namespace PatchworkRunner
 
 #if PERF_PARALLEL
 			Parallel.For(0, 10, (run) => //5900
-			#else
+#else
 			for (var run = 0; run < 4; run++) //13000
 #endif
 			{
@@ -135,7 +135,7 @@ namespace PatchworkRunner
 				//ExhaustiveMostFuturePlacementsPlacementStrategy.Instance1_6,
 				//new BestEvaluatorStrategy(new TightBoardEvaluator(true)), 
 				//new BestEvaluatorStrategy(new TightBoardEvaluator(false)), 
-				new BestEvaluatorStrategy(TuneablePattern2x2BoardEvaluator.Tuning1), 
+				new BestEvaluatorStrategy(TuneablePattern2x2BoardEvaluator.Tuning1),
 			};
 
 			//ExhaustiveMostFuturePlacementsPlacementStrategy
@@ -346,28 +346,28 @@ namespace PatchworkRunner
 				int bWins = 0;
 
 				//Parallel.For(0, 2, starter =>
-						for (var starter = 0; starter < 2; starter++)
-					{
-						var state = new SimulationState(SimulationHelpers.GetRandomPieces(run), 0);
+				for (var starter = 0; starter < 2; starter++)
+				{
+					var state = new SimulationState(SimulationHelpers.GetRandomPieces(run), 0);
 
-						//Let each Ai have half of the goes first and half second
-						var runner = new SimulationRunner(state, starter == 0 ? AiA() : AiB(), starter == 1 ? AiA() : AiB());
+					//Let each Ai have half of the goes first and half second
+					var runner = new SimulationRunner(state, starter == 0 ? AiA() : AiB(), starter == 1 ? AiA() : AiB());
 
-						while (!state.GameHasEnded)
-							runner.PerformNextStep();
+					while (!state.GameHasEnded)
+						runner.PerformNextStep();
 
-						var aWin = starter % 2 == state.WinningPlayer;
+					var aWin = starter % 2 == state.WinningPlayer;
 
-						if (aWin)
-							Interlocked.Increment(ref aWins);
-						else
-							Interlocked.Increment(ref bWins);
+					if (aWin)
+						Interlocked.Increment(ref aWins);
+					else
+						Interlocked.Increment(ref bWins);
 
-						Interlocked.Add(ref aTicks, runner.Stopwatches[starter == 0 ? 0 : 1].ElapsedTicks);
-						Interlocked.Add(ref bTicks, runner.Stopwatches[starter == 0 ? 1 : 0].ElapsedTicks);
+					Interlocked.Add(ref aTicks, runner.Stopwatches[starter == 0 ? 0 : 1].ElapsedTicks);
+					Interlocked.Add(ref bTicks, runner.Stopwatches[starter == 0 ? 1 : 0].ElapsedTicks);
 
-						//Console.WriteLine($"{run} Starter {starter}, winner {(state.WinningPlayer + starter) % 2}");
-					}
+					//Console.WriteLine($"{run} Starter {starter}, winner {(state.WinningPlayer + starter) % 2}");
+				}
 				//);
 
 				if (aWins != bWins)
