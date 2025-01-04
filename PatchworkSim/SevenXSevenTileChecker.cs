@@ -1,4 +1,6 @@
-﻿namespace PatchworkSim
+﻿using System;
+
+namespace PatchworkSim
 {
 	public static class SevenXSevenTileChecker
 	{
@@ -12,12 +14,12 @@
 			var line = (UInt128)0b1111111;
 
 			var block = line
-			            | (line << (BoardState.Width * 1))
-			            | (line << (BoardState.Width * 2))
-			            | (line << (BoardState.Width * 3))
-			            | (line << (BoardState.Width * 4))
-			            | (line << (BoardState.Width * 5))
-			            | (line << (BoardState.Width * 6));
+						| (line << (BoardState.Width * 1))
+						| (line << (BoardState.Width * 2))
+						| (line << (BoardState.Width * 3))
+						| (line << (BoardState.Width * 4))
+						| (line << (BoardState.Width * 5))
+						| (line << (BoardState.Width * 6));
 
 			MatchingState = new UInt128[(BoardState.Width - 7 + 1) * (BoardState.Height - 7 + 1)];
 			int index = 0;

@@ -21,7 +21,7 @@ namespace PatchworkSim
 		public bool this[int x, int y]
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get { return !(_state & XYToPositionMask[x + Width * y]).IsZero; }
+			get { return (_state & XYToPositionMask[x + Width * y]) != 0; }
 			set
 			{
 #if SAFE_MODE || DEBUG
@@ -49,9 +49,7 @@ namespace PatchworkSim
 			//var shifted = bitmap.Bitmap << (x + y * Width);
 			var shifted = bitmap.GetShifted(x, y);
 
-			//return (shifted & _state).IsZero;
-			UInt128.And(out shifted, ref shifted, ref _state);
-			return shifted.IsZero;
+			return (shifted & _state) == 0;
 		}
 
 		public void Place(PieceBitmap bitmap, int x, int y)
@@ -63,8 +61,7 @@ namespace PatchworkSim
 			//var shifted = bitmap.Bitmap << (x + y * Width);
 			var shifted = bitmap.GetShifted(x, y);
 
-			//_state |= shifted;
-			UInt128.Or(out _state, ref _state, ref shifted);
+			_state |= shifted;
 		}
 
 		public int UsedPositionCount
@@ -76,7 +73,7 @@ namespace PatchworkSim
 				{
 					for (var y = 0; y < Height; y++)
 					{
-						if (!(XYToPositionMask[x + Width * y] & _state).IsZero)
+						if ((XYToPositionMask[x + Width * y] & _state) != 0)
 							sum++;
 					}
 				}
@@ -90,7 +87,7 @@ namespace PatchworkSim
 		/// </summary>
 		public bool Has7x7Coverage => SevenXSevenTileChecker.Has7x7(_state);
 
-		public bool IsEmpty => _state.IsZero;
+		public bool IsEmpty => _state == 0;
 
 		private static readonly UInt128[] XYToPositionMask;
 
