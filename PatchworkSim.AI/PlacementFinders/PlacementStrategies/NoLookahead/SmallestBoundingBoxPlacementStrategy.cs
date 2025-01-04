@@ -1,81 +1,80 @@
 ﻿using System;
 
-namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead
+namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
+
+/// <summary>
+/// Places the piece to minimise the bounding box of used spaces
+/// </summary>
+public class SmallestBoundingBoxPlacementStrategy : NoLookaheadStrategy
 {
-	/// <summary>
-	/// Places the piece to minimise the bounding box of used spaces
-	/// </summary>
-	public class SmallestBoundingBoxPlacementStrategy : NoLookaheadStrategy
+	public static readonly SmallestBoundingBoxPlacementStrategy Instance = new SmallestBoundingBoxPlacementStrategy();
+
+	public override string Name => "SmallestBoundingBox";
+
+	private SmallestBoundingBoxPlacementStrategy()
 	{
-		public static readonly SmallestBoundingBoxPlacementStrategy Instance = new SmallestBoundingBoxPlacementStrategy();
+	}
 
-		public override string Name => "SmallestBoundingBox";
+	protected override bool TryPlacePiece(BoardState board, PieceDefinition piece, out PieceBitmap resultBitmap, out int resultX, out int resultY)
+	{
+		int smallestSize = BoardState.Height * BoardState.Width + 1;
 
-		private SmallestBoundingBoxPlacementStrategy()
+		resultBitmap = null;
+		resultX = 0;
+		resultY = 0;
+
+		//TODO: If we weren't a singleton we could track our used Width/Height
+		int currentHeight = CalcUsedHeight(ref board);
+		int currentWidth = CalcUsedWidth(ref board);
+		//Console.WriteLine($"Current {currentWidth}x{currentHeight}");
+
+		for (var x = 0; x < BoardState.Width; x++)
 		{
-		}
-
-		protected override bool TryPlacePiece(BoardState board, PieceDefinition piece, out PieceBitmap resultBitmap, out int resultX, out int resultY)
-		{
-			int smallestSize = BoardState.Height * BoardState.Width + 1;
-
-			resultBitmap = null;
-			resultX = 0;
-			resultY = 0;
-
-			//TODO: If we weren't a singleton we could track our used Width/Height
-			int currentHeight = CalcUsedHeight(ref board);
-			int currentWidth = CalcUsedWidth(ref board);
-			//Console.WriteLine($"Current {currentWidth}x{currentHeight}");
-
-			for (var x = 0; x < BoardState.Width; x++)
+			for (var y = 0; y < BoardState.Height; y++)
 			{
-				for (var y = 0; y < BoardState.Height; y++)
+				foreach (var bitmap in piece.PossibleOrientations)
 				{
-					foreach (var bitmap in piece.PossibleOrientations)
-					{
-						var size = Math.Max(currentWidth, x + bitmap.Width) * Math.Max(currentHeight, y + bitmap.Height);
+					var size = Math.Max(currentWidth, x + bitmap.Width) * Math.Max(currentHeight, y + bitmap.Height);
 
-						if (size < smallestSize && x + bitmap.Width <= BoardState.Width && y + bitmap.Height <= BoardState.Height && board.CanPlace(bitmap, x, y))
-						{
-							smallestSize = size;
-							resultBitmap = bitmap;
-							resultX = x;
-							resultY = y;
-						}
+					if (size < smallestSize && x + bitmap.Width <= BoardState.Width && y + bitmap.Height <= BoardState.Height && board.CanPlace(bitmap, x, y))
+					{
+						smallestSize = size;
+						resultBitmap = bitmap;
+						resultX = x;
+						resultY = y;
 					}
 				}
 			}
-
-			return resultBitmap != null;
 		}
 
-		private static int CalcUsedHeight(ref BoardState board)
+		return resultBitmap != null;
+	}
+
+	private static int CalcUsedHeight(ref BoardState board)
+	{
+		for (var y = BoardState.Height - 1; y >= 0; y--)
 		{
-			for (var y = BoardState.Height - 1; y >= 0; y--)
+			for (var x = 0; x < BoardState.Width; x++)
 			{
-				for (var x = 0; x < BoardState.Width; x++)
-				{
-					if (board[x, y])
-						return y + 1;
-				}
+				if (board[x, y])
+					return y + 1;
 			}
-
-			return 0;
 		}
 
-		private static int CalcUsedWidth(ref BoardState board)
+		return 0;
+	}
+
+	private static int CalcUsedWidth(ref BoardState board)
+	{
+		for (var x = BoardState.Width - 1; x >= 0; x--)
 		{
-			for (var x = BoardState.Width - 1; x >= 0; x--)
+			for (var y = 0; y < BoardState.Width; y++)
 			{
-				for (var y = 0; y < BoardState.Width; y++)
-				{
-					if (board[x, y])
-						return x + 1;
-				}
+				if (board[x, y])
+					return x + 1;
 			}
-
-			return 0;
 		}
+
+		return 0;
 	}
 }

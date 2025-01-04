@@ -1,32 +1,31 @@
-﻿namespace PatchworkSim
+﻿namespace PatchworkSim;
+
+public interface ISimulationLogger
 {
-	public interface ISimulationLogger
+	void PlayerAdvanced(int player);
+
+	void PlayerPurchasedPiece(int player, PieceDefinition piece);
+
+	void PlayerPlacedPiece(int player, PieceDefinition piece, int x, int y, PieceBitmap bitmap);
+}
+
+public class NullSimulationLogger : ISimulationLogger
+{
+	public static NullSimulationLogger Instance = new NullSimulationLogger();
+
+	private NullSimulationLogger()
 	{
-		void PlayerAdvanced(int player);
-
-		void PlayerPurchasedPiece(int player, PieceDefinition piece);
-
-		void PlayerPlacedPiece(int player, PieceDefinition piece, int x, int y, PieceBitmap bitmap);
 	}
 
-	public class NullSimulationLogger : ISimulationLogger
+	public void PlayerAdvanced(int player)
 	{
-		public static NullSimulationLogger Instance = new NullSimulationLogger();
+	}
 
-		private NullSimulationLogger()
-		{
-		}
+	public void PlayerPurchasedPiece(int player, PieceDefinition piece)
+	{
+	}
 
-		public void PlayerAdvanced(int player)
-		{
-		}
-
-		public void PlayerPurchasedPiece(int player, PieceDefinition piece)
-		{
-		}
-
-		public void PlayerPlacedPiece(int player, PieceDefinition piece, int x, int y, PieceBitmap bitmap)
-		{
-		}
+	public void PlayerPlacedPiece(int player, PieceDefinition piece, int x, int y, PieceBitmap bitmap)
+	{
 	}
 }

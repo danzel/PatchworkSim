@@ -1,44 +1,43 @@
 ﻿using System.Collections.Generic;
 
-namespace PatchworkSim.AI
+namespace PatchworkSim.AI;
+
+public interface IPoolableItem
 {
-	public interface IPoolableItem
+	void Reset();
+}
+
+/// <summary>
+/// An item pool that is only usable by a single thread. Use with ThreadLocal for threadsafe use
+/// </summary>
+public class SingleThreadedPool<T> where T: IPoolableItem, new()
+{
+	private readonly List<T> _pool = new List<T>();
+	private int _getIndex;
+
+	public T Get()
 	{
-		void Reset();
+		if (_getIndex < _pool.Count)
+		{
+			var index = _getIndex;
+			_getIndex++;
+			//FetchedFromPool++;
+			return _pool[index];
+		}
+
+		var res = new T();
+		_pool.Add(res);
+		_getIndex++;
+		return res;
 	}
 
-	/// <summary>
-	/// An item pool that is only usable by a single thread. Use with ThreadLocal for threadsafe use
-	/// </summary>
-	public class SingleThreadedPool<T> where T: IPoolableItem, new()
+	public void ReturnAll()
 	{
-		private readonly List<T> _pool = new List<T>();
-		private int _getIndex;
-
-		public T Get()
+		for (var i = 0; i < _getIndex; i++)
 		{
-			if (_getIndex < _pool.Count)
-			{
-				var index = _getIndex;
-				_getIndex++;
-				//FetchedFromPool++;
-				return _pool[index];
-			}
-
-			var res = new T();
-			_pool.Add(res);
-			_getIndex++;
-			return res;
+			_pool[i].Reset();
 		}
 
-		public void ReturnAll()
-		{
-			for (var i = 0; i < _getIndex; i++)
-			{
-				_pool[i].Reset();
-			}
-
-			_getIndex = 0;
-		}
+		_getIndex = 0;
 	}
 }

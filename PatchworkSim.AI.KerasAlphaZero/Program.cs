@@ -3,10 +3,6 @@ using PatchworkSim.AI.MoveMakers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using static PatchworkServer;
 
 public static partial class PatchworkServer
@@ -130,7 +126,7 @@ public static partial class PatchworkServer
 
 namespace PatchworkSim.AI.KerasAlphaZero
 {
-    public class Program
+	public class Program
     {
 		public static void Main()
 		{

@@ -1,17 +1,15 @@
 ﻿using PatchworkSim;
-using PatchworkSim.AI;
 using Xunit;
 
-namespace PathworkSim.Test
+namespace PathworkSim.Test;
+
+public class AiHelpersTests
 {
-	public class AiHelpersTests
+	[Fact]
+	public void ButtonIncomeAfter()
 	{
-		[Fact]
-		public void ButtonIncomeAfter()
-		{
-			Assert.Equal(SimulationState.ButtonIncomeMarkers.Length, SimulationHelpers.ButtonIncomeAmountAfterPosition(0));
-			Assert.Equal(SimulationState.ButtonIncomeMarkers.Length - 1, SimulationHelpers.ButtonIncomeAmountAfterPosition(SimulationState.ButtonIncomeMarkers[0]));
-			Assert.Equal(0, SimulationHelpers.ButtonIncomeAmountAfterPosition(SimulationState.EndLocation));
-		}
+		Assert.Equal(SimulationState.ButtonIncomeMarkers.Length, SimulationHelpers.ButtonIncomeAmountAfterPosition(0));
+		Assert.Equal(SimulationState.ButtonIncomeMarkers.Length - 1, SimulationHelpers.ButtonIncomeAmountAfterPosition(SimulationState.ButtonIncomeMarkers[0]));
+		Assert.Equal(0, SimulationHelpers.ButtonIncomeAmountAfterPosition(SimulationState.EndLocation));
 	}
 }
