@@ -11,7 +11,7 @@ public class MoveOnlyMonteCarloTreeSearchMoveMaker : BaseMoveOnlyMonteCarloTreeS
 
 	public override string Name => $"MO-MCTS({Mcts.Iterations}+{Mcts.RolloutMoveMaker.Name}+{_useMinusOne}+{_progressiveBiasWeight})";
 
-	public MoveOnlyMonteCarloTreeSearchMoveMaker(int iterations, IMoveDecisionMaker rolloutMoveMaker = null, bool useMinusOne = false, double progressiveBiasWeight = 0) : base(iterations, rolloutMoveMaker)
+	public MoveOnlyMonteCarloTreeSearchMoveMaker(int iterations, IMoveDecisionMaker? rolloutMoveMaker = null, bool useMinusOne = false, double progressiveBiasWeight = 0) : base(iterations, rolloutMoveMaker)
 	{
 		_useMinusOne = useMinusOne;
 		_progressiveBiasWeight = progressiveBiasWeight;
@@ -29,6 +29,6 @@ public class MoveOnlyMonteCarloTreeSearchMoveMaker : BaseMoveOnlyMonteCarloTreeS
 		else
 			state.PerformAdvanceMove();
 
-		MonteCarloTreeSearch<SearchNode>.NodePool.Value.ReturnAll();
+		MonteCarloTreeSearch<SearchNode>.NodePool.Value!.ReturnAll();
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
@@ -17,7 +18,7 @@ public class NextToPieceEdgeLeastHolesTieBreakerPlacementStrategy : NoLookaheadS
 	{
 	}
 
-	protected override bool TryPlacePiece(BoardState board, PieceDefinition piece, out PieceBitmap resultBitmap, out int resultX, out int resultY)
+	protected override bool TryPlacePiece(BoardState board, PieceDefinition piece, [NotNullWhen(true)] out PieceBitmap? resultBitmap, out int resultX, out int resultY)
 	{
 		resultBitmap = null;
 		resultX = -1;
@@ -93,7 +94,7 @@ public class NextToPieceEdgeLeastHolesTieBreakerPlacementStrategy : NoLookaheadS
 		return resultBitmap != null;
 	}
 
-	private void TryPlacement(BoardState board, PieceBitmap bitmap, int x, int y, ref PieceBitmap resultBitmap, ref int resultX, ref int resultY, ref int bestLeastHoles, ref int bestLargestHole, ref int bestDistance, List<int> holes)
+	private void TryPlacement(BoardState board, PieceBitmap bitmap, int x, int y, ref PieceBitmap? resultBitmap, ref int resultX, ref int resultY, ref int bestLeastHoles, ref int bestLargestHole, ref int bestDistance, List<int> holes)
 	{
 		board.Place(bitmap, x, y);
 

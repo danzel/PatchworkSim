@@ -2,7 +2,9 @@
 
 namespace PatchworkSim.AI.MoveMakers.UtilityCalculators;
 
-[Obsolete("Generally TuneableByBoardPosition is better")]
+/// <summary>
+/// Generally TuneableByBoardPosition is better
+/// </summary>
 public class TuneableUtilityCalculator : IUtilityCalculator
 {
 	public static readonly TuneableUtilityCalculator Tuning1 = new TuneableUtilityCalculator(-0.03892573, 1, -0.593965087, -0.984706754, 0.554044008, -0.052553921, 0.609957017, -0.015045333, "Tuning1");
@@ -18,9 +20,9 @@ public class TuneableUtilityCalculator : IUtilityCalculator
 	public readonly double GetAnotherTurnUtility;
 	public readonly double ReceiveIncomeUtility;
 
-	private readonly string _name;
+	private readonly string? _name;
 
-	public TuneableUtilityCalculator(double advancingPerButtonUtility, double usedLocationUtility, double buttonCostUtility, double timeCostUtility, double incomeUtility, double incomeSquaredUtility, double getAnotherTurnUtility, double receiveIncomeUtility, string name = null)
+	public TuneableUtilityCalculator(double advancingPerButtonUtility, double usedLocationUtility, double buttonCostUtility, double timeCostUtility, double incomeUtility, double incomeSquaredUtility, double getAnotherTurnUtility, double receiveIncomeUtility, string? name = null)
 	{
 		AdvancingPerButtonUtility = advancingPerButtonUtility;
 		UsedLocationUtility = usedLocationUtility;

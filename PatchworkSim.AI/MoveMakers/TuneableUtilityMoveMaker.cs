@@ -16,7 +16,7 @@ public class TuneableUtilityMoveMaker : BaseUtilityMoveMaker
 	/// <summary>
 	/// Utility values should range from -1 to 1. They will be individually capped at that range after calculating them.
 	/// </summary>
-	public TuneableUtilityMoveMaker(double advancingPerButtonUtility, double usedLocationUtility, double buttonCostUtility, double timeCostUtility, double incomeUtility, double incomeSquaredUtility, double getAnotherTurnUtility, double receiveIncomeUtility, string name = null)
+	public TuneableUtilityMoveMaker(double advancingPerButtonUtility, double usedLocationUtility, double buttonCostUtility, double timeCostUtility, double incomeUtility, double incomeSquaredUtility, double getAnotherTurnUtility, double receiveIncomeUtility, string? name = null)
 	{
 		_calculator = new TuneableUtilityCalculator(advancingPerButtonUtility, usedLocationUtility, buttonCostUtility, timeCostUtility, incomeUtility, incomeSquaredUtility, getAnotherTurnUtility, receiveIncomeUtility, name);
 	}

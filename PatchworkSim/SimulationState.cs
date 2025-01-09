@@ -90,7 +90,7 @@ public class SimulationState
 	/// After a player has purchased a piece, this will be the piece they need to place.
 	/// If they pass a leather patch then that will be placed here too
 	/// </summary>
-	public PieceDefinition PieceToPlace;
+	public PieceDefinition? PieceToPlace;
 
 	/// <summary>
 	/// Player that owns the PieceToPlace (required as when collecting leather patches during a move, that could make them not the ActivePlayer anymore)
@@ -127,7 +127,7 @@ public class SimulationState
 	}
 
 	/// <param name="pieces">This list is not cloned, we take ownership and modify the given list</param> //TODO: THIS COMMENT IS WRONG
-	public SimulationState(List<int> pieces, int nextPieceIndex)
+	public SimulationState(List<int>? pieces, int nextPieceIndex)
 	{
 		if (pieces != null)
 			Pieces.Populate(pieces);

@@ -1,12 +1,12 @@
-﻿using System;
+﻿using PatchworkSim;
+using PatchworkSim.AI.PlacementFinders.PlacementStrategies.BoardEvaluators;
+using PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
+using Redzen.Random.Double;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using PatchworkSim;
-using PatchworkSim.AI.PlacementFinders.PlacementStrategies.BoardEvaluators;
-using PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
-using Redzen.Random.Double;
 
 namespace PatchworkRunner;
 
@@ -17,7 +17,7 @@ class Pattern3x3Evolver
 	private readonly Random _random = new Random();
 	private readonly ZigguratGaussianDistribution _zig = new ZigguratGaussianDistribution(0, 0, 50);
 
-	List<PopulationMember> _population;
+	List<PopulationMember> _population = null!;
 	const int MaxGeneration = 10_000;
 
 	private const int MinValue = -100;
@@ -170,6 +170,7 @@ class Pattern3x3Evolver
 		public PopulationMember(int[] gene)
 		{
 			Gene = gene;
+			Strategy = null!; //Set in CreateMoveMaker
 			CreateMoveMaker();
 		}
 
@@ -179,7 +180,7 @@ class Pattern3x3Evolver
 			Strategy = new BestEvaluatorStrategy(new TuneablePattern3x3BoardEvaluator(Gene));
 		}
 
-		public int CompareTo(PopulationMember other)
+		public int CompareTo(PopulationMember? other)
 		{
 			if (ReferenceEquals(this, other)) return 0;
 			if (ReferenceEquals(null, other)) return 1;

@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading;
-using PatchworkSim.AI.MoveMakers.UtilityCalculators;
+﻿using PatchworkSim.AI.MoveMakers.UtilityCalculators;
 using PatchworkSim.AI.PlacementFinders;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies;
+using System;
+using System.Threading;
 
 namespace PatchworkSim.AI.MoveMakers;
 
@@ -16,7 +16,7 @@ public class AlphaBetaMoveMaker : IMoveDecisionMaker
 	private readonly ThreadLocal<SingleThreadedStackPool<SimulationState>> _pool = new ThreadLocal<SingleThreadedStackPool<SimulationState>>(() => new SingleThreadedStackPool<SimulationState>(), false);
 
 	private readonly SingleThreadedStackPool<SimulationState> _thisThreadPool;
-	private readonly PlacementMaker _placementMaker;
+	private readonly PlacementMaker? _placementMaker;
 
 	/// <summary>
 	/// 
@@ -24,9 +24,9 @@ public class AlphaBetaMoveMaker : IMoveDecisionMaker
 	/// <param name="maxSearchDepth"></param>
 	/// <param name="calculator"></param>
 	/// <param name="placementStrategy">If specified, AB will place pieces, otherwise runs in NoPiecePlacing fidelity</param>
-	public AlphaBetaMoveMaker(int maxSearchDepth, IUtilityCalculator calculator, IPlacementStrategy placementStrategy = null)
+	public AlphaBetaMoveMaker(int maxSearchDepth, IUtilityCalculator calculator, IPlacementStrategy? placementStrategy = null)
 	{
-		_thisThreadPool = _pool.Value;
+		_thisThreadPool = _pool.Value!;
 		_maxSearchDepth = maxSearchDepth;
 		_calculator = calculator;
 

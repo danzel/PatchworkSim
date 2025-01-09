@@ -12,7 +12,7 @@ public abstract class BaseMoveOnlyMonteCarloTreeSearchMoveMaker : IMoveDecisionM
 
 	protected readonly MonteCarloTreeSearch<SearchNode> Mcts;
 
-	protected BaseMoveOnlyMonteCarloTreeSearchMoveMaker(int iterations, IMoveDecisionMaker rolloutMoveMaker = null)
+	protected BaseMoveOnlyMonteCarloTreeSearchMoveMaker(int iterations, IMoveDecisionMaker? rolloutMoveMaker = null)
 	{
 		Mcts = new MonteCarloTreeSearch<SearchNode>(iterations, rolloutMoveMaker);
 	}
@@ -46,7 +46,7 @@ public abstract class BaseMoveOnlyMonteCarloTreeSearchMoveMaker : IMoveDecisionM
 #endif
 			//Advance
 			{
-				var node = MonteCarloTreeSearch<SearchNode>.NodePool.Value.Get();
+				var node = MonteCarloTreeSearch<SearchNode>.NodePool.Value!.Get();
 
 				State.CloneTo(node.State);
 				node.State.Fidelity = SimulationFidelity.NoPiecePlacing;

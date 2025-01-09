@@ -52,7 +52,7 @@ public class MoveOnlyMonteCarloTreeSearchAlphaZeroMoveMaker : IMoveDecisionMaker
 				res.MoveRating.Add(0);
 		}
 
-		MonteCarloTreeSearchAlphaZero.NodePool.Value.ReturnAll();
+		MonteCarloTreeSearchAlphaZero.NodePool.Value!.ReturnAll();
 
 		return res;
 	}

@@ -1,4 +1,6 @@
-﻿namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
 
 public class FirstPossiblePlacementStrategy : NoLookaheadStrategy
 {
@@ -10,7 +12,7 @@ public class FirstPossiblePlacementStrategy : NoLookaheadStrategy
 	{
 	}
 
-	protected override bool TryPlacePiece(BoardState board, PieceDefinition piece, out PieceBitmap resultBitmap, out int resultX, out int resultY)
+	protected override bool TryPlacePiece(BoardState board, PieceDefinition piece, [NotNullWhen(true)] out PieceBitmap? resultBitmap, out int resultX, out int resultY)
 	{
 		foreach (var bitmap in piece.PossibleOrientations)
 		{

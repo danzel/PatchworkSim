@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using PatchworkSim;
+﻿using PatchworkSim;
 using PatchworkSim.AI;
 using PatchworkSim.AI.MoveMakers;
 using PatchworkSim.AI.MoveMakers.UtilityCalculators;
@@ -15,6 +8,13 @@ using PatchworkSim.AI.PlacementFinders.PlacementStrategies.BoardEvaluators;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers;
 using PatchworkSim.Loggers;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace PatchworkAIComparer;
 
@@ -78,7 +78,7 @@ class Program
 		};
 
 		const int TotalRuns = 500;
-		const bool enableConsoleLogging = false;
+		bool enableConsoleLogging = false;
 
 		//TODO: Play each AI against each other AI 100 times and print a table of results
 
@@ -101,10 +101,10 @@ class Program
 				Console.WriteLine($"{++gameNumber} {aiA().Name} vs {aiB().Name}");
 
 				Parallel.For(0, TotalRuns, new ParallelOptions { MaxDegreeOfParallelism = 6 }, (run) =>
-						//for (var run = 0; run < TotalRuns; run++)
+				//for (var run = 0; run < TotalRuns; run++)
 					{
 						var state = new SimulationState(SimulationHelpers.GetRandomPieces(run / 2), 0);
-						ConsoleLogger logger = null;
+						ConsoleLogger? logger = null;
 						if (enableConsoleLogging)
 							state.Logger = logger = new ConsoleLogger(state);
 						//state.Fidelity = SimulationFidelity.NoPiecePlacing;
@@ -241,7 +241,7 @@ class Program
 	{
 		var preplacers = new IPreplacer[]
 		{
-			new ExhaustiveMostFuturePlacementsPreplacer(1), 
+			new ExhaustiveMostFuturePlacementsPreplacer(1),
 			new ExhaustiveMostFuturePlacementsPreplacer(2),
 			new ExhaustiveMostFuturePlacementsPreplacer(3),
 
@@ -329,7 +329,7 @@ class Program
 		};
 
 		//foreach (var strategy in strategies)
-		Parallel.ForEach(preplacers, new ParallelOptions { MaxDegreeOfParallelism = 4}, (preplacer) =>
+		Parallel.ForEach(preplacers, new ParallelOptions { MaxDegreeOfParallelism = 4 }, (preplacer) =>
 			{
 				var sw = Stopwatch.StartNew();
 

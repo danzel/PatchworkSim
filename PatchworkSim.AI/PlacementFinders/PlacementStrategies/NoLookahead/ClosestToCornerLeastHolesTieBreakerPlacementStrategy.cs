@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
@@ -17,7 +18,7 @@ public class ClosestToCornerLeastHolesTieBreakerPlacementStrategy : NoLookaheadS
 	{
 	}
 
-	protected override bool TryPlacePiece(BoardState board, PieceDefinition piece, out PieceBitmap resultBitmap, out int resultX, out int resultY)
+	protected override bool TryPlacePiece(BoardState board, PieceDefinition piece, [NotNullWhen(true)] out PieceBitmap? resultBitmap, out int resultX, out int resultY)
 	{
 		var holes = new List<int>();
 
@@ -33,7 +34,7 @@ public class ClosestToCornerLeastHolesTieBreakerPlacementStrategy : NoLookaheadS
 		for (var distance = 0; distance < BoardState.Width + BoardState.Height; distance++)
 		{
 			//TODO: Min(distance, Width - bitmap.MinSideSize) ?
-			for (var x = 0; x <= distance ; x++)
+			for (var x = 0; x <= distance; x++)
 			{
 				var y = distance - x;
 

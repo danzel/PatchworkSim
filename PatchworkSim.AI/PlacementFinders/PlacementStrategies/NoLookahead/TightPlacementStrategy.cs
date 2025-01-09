@@ -1,4 +1,6 @@
-﻿namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
 
 /// <summary>
 /// Strategy that tries to minimise amount of toggles between filled and not filled when looking across and up/down the board.
@@ -20,7 +22,7 @@ public class TightPlacementStrategy : NoLookaheadStrategy
 		_doubler = doubler;
 	}
 
-	protected override bool TryPlacePiece(BoardState board, PieceDefinition piece, out PieceBitmap resultBitmap, out int resultX, out int resultY)
+	protected override bool TryPlacePiece(BoardState board, PieceDefinition piece, [NotNullWhen(true)] out PieceBitmap? resultBitmap, out int resultX, out int resultY)
 	{
 		resultBitmap = null;
 		resultX = -1;
@@ -37,7 +39,7 @@ public class TightPlacementStrategy : NoLookaheadStrategy
 			{
 				for (int y = 0; y < BoardState.Height - bitmap.Height + 1; y++)
 				{
-					if (board.CanPlace(bitmap,x , y))
+					if (board.CanPlace(bitmap, x, y))
 					{
 						CalculateScore(board, bitmap, x, y, _doubler, out var score);
 						if (score < bestScore)

@@ -33,7 +33,7 @@ public class MonteCarloTreeSearchAlphaZero
 	/// </summary>
 	internal MCTSAZNode PerformMCTS(SimulationState state)
 	{
-		var root = NodePool.Value.Get();
+		var root = NodePool.Value!.Get();
 		state.CloneTo(root.State);
 
 		var req = new EvaluateRequest();
@@ -50,7 +50,7 @@ public class MonteCarloTreeSearchAlphaZero
 			if (leaf.IsGameEnd)
 			{
 				//Value at a leaf is from the perspective of the player who performed an action to move the simulation to that state
-				leafValue = (leaf.State.WinningPlayer == leaf.Parent.State.ActivePlayer) ? 1 : -1;
+				leafValue = (leaf.State.WinningPlayer == leaf.Parent!.State.ActivePlayer) ? 1 : -1;
 			}
 			else
 			{
@@ -61,7 +61,7 @@ public class MonteCarloTreeSearchAlphaZero
 				leaf = Select(leaf);
 
 				//Simulation
-				leafValue = leaf.NetworkResult.WinRate;
+				leafValue = leaf.NetworkResult!.WinRate;
 			}
 
 			//Backpropagation
@@ -85,16 +85,16 @@ public class MonteCarloTreeSearchAlphaZero
 	{
 		while (root.Children.Count != 0) //Look for a leaf node (one we haven't expanded yet)
 		{
-			MCTSAZNode bestNext = null;
+			MCTSAZNode bestNext = null!;
 			double bestValue = double.MinValue;
 
 			for (var i = 0; i < root.Children.Count; i++)
 			{
 				var c = root.Children[i];
-				double uctValue = c.AverageValue + c.CalculateUCT(_random, root, root.NetworkResult.MoveRating[c.NetworkChildIndex]);
+				double uctValue = c.AverageValue + c.CalculateUCT(_random, root, root.NetworkResult!.MoveRating[c.NetworkChildIndex]);
 				// small random number to break ties randomly in unexpanded nodes
 				if (root.Parent == null)
-					uctValue *= _random.NextDouble();
+					uctValue *= _random.NextDouble() * MCTSAZNode.Epsilon;
 
 				if (uctValue > bestValue)
 				{
@@ -152,11 +152,11 @@ internal class MCTSAZNode : IPoolableItem
 	public int NetworkChildIndex;
 	public readonly SimulationState State = new SimulationState();
 
-	public MCTSAZNode Parent;
+	public MCTSAZNode? Parent;
 
 	public bool IsGameEnd => State.GameHasEnded;
 
-	public Evaluation NetworkResult;
+	public Evaluation? NetworkResult;
 
 
 	public double CalculateUCT(Random random, MCTSAZNode parent, float priorProbability)
@@ -191,7 +191,7 @@ internal class MCTSAZNode : IPoolableItem
 
 		//Advance
 		{
-			var node = MonteCarloTreeSearchAlphaZero.NodePool.Value.Get();
+			var node = MonteCarloTreeSearchAlphaZero.NodePool.Value!.Get();
 
 			State.CloneTo(node.State);
 			node.State.Fidelity = SimulationFidelity.NoPiecePlacing;

@@ -1,8 +1,8 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using PatchworkSim;
 using PatchworkWebRunner.Services;
+using System;
 
 namespace PatchworkWebRunner.Controllers;
 
@@ -56,8 +56,7 @@ public class PatchworkController : Controller
 		(var sim, var gameId) = _patchwork.CreateSimulation(value.RandomSeed, value.OpponentStrength);
 
 
-		var res = new CreateResponse { GameId = gameId, Reward = 0 };
-		PopulateObservation(res, sim);
+		var res = new CreateResponse { GameId = gameId, Reward = 0, ObservationForNextMove = CreateObservation(sim) };
 		return res;
 	}
 
@@ -112,12 +111,11 @@ public class PatchworkController : Controller
 		var res = new MoveResponse
 		{
 			Reward = CalculateReward(sim, moveWasInvalid, currentValue, resultingValue),
-			GameHasEnded = sim.GameHasEnded
+			GameHasEnded = sim.GameHasEnded,
+			ObservationForNextMove = CreateObservation(sim)
 		};
 		if (sim.GameHasEnded)
 			res.WinningPlayer = sim.WinningPlayer;
-
-		PopulateObservation(res, sim);
 
 		return res;
 	}
@@ -151,20 +149,19 @@ public class PatchworkController : Controller
 			state.PlayerButtonIncome[player] * SimulationHelpers.ButtonIncomeAmountAfterPosition(state.PlayerPosition[player]) / ButtonIncomeScale;
 	}
 
-	private void PopulateObservation(Observation res, SimulationState sim)
+	private float[] CreateObservation(SimulationState sim)
 	{
-
-		res.ObservationForNextMove = new float[PlayerObservations + LookAheadPieceAmount * PieceFields];
-		res.ObservationForNextMove[0] = sim.PlayerButtonIncome[0] / ButtonIncomeScale;
-		res.ObservationForNextMove[1] = sim.PlayerButtonIncome[1] / ButtonIncomeScale;
-		res.ObservationForNextMove[2] = sim.PlayerButtonAmount[0] / ButtonAmountScale;
-		res.ObservationForNextMove[3] = sim.PlayerButtonAmount[1] / ButtonAmountScale;
-		res.ObservationForNextMove[4] = sim.PlayerBoardUsedLocationsCount[0] / UsedLocationsScale;
-		res.ObservationForNextMove[5] = sim.PlayerBoardUsedLocationsCount[1] / UsedLocationsScale;
-		res.ObservationForNextMove[6] = sim.PlayerPosition[0] / PlayerPositionScale;
-		res.ObservationForNextMove[7] = sim.PlayerPosition[1] / PlayerPositionScale;
-		res.ObservationForNextMove[8] = SimulationHelpers.ButtonIncomeAmountAfterPosition(sim.PlayerPosition[0]) / IncomesRemainingScale;
-		res.ObservationForNextMove[9] = SimulationHelpers.ButtonIncomeAmountAfterPosition(sim.PlayerPosition[1]) / IncomesRemainingScale;
+		var observationForNextMove = new float[PlayerObservations + LookAheadPieceAmount * PieceFields];
+		observationForNextMove[0] = sim.PlayerButtonIncome[0] / ButtonIncomeScale;
+		observationForNextMove[1] = sim.PlayerButtonIncome[1] / ButtonIncomeScale;
+		observationForNextMove[2] = sim.PlayerButtonAmount[0] / ButtonAmountScale;
+		observationForNextMove[3] = sim.PlayerButtonAmount[1] / ButtonAmountScale;
+		observationForNextMove[4] = sim.PlayerBoardUsedLocationsCount[0] / UsedLocationsScale;
+		observationForNextMove[5] = sim.PlayerBoardUsedLocationsCount[1] / UsedLocationsScale;
+		observationForNextMove[6] = sim.PlayerPosition[0] / PlayerPositionScale;
+		observationForNextMove[7] = sim.PlayerPosition[1] / PlayerPositionScale;
+		observationForNextMove[8] = SimulationHelpers.ButtonIncomeAmountAfterPosition(sim.PlayerPosition[0]) / IncomesRemainingScale;
+		observationForNextMove[9] = SimulationHelpers.ButtonIncomeAmountAfterPosition(sim.PlayerPosition[1]) / IncomesRemainingScale;
 
 		int baseIndex = PlayerObservations;
 
@@ -173,10 +170,12 @@ public class PatchworkController : Controller
 			var piece = PatchworkSim.AI.Helpers.GetNextPiece(sim, i);
 
 			var b = baseIndex + (i * PieceFields);
-			res.ObservationForNextMove[b + 0] = piece.ButtonCost / ButtonAmountScale;
-			res.ObservationForNextMove[b + 1] = piece.ButtonsIncome / ButtonIncomeScale;
-			res.ObservationForNextMove[b + 2] = piece.TotalUsedLocations / UsedLocationsScale;
+			observationForNextMove[b + 0] = piece.ButtonCost / ButtonAmountScale;
+			observationForNextMove[b + 1] = piece.ButtonsIncome / ButtonIncomeScale;
+			observationForNextMove[b + 2] = piece.TotalUsedLocations / UsedLocationsScale;
 		}
+
+		return observationForNextMove;
 	}
 
 	/// <summary>
@@ -187,7 +186,7 @@ public class PatchworkController : Controller
 		/// <summary>
 		/// Observation array
 		/// </summary>
-		public float[] ObservationForNextMove { get; set; }
+		public required float[] ObservationForNextMove { get; set; }
 
 		/// <summary>
 		/// Reward gained from the previous move.

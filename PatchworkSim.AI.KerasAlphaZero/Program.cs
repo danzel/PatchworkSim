@@ -32,10 +32,10 @@ public static partial class PatchworkServer
 		}
 	}
 
-	class ResultBox<T>
-	{
-		public T Item;
-	}
+	//class ResultBox<T>
+	//{
+	//	public T? Item;
+	//}
 	/*
 	class BatchingPatchworkServerClient : IPatchworkServerClient
 	{
@@ -127,7 +127,7 @@ public static partial class PatchworkServer
 namespace PatchworkSim.AI.KerasAlphaZero
 {
 	public class Program
-    {
+	{
 		public static void Main()
 		{
 			var channel = new Channel("127.0.0.1:50051", ChannelCredentials.Insecure);

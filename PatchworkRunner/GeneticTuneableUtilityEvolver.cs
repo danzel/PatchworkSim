@@ -1,10 +1,10 @@
-﻿using System;
+﻿using PatchworkSim;
+using PatchworkSim.AI.MoveMakers;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using PatchworkSim;
-using PatchworkSim.AI.MoveMakers;
 
 namespace PatchworkRunner;
 
@@ -13,7 +13,7 @@ class GeneticTuneableUtilityEvolver
 	private const int PopulationSize = 30;
 	private readonly Random _random = new Random();
 	private readonly IMoveDecisionMaker _boss = new GreedyCardValueUtilityMoveMaker(2);
-	List<PopulationMember> _population;
+	List<PopulationMember> _population = null!;
 	const int MaxGeneration = 50_000;
 
 	private void GenerateInitialPopulation()
@@ -173,8 +173,8 @@ class GeneticTuneableUtilityEvolver
 			state.Fidelity = SimulationFidelity.NoPiecePlacing;
 			//TODO: May need a cheaper placement engine
 			var runner = new SimulationRunner(state,
-				new PlayerDecisionMaker(best, null),
-				new PlayerDecisionMaker(challenger, null));
+				new PlayerDecisionMaker(best, null!),
+				new PlayerDecisionMaker(challenger, null!));
 
 			while (!state.GameHasEnded)
 				runner.PerformNextStep();
@@ -198,6 +198,7 @@ class GeneticTuneableUtilityEvolver
 		public PopulationMember(double[] gene)
 		{
 			Gene = gene;
+			MoveMaker = null!; //Set in CreateMoveMaker
 			CreateMoveMaker();
 		}
 
@@ -215,7 +216,7 @@ class GeneticTuneableUtilityEvolver
 			);
 		}
 
-		public int CompareTo(PopulationMember other)
+		public int CompareTo(PopulationMember? other)
 		{
 			if (ReferenceEquals(this, other)) return 0;
 			if (ReferenceEquals(null, other)) return 1;

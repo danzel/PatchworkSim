@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies;
 
@@ -23,7 +24,7 @@ public class ExhaustiveMostFuturePlacementsPlacementStrategy : IPlacementStrateg
 		_lookAheadSpread = lookAheadSpread;
 	}
 
-	public bool TryPlacePiece(BoardState board, PieceDefinition piece, in PieceCollection possibleFuturePieces, int possibleFuturePiecesOffset, out PieceBitmap resultBitmap, out int resultX, out int resultY)
+	public bool TryPlacePiece(BoardState board, PieceDefinition piece, in PieceCollection possibleFuturePieces, int possibleFuturePiecesOffset, [NotNullWhen(true)] out PieceBitmap? resultBitmap, out int resultX, out int resultY)
 	{
 		resultBitmap = null;
 		resultX = -1;

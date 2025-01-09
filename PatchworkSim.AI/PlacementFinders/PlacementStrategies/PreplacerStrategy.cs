@@ -1,7 +1,7 @@
-﻿using System;
+﻿using PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers;
 
 namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies;
 
@@ -21,8 +21,8 @@ public class PreplacerStrategy : IPlacementStrategy
 
 	private readonly Queue<Preplacement> _preplacements = new Queue<Preplacement>(2);
 
-	private List<PieceDefinition[]> _allPlannedFuturePieces;
-	private List<PieceDefinition[]> _allActualPieces;
+	private List<PieceDefinition[]>? _allPlannedFuturePieces;
+	private List<PieceDefinition[]>? _allActualPieces;
 
 	public PreplacerStrategy(IPreplacer preplacer, bool calculatePredictions = false)
 	{
@@ -77,18 +77,18 @@ public class PreplacerStrategy : IPlacementStrategy
 		}
 
 		_allPlannedFuturePieces.Add(plannedFuturePieces.Skip(preplaceAmount).ToArray());
-		_allActualPieces.Add(plannedFuturePieces.Take(preplaceAmount).ToArray());
+		_allActualPieces!.Add(plannedFuturePieces.Take(preplaceAmount).ToArray());
 	}
 
 	public void PrintPredictionAccuracy()
 	{
-		var allActual = _allActualPieces.SelectMany(x => x).ToArray();
-		var allActualIndex = _allActualPieces[0].Length; //Skip these cause they were placed before the first prediction
+		var allActual = _allActualPieces!.SelectMany(x => x).ToArray();
+		var allActualIndex = _allActualPieces![0].Length; //Skip these cause they were placed before the first prediction
 
 		int totalCorrect = 0;
 		int totalIncorrect = 0;
 
-		for (var i = 0; i < _allPlannedFuturePieces.Count; i++)
+		for (var i = 0; i < _allPlannedFuturePieces!.Count; i++)
 		{
 			if (i < _allActualPieces.Count)
 				Console.WriteLine($"Purchased {i.ToString().PadLeft(2)}: " + String.Join(", ", _allActualPieces[i].Select(p => p.Name)));

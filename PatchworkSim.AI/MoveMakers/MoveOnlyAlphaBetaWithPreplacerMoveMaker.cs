@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using PatchworkSim.AI.MoveMakers.UtilityCalculators;
+﻿using PatchworkSim.AI.MoveMakers.UtilityCalculators;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 
 namespace PatchworkSim.AI.MoveMakers;
 
@@ -23,7 +24,7 @@ public class MoveOnlyAlphaBetaWithPreplacerMoveMaker : IMoveDecisionMaker
 
 	public MoveOnlyAlphaBetaWithPreplacerMoveMaker(int maxSearchDepth, IUtilityCalculator calculator, PreplacerStrategy preplacer)
 	{
-		_thisThreadPool = _pool.Value;
+		_thisThreadPool = _pool.Value!;
 		_maxSearchDepth = maxSearchDepth;
 		_calculator = calculator;
 		_preplacer = preplacer;
@@ -116,7 +117,7 @@ public class MoveOnlyAlphaBetaWithPreplacerMoveMaker : IMoveDecisionMaker
 		int beta = int.MaxValue;
 
 		int bestMove = -1;
-		List<int> bestMoves = null;
+		List<int> bestMoves = null!;
 		int bestValue = Int32.MinValue;
 
 		//0-2 + -1 for advance
@@ -197,7 +198,7 @@ public class MoveOnlyAlphaBetaWithPreplacerMoveMaker : IMoveDecisionMaker
 
 
 	//https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning#Pseudocode
-	private int AlphaBeta(SimulationState parentState, int depth, int alpha, int beta, int maximizingPlayer, out List<int> moves)
+	private int AlphaBeta(SimulationState parentState, int depth, int alpha, int beta, int maximizingPlayer, [NotNull] out List<int>? moves)
 	{
 		//Console.WriteLine($"{depth} ({alpha}/{beta})");
 		//We deviate from strict depth limited minimax here.

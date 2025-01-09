@@ -1,4 +1,5 @@
 ﻿using PatchworkSim.AI.PlacementFinders.PlacementStrategies.BoardEvaluators;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
 
@@ -14,7 +15,7 @@ public class BestEvaluatorStrategy : NoLookaheadStrategy
 	}
 
 
-	protected override bool TryPlacePiece(BoardState board, PieceDefinition piece, out PieceBitmap resultBitmap, out int resultX, out int resultY)
+	protected override bool TryPlacePiece(BoardState board, PieceDefinition piece, [NotNullWhen(true)] out PieceBitmap? resultBitmap, out int resultX, out int resultY)
 	{
 		_evaluator.BeginEvaluation(board);
 

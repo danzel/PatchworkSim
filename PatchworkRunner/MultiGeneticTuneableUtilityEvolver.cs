@@ -1,11 +1,11 @@
-﻿using System;
+﻿using PatchworkSim;
+using PatchworkSim.AI.MoveMakers;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using PatchworkSim;
-using PatchworkSim.AI.MoveMakers;
 
 namespace PatchworkRunner;
 
@@ -14,7 +14,7 @@ class MultiGeneticTuneableUtilityEvolver
 	private const int PopulationSize = 50;
 	private readonly Random _random = new Random();
 	private readonly IMoveDecisionMaker _boss = TuneableUtilityMoveMaker.Tuning1;
-	List<PopulationMember> _population;
+	List<PopulationMember> _population = null!;
 	const int MaxGeneration = 120_000;
 
 	private const double MinValue = -1;
@@ -169,8 +169,8 @@ class MultiGeneticTuneableUtilityEvolver
 			state.Fidelity = SimulationFidelity.NoPiecePlacing;
 			//TODO: May need a cheaper placement engine
 			var runner = new SimulationRunner(state,
-				new PlayerDecisionMaker(best, null),
-				new PlayerDecisionMaker(challenger, null));
+				new PlayerDecisionMaker(best, null!),
+				new PlayerDecisionMaker(challenger, null!));
 
 			while (!state.GameHasEnded)
 				runner.PerformNextStep();
@@ -203,6 +203,7 @@ class MultiGeneticTuneableUtilityEvolver
 		public PopulationMember(double[] gene)
 		{
 			Gene = gene;
+			MoveMaker = null!; //Set in CreateMoveMaker
 			CreateMoveMaker();
 		}
 
@@ -227,7 +228,7 @@ class MultiGeneticTuneableUtilityEvolver
 			MoveMaker = new RangeSplitByBoardPositionDelegationMoveMaker(moveMakers);
 		}
 
-		public int CompareTo(PopulationMember other)
+		public int CompareTo(PopulationMember? other)
 		{
 			if (ReferenceEquals(this, other)) return 0;
 			if (ReferenceEquals(null, other)) return 1;

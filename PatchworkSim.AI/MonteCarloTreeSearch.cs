@@ -1,7 +1,7 @@
-﻿using System;
+﻿using PatchworkSim.AI.MoveMakers;
+using System;
 using System.Collections.Generic;
 using System.Threading;
-using PatchworkSim.AI.MoveMakers;
 
 namespace PatchworkSim.AI;
 
@@ -11,7 +11,7 @@ namespace PatchworkSim.AI;
 /// <summary>
 /// Reusable parts of MonteCarloTreeSearch
 /// </summary>
-public class MonteCarloTreeSearch<T> where T : MCTSNode<T>, IPoolableItem, new()
+public class MonteCarloTreeSearch<T> where T : notnull, MCTSNode<T>, IPoolableItem, new()
 {
 	public readonly int Iterations;
 	public readonly IMoveDecisionMaker RolloutMoveMaker;
@@ -24,7 +24,7 @@ public class MonteCarloTreeSearch<T> where T : MCTSNode<T>, IPoolableItem, new()
 	/// </summary>
 	private readonly SimulationState _rolloutState = new SimulationState();
 
-	public MonteCarloTreeSearch(int iterations, IMoveDecisionMaker rolloutMoveMaker)
+	public MonteCarloTreeSearch(int iterations, IMoveDecisionMaker? rolloutMoveMaker)
 	{
 		Iterations = iterations;
 		RolloutMoveMaker = rolloutMoveMaker ?? new RandomMoveMaker(0);
@@ -36,7 +36,7 @@ public class MonteCarloTreeSearch<T> where T : MCTSNode<T>, IPoolableItem, new()
 	/// </summary>
 	public T PerformMCTS(SimulationState state, bool useMinusOne, double progressiveBiasWeight)
 	{
-		var root = NodePool.Value.Get();
+		var root = NodePool.Value!.Get();
 		state.CloneTo(root.State);
 
 		for (var i = 0; i < Iterations; i++)
@@ -99,8 +99,8 @@ public class MonteCarloTreeSearch<T> where T : MCTSNode<T>, IPoolableItem, new()
 	{
 		while (root.Children.Count != 0) //Look for a leaf node (one we haven't expanded yet)
 		{
-			T bestNext = null;
-			double bestValue = Double.MinValue;
+			T? bestNext = null;
+			double bestValue = double.MinValue;
 
 			for (var i = 0; i < root.Children.Count; i++)
 			{
@@ -114,7 +114,7 @@ public class MonteCarloTreeSearch<T> where T : MCTSNode<T>, IPoolableItem, new()
 				}
 			}
 
-			root = bestNext;
+			root = bestNext!;
 		}
 
 		return root;
@@ -162,8 +162,8 @@ public abstract class MCTSNode
 	{
 		//https://en.wikipedia.org/wiki/Monte_Carlo_tree_search#Exploration_and_exploitation
 		var res = Value / (VisitCount + epsilon) +
-		       explorationParameter * Math.Sqrt(Math.Log(parent.VisitCount + 1) / (VisitCount + epsilon)) +
-		       random.NextDouble() * epsilon; // small random number to break ties randomly in unexpanded nodes
+			   explorationParameter * Math.Sqrt(Math.Log(parent.VisitCount + 1) / (VisitCount + epsilon)) +
+			   random.NextDouble() * epsilon; // small random number to break ties randomly in unexpanded nodes
 
 		res += ProgressiveBias / (VisitCount + 1);
 		return res;
@@ -175,7 +175,7 @@ public abstract class MCTSNode<T> : MCTSNode where T : MCTSNode<T>
 	public readonly List<T> Children;
 
 	public readonly SimulationState State = new SimulationState();
-	public T Parent;
+	public T? Parent;
 	public bool IsGameEnd => State.GameHasEnded;
 
 	protected MCTSNode(int initialChildrenSize)

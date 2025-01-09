@@ -1,6 +1,6 @@
-﻿using System;
-using PatchworkSim.AI.PlacementFinders.PlacementStrategies;
+﻿using PatchworkSim.AI.PlacementFinders.PlacementStrategies;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
+using System;
 
 namespace PatchworkSim.AI.PlacementFinders;
 
@@ -24,7 +24,7 @@ public class PlacementMaker : IPlacementDecisionMaker
 
 	public void PlacePiece(SimulationState state)
 	{
-		if (_strategy.TryPlacePiece(state.PlayerBoardState[state.PieceToPlacePlayer], state.PieceToPlace, in state.Pieces, state.NextPieceIndex, out var bitmap, out var x, out var y))
+		if (_strategy.TryPlacePiece(state.PlayerBoardState[state.PieceToPlacePlayer], state.PieceToPlace!, in state.Pieces, state.NextPieceIndex, out var bitmap, out var x, out var y))
 			state.PerformPlacePiece(bitmap, x, y);
 		else
 			throw new Exception("There is no where to place the piece");

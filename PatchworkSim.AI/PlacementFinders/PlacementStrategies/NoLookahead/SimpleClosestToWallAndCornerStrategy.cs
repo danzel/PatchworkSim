@@ -1,4 +1,6 @@
-﻿namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
 
 /// <summary>
 /// Starting at 0,0 move out along the walls attempting to place the piece.
@@ -20,7 +22,7 @@ public class SimpleClosestToWallAndCornerStrategy : NoLookaheadStrategy
 	{
 	}
 
-	protected override bool TryPlacePiece(BoardState board, PieceDefinition piece, out PieceBitmap resultBitmap, out int x, out int y)
+	protected override bool TryPlacePiece(BoardState board, PieceDefinition piece, [NotNullWhen(true)] out PieceBitmap? resultBitmap, out int x, out int y)
 	{
 		for (var oppositeWallGap = 0; oppositeWallGap < BoardState.Width; oppositeWallGap++)
 		{

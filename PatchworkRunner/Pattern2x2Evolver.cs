@@ -1,12 +1,12 @@
-﻿using System;
+﻿using PatchworkSim;
+using PatchworkSim.AI.PlacementFinders.PlacementStrategies.BoardEvaluators;
+using PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using PatchworkSim;
-using PatchworkSim.AI.PlacementFinders.PlacementStrategies.BoardEvaluators;
-using PatchworkSim.AI.PlacementFinders.PlacementStrategies.NoLookahead;
 
 namespace PatchworkRunner;
 
@@ -14,7 +14,7 @@ class Pattern2x2Evolver
 {
 	private const int PopulationSize = 60;
 	private readonly Random _random = new Random();
-	List<PopulationMember> _population;
+	List<PopulationMember> _population = null!;
 	const int MaxGeneration = 10_000;
 
 	private const int MinValue = -100;
@@ -191,6 +191,7 @@ class Pattern2x2Evolver
 		public PopulationMember(int[] gene)
 		{
 			Gene = gene;
+			Strategy = null!; //Set in CreateMoveMaker
 			CreateMoveMaker();
 		}
 
@@ -200,7 +201,7 @@ class Pattern2x2Evolver
 			Strategy = new BestEvaluatorStrategy(new TuneablePattern2x2BoardEvaluator(Gene));
 		}
 
-		public int CompareTo(PopulationMember other)
+		public int CompareTo(PopulationMember? other)
 		{
 			if (ReferenceEquals(this, other)) return 0;
 			if (ReferenceEquals(null, other)) return 1;

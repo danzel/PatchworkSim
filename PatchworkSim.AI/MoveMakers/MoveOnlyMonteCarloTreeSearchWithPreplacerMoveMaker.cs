@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using PatchworkSim.AI.PlacementFinders.PlacementStrategies;
+﻿using PatchworkSim.AI.PlacementFinders.PlacementStrategies;
+using System.Collections.Generic;
 
 namespace PatchworkSim.AI.MoveMakers;
 
@@ -23,7 +23,7 @@ public class MoveOnlyMonteCarloTreeSearchWithPreplacerMoveMaker : BaseMoveOnlyMo
 
 		_lookahead.Clear();
 
-		SearchNode bestRootChild = null;
+		SearchNode? bestRootChild = null;
 		int preplaceAmount = 0;
 
 		//Go through what we currently think are our best moves and record the pieces we'll get
@@ -31,8 +31,7 @@ public class MoveOnlyMonteCarloTreeSearchWithPreplacerMoveMaker : BaseMoveOnlyMo
 		{
 			var bestChild = Mcts.FindBestChild(root);
 
-			if (bestRootChild == null)
-				bestRootChild = bestChild;
+			bestRootChild ??= bestChild;
 
 			//If this move was made by us
 			if (root.State.ActivePlayer == state.ActivePlayer)
@@ -67,11 +66,11 @@ public class MoveOnlyMonteCarloTreeSearchWithPreplacerMoveMaker : BaseMoveOnlyMo
 		}
 
 
-		if (bestRootChild.PieceToPurchase.HasValue)
+		if (bestRootChild!.PieceToPurchase.HasValue)
 			state.PerformPurchasePiece(bestRootChild.PieceToPurchase.Value);
 		else
 			state.PerformAdvanceMove();
 
-		MonteCarloTreeSearch<SearchNode>.NodePool.Value.ReturnAll();
+		MonteCarloTreeSearch<SearchNode>.NodePool.Value!.ReturnAll();
 	}
 }

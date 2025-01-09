@@ -16,7 +16,7 @@ public class ExhaustiveMostFuturePlacementsPreplacer : IPreplacer
 
 	public Preplacement Preplace(BoardState board, List<PieceDefinition> plannedFuturePieces)
 	{
-		PieceBitmap resultBitmap = null;
+		PieceBitmap? resultBitmap = null;
 		int resultX = -1;
 		int resultY = -1;
 

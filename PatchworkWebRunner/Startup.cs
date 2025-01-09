@@ -1,12 +1,12 @@
-﻿using System;
-using System.IO;
-using System.Reflection;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using PatchworkWebRunner.Services;
+using System;
+using System.IO;
+using System.Reflection;
 
 namespace PatchworkWebRunner;
 
@@ -38,18 +38,18 @@ public class Startup
 			var commentsFileName = Assembly.GetExecutingAssembly().GetName().Name + ".XML";
 			var commentsFile = Path.Combine(baseDirectory, commentsFileName);
 
-			c.DescribeAllEnumsAsStrings();
+			//c.DescribeAllEnumsAsStrings();
 			c.IncludeXmlComments(commentsFile);
-			c.SwaggerDoc("v1", new Info { Title = "Patchwork API", Version = "v1" });
+			//c.SwaggerDoc("v1", new Info { Title = "Patchwork API", Version = "v1" });
 		});
 
-		services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+		services.AddMvc();
 	}
 
 	/// <summary>
 	/// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 	/// </summary>
-	public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+	public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 	{
 		if (env.IsDevelopment())
 		{
@@ -59,6 +59,9 @@ public class Startup
 		app.UseSwagger();
 		app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"); });
 
-		app.UseMvc();
+		app.UseEndpoints(endpoints =>
+		{
+			endpoints.MapControllers();
+		});
 	}
 }

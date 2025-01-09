@@ -62,9 +62,9 @@ public static class BoolmapOps
 
 	internal class BoolArrayComparer : IEqualityComparer<bool[,]>
 	{
-		public bool Equals(bool[,] bitmap0, bool[,] bitmap1)
+		public bool Equals(bool[,]? bitmap0, bool[,]? bitmap1)
 		{
-			if (bitmap0.GetLength(0) != bitmap1.GetLength(0))
+			if (bitmap0!.GetLength(0) != bitmap1!.GetLength(0))
 				return false;
 			if (bitmap0.GetLength(1) != bitmap1.GetLength(1))
 				return false;

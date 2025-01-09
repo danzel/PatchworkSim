@@ -1,7 +1,7 @@
-﻿using System;
+﻿using PatchworkSim.AI.PlacementFinders.PlacementStrategies.BoardEvaluators;
+using System;
 using System.Collections.Generic;
 using System.Threading;
-using PatchworkSim.AI.PlacementFinders.PlacementStrategies.BoardEvaluators;
 
 namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers;
 
@@ -30,7 +30,7 @@ public class WeightedTreeSearchPreplacer : IPreplacer
 	{
 		//TODO: When board is empty we should remove rotations/mirrors of the placements (not worth it on future ones)
 
-		var root = NodePool.Value.Get();
+		var root = NodePool.Value!.Get();
 		root.Board = board;
 		root.Bitmap = null;
 		root.X = -1;
@@ -83,7 +83,7 @@ public class WeightedTreeSearchPreplacer : IPreplacer
 
 		//Console.WriteLine($"Best Depth:{bestChildDepth},  ties: {ties},  stuck: {stuckCount}");
 
-		var result = new Preplacement(bestChild.Bitmap, bestChild.X, bestChild.Y);
+		var result = new Preplacement(bestChild.Bitmap!, bestChild.X, bestChild.Y);
 
 		NodePool.Value.ReturnAll();
 
@@ -91,7 +91,7 @@ public class WeightedTreeSearchPreplacer : IPreplacer
 		//NodePool.Dump();
 	}
 
-	private SearchNode Select(SearchNode currentRoot)
+	private SearchNode? Select(SearchNode currentRoot)
 	{
 		while (currentRoot.HasBeenExpanded) //Look for a leaf node (one we haven't expanded yet)
 		{
@@ -159,7 +159,7 @@ public class WeightedTreeSearchPreplacer : IPreplacer
 						var utility = _boardEvaluator.Evaluate(in copy, x, x + bitmap.Width, y, y + bitmap.Height);
 
 						//Insertion sort us in to the children list
-						SearchNode child = null;
+						SearchNode? child = null;
 						for (var i = 0; i < children.Count; i++)
 						{
 							//We should be here
@@ -175,7 +175,7 @@ public class WeightedTreeSearchPreplacer : IPreplacer
 								else
 								{
 									//Not full yet, just insert us here
-									child = NodePool.Value.Get();
+									child = NodePool.Value!.Get();
 									children.Insert(i, child);
 								}
 								break;
@@ -186,7 +186,7 @@ public class WeightedTreeSearchPreplacer : IPreplacer
 						if (child == null && children.Count < _maxBranching)
 						{
 							//Insert us last
-							child = NodePool.Value.Get();
+							child = NodePool.Value!.Get();
 							children.Add(child);
 						}
 
@@ -229,7 +229,7 @@ public class WeightedTreeSearchPreplacer : IPreplacer
 	class SearchNode : IComparable<SearchNode>, IPoolableItem
 	{
 		public BoardState Board;
-		public PieceBitmap Bitmap;
+		public PieceBitmap? Bitmap;
 		public int X, Y;
 		public int Depth;
 
@@ -243,9 +243,9 @@ public class WeightedTreeSearchPreplacer : IPreplacer
 			Children = new List<SearchNode>(SearchNodeListSize);
 		}
 
-		public int CompareTo(SearchNode other)
+		public int CompareTo(SearchNode? other)
 		{
-			return -Utility.CompareTo(other.Utility);
+			return -Utility.CompareTo(other!.Utility);
 		}
 
 		public int CalculateMaxChildDepth()

@@ -1,6 +1,6 @@
-﻿using System;
+﻿using PatchworkSim.AI.PlacementFinders.PlacementStrategies.BoardEvaluators;
+using System;
 using System.Collections.Generic;
-using PatchworkSim.AI.PlacementFinders.PlacementStrategies.BoardEvaluators;
 
 namespace PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers;
 
@@ -33,9 +33,10 @@ public class EvaluatorTreeSearchPreplacer : IPreplacer
 
 		for (var i = 0; i < root.Length; i++)
 		{
-			if (root[i] == null)
+			var child = root[i];
+			if (child == null)
 				break;
-			var move = root[i].Value;
+			var move = child.Value;
 
 			var clone = board;
 			clone.Place(move.Bitmap, move.X, move.Y);
@@ -48,7 +49,7 @@ public class EvaluatorTreeSearchPreplacer : IPreplacer
 			}
 		}
 
-		return bestPreplacement.Value;
+		return bestPreplacement!.Value;
 	}
 
 	private Preplacement?[] FindBestPlacements(in BoardState board, PieceDefinition piece)
@@ -145,9 +146,10 @@ public class EvaluatorTreeSearchPreplacer : IPreplacer
 
 		for (var i = 0; i < placements.Length; i++)
 		{
-			if (placements[i] == null)
+			var placement = placements[i];
+			if (placement == null)
 				break;
-			var move = placements[i].Value;
+			var move = placement.Value;
 
 			var clone = board;
 			clone.Place(move.Bitmap, move.X, move.Y);

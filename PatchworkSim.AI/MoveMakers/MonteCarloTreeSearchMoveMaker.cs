@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using PatchworkSim.AI.PlacementFinders.PlacementStrategies;
+﻿using PatchworkSim.AI.PlacementFinders.PlacementStrategies;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies.BoardEvaluators;
 using PatchworkSim.AI.PlacementFinders.PlacementStrategies.Preplacers;
+using System;
+using System.Collections.Generic;
 
 namespace PatchworkSim.AI.MoveMakers;
 
@@ -51,7 +51,7 @@ public class MonteCarloTreeSearchMoveMaker : IMoveDecisionMaker
 			}
 		}
 
-		MonteCarloTreeSearch<SearchNode>.NodePool.Value.ReturnAll();
+		MonteCarloTreeSearch<SearchNode>.NodePool.Value!.ReturnAll();
 	}
 
 	protected class MonteCarloTreeSearchPlacementExpander : MonteCarloTreeSearch<SearchNode>
@@ -96,7 +96,7 @@ public class MonteCarloTreeSearchMoveMaker : IMoveDecisionMaker
 
 			_expandPlacingUtility.Clear();
 
-			var piece = root.State.PieceToPlace;
+			var piece = root.State.PieceToPlace!;
 			var isFirstPiece = root.State.PlayerBoardState[root.State.ActivePlayer].IsEmpty;
 			var board = root.State.PlayerBoardState[root.State.PieceToPlacePlayer];
 			var children = root.Children;
@@ -130,7 +130,7 @@ public class MonteCarloTreeSearchMoveMaker : IMoveDecisionMaker
 							var utility = BoardEvaluator.Evaluate(in copy, x, x + bitmap.Width, y, y + bitmap.Height);
 
 							//Insertion sort us in to the children list
-							SearchNode child = null;
+							SearchNode? child = null;
 							for (var i = 0; i < children.Count; i++)
 							{
 								//We should be here
@@ -147,7 +147,7 @@ public class MonteCarloTreeSearchMoveMaker : IMoveDecisionMaker
 									else
 									{
 										//Not full yet, just insert us here
-										child = NodePool.Value.Get();
+										child = NodePool.Value!.Get();
 										children.Insert(i, child);
 										_expandPlacingUtility.Insert(i, utility);
 									}
@@ -159,7 +159,7 @@ public class MonteCarloTreeSearchMoveMaker : IMoveDecisionMaker
 							if (child == null && children.Count < MaxChildrenPerPiece)
 							{
 								//Insert us last
-								child = NodePool.Value.Get();
+								child = NodePool.Value!.Get();
 								children.Add(child);
 								_expandPlacingUtility.Add(utility);
 							}
@@ -181,7 +181,7 @@ public class MonteCarloTreeSearchMoveMaker : IMoveDecisionMaker
 			{
 				var c = children[i];
 				root.State.CloneTo(c.State);
-				c.State.PerformPlacePiece(c.PlaceBitmap, c.PlaceX, c.PlaceY);
+				c.State.PerformPlacePiece(c.PlaceBitmap!, c.PlaceX, c.PlaceY);
 				c.Parent = root;
 			}
 		}
@@ -190,7 +190,7 @@ public class MonteCarloTreeSearchMoveMaker : IMoveDecisionMaker
 		{
 			//Advance
 			{
-				var node = NodePool.Value.Get();
+				var node = NodePool.Value!.Get();
 
 				root.State.CloneTo(node.State);
 				node.State.PerformAdvanceMove();
@@ -226,7 +226,7 @@ public class MonteCarloTreeSearchMoveMaker : IMoveDecisionMaker
 		public int? PieceToPurchase;
 
 		//TODO: Do we want to use these placements or re-calculate the placement at the end of it?
-		public PieceBitmap PlaceBitmap;
+		public PieceBitmap? PlaceBitmap;
 
 		public int PlaceX;
 		public int PlaceY;

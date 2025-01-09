@@ -15,7 +15,7 @@ public class SimulationRunnerTests
 	{
 		var state = new SimulationState(SimulationHelpers.GetRandomPieces(), 0);
 		state.Fidelity = SimulationFidelity.NoPiecePlacing;
-		var runner = new SimulationRunner(state, new PlayerDecisionMaker(AlwaysAdvanceMoveMaker.Instance, null), new PlayerDecisionMaker(AlwaysAdvanceMoveMaker.Instance, null));
+		var runner = new SimulationRunner(state, new PlayerDecisionMaker(AlwaysAdvanceMoveMaker.Instance, null!), new PlayerDecisionMaker(AlwaysAdvanceMoveMaker.Instance, null!));
 
 		//The game definitely ends within 200 steps
 		for (var i = 0; i < 200 && !state.GameHasEnded; i++)
@@ -50,7 +50,7 @@ public class SimulationRunnerTests
 	{
 		var state = new SimulationState(SimulationHelpers.GetRandomPieces(3), 0);
 		state.Fidelity = SimulationFidelity.NoPiecePlacing;
-		var runner = new SimulationRunner(state, new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, null), new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, null));
+		var runner = new SimulationRunner(state, new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, null!), new PlayerDecisionMaker(BuyFirstPossibleMoveMaker.Instance, null!));
 
 		while (!state.GameHasEnded)
 		{
