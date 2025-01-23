@@ -11,7 +11,7 @@ public unsafe struct PieceCollection
 
 	public void RemoveAt(int index)
 	{
-#if DEBUG
+#if SAFE_MODE || DEBUG
 		if (index >= Count || index < 0)
 			throw new Exception();
 #endif
@@ -31,7 +31,7 @@ public unsafe struct PieceCollection
 	{
 		get
 		{
-#if DEBUG
+#if SAFE_MODE || DEBUG
 			if (key >= PieceDefinition.TotalPieces || key >= Count || key < 0)
 				throw new Exception();
 #endif
@@ -43,7 +43,7 @@ public unsafe struct PieceCollection
 
 		set
 		{
-#if DEBUG
+#if SAFE_MODE || DEBUG
 			if (key >= PieceDefinition.TotalPieces || key >= Count || key < 0)
 				throw new Exception();
 #endif

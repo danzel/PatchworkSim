@@ -17,6 +17,9 @@ public static class SimulationHelpers
 		}
 	}
 
+	/// <summary>
+	/// How many times a player will receive button income before they reach the end starting from the given position
+	/// </summary>
 	public static int ButtonIncomeAmountAfterPosition(int position)
 	{
 		return _buttonIncomeAmountAfterPositionCache[position];
@@ -26,7 +29,7 @@ public static class SimulationHelpers
 	{
 		var rand = randomSeed.HasValue ? new Random(randomSeed.Value) : new Random();
 
-		//Populate the array with 0 as the last item
+		//Populate the array with 0 (the starting piece) as the last item
 		var array = new List<int>(PieceDefinition.AllPieceDefinitions.Length);
 		for (var i = 1; i < PieceDefinition.AllPieceDefinitions.Length; i++)
 			array.Add(i);

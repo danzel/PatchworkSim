@@ -11,7 +11,7 @@ public interface ISimulationLogger
 
 public class NullSimulationLogger : ISimulationLogger
 {
-	public static NullSimulationLogger Instance = new NullSimulationLogger();
+	public static readonly NullSimulationLogger Instance = new NullSimulationLogger();
 
 	private NullSimulationLogger()
 	{

@@ -3,8 +3,12 @@ using System.Linq;
 
 namespace PatchworkSim;
 
+
 public static class BoolmapOps
 {
+	/// <summary>
+	/// Rotate and flip the given piece bitmap to generate all possible ways it can be placed
+	/// </summary>
 	public static bool[][,] CalculatePossibleOrientations(bool[,] bitmap)
 	{
 		var temp = new List<bool[,]>();

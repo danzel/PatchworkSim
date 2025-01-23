@@ -56,6 +56,7 @@ public class PieceBitmap
 	/// </summary>
 	private UInt128 Shift(int x, int y)
 	{
+#if SAFE_MODE || DEBUG
 		if (x < 0)
 			throw new Exception("X is out of range");
 		if (y < 0)
@@ -64,6 +65,7 @@ public class PieceBitmap
 			throw new Exception("X is out of range");
 		if (Height + y > BoardState.Height)
 			throw new Exception("Y is out of range");
+#endif
 
 		return Bitmap << (x + y * BoardState.Width);
 	}
